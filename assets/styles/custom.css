@@ -1,0 +1,30 @@
+.navbar-brand {padding: 0 !important;}
+.total_crypto_price_div{padding: 10px 0px;background-color:#DCDCDC;}
+.list-aggregate {list-style: none; margin-top: 10px;}
+.list-aggregate li { border-bottom-color: #e5e5e5; }
+.list-aggregate li a { color: #fff; font-weight:bold; }
+.marquee_div {height:100px;background-color:black;}
+.marquee_list_item { width:340px; float: left;}
+.center {text-align:center;}
+.navbar-inverse{min-height:55px;background-color:#DCDCDC !important;}
+.fixed-header {position: fixed;top:0; left:0;width: 100%; z-index: 99999;}
+nav.navbar.navbar-inverse {position: fixed;top: 0;left: 0;width: 100%;z-index: 1000;overflow: hidden;
+    -webkit-transition: height 0.3s;-moz-transition: height 0.3s;transition: height 0.3s;text-align:center;}
+nav.navbar.navbar-inverse.shrink {position: fixed;width: 100%;background:#DCDCDC !important;z-index: 999;
+    -webkit-transition: all 0.3s;-moz-transition: all 0.3s;transition: all 0.3s; }
+.fadeInRight {margin-top: 30px;}
+@media all and (max-width: 1161px) {
+	.fadeInRight {margin-top: 50px !important;}
+}
+@media all and (max-width: 765px) {
+	.fadeInRight {margin-top: 125px !important;}
+}
+@media all and (max-width: 390px) {
+	.fadeInRight {margin-top: 140px !important;}
+}
+
+
+
+
+
+
