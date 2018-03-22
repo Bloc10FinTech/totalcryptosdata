@@ -187,7 +187,7 @@ $(document).ready(function(){
         x: {
             //type: 'timeseries',
             tick: {
-                //format: function (x) { console.log(x); return x; }
+                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return year+'-'+month+'-'+day; }
             }
         }
     }
@@ -211,7 +211,7 @@ $(document).ready(function(){
         x: {
             //type: 'timeseries',
             tick: {
-                //format: function (x) { return x; }
+                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return year+'-'+month+'-'+day; }
             }
         }
     }
@@ -235,7 +235,7 @@ $(document).ready(function(){
         x: {
             //type: 'timeseries',
             tick: {
-                //format: function (x) { return x; }
+                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return year+'-'+month+'-'+day; }
             }
         }
     }

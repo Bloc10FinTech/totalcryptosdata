@@ -144,30 +144,45 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products).result;
-				ApiService.bittrexMarketSummaries().then(tickers=>{
-					if(_.isEmpty(JSON.parse(tickers).message)){
-						 tickers=JSON.parse(tickers);
-						_.forEach(products,function(product){
-							_.forEach(tickers.result,function(ticker){
-								if(ticker.MarketName==product.MarketName){
-									ticker.BaseCurrency=product.BaseCurrency;
-									ticker.MarketCurrency=product.MarketCurrency;
-									//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
-									ticker.High=math.format(ticker.High,{lowerExp: -100, upperExp: 100});
-									ticker.Low=math.format(ticker.Low,{lowerExp: -100, upperExp: 100});
-									ticker.Last=math.format(ticker.Last,{lowerExp: -100, upperExp: 100});
-									ticker.Bid=math.format(ticker.Bid,{lowerExp: -100, upperExp: 100});
-									ticker.Ask=math.format(ticker.Ask,{lowerExp: -100, upperExp: 100});
-									ticker.PrevDay=math.format(ticker.PrevDay,{lowerExp: -100, upperExp: 100});
-								}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);}
+					ApiService.bittrexMarketSummaries().then(tickers=>{
+						if(_.isEmpty(JSON.parse(tickers).message)){
+							 tickers=JSON.parse(tickers);
+							_.forEach(products,function(product){
+								_.forEach(tickers.result,function(ticker){
+									if(ticker.MarketName==product.MarketName){
+										ticker.BaseCurrency=product.BaseCurrency;
+										ticker.MarketCurrency=product.MarketCurrency;
+										//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
+										ticker.High=math.format(ticker.High,{lowerExp: -100, upperExp: 100});
+										ticker.Low=math.format(ticker.Low,{lowerExp: -100, upperExp: 100});
+										ticker.Last=math.format(ticker.Last,{lowerExp: -100, upperExp: 100});
+										ticker.Bid=math.format(ticker.Bid,{lowerExp: -100, upperExp: 100});
+										ticker.Ask=math.format(ticker.Ask,{lowerExp: -100, upperExp: 100});
+										ticker.PrevDay=math.format(ticker.PrevDay,{lowerExp: -100, upperExp: 100});
+										var chart_data=[];
+										_.forEach(charts,function(chart_list){
+											chart_list=JSON.parse(chart_list.tickers).result;
+											_.forEach(chart_list,function(chart){
+												if(chart.MarketName==product.MarketName){
+													chart_data.push(chart.Last);
+												}
+											});
+										});
+										chart_data=_.reverse(chart_data);
+										chart_data.push(ticker.Last);
+										ticker.chart=chart_data;
+									}
+								});
 							});
-						});
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('bittrex','api',err,'tickers_api_select',curDateTime);});
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+					}).
+					catch(err=> { ApiService.exchangeErrors('bittrex','api',err,'tickers_api_select',curDateTime);});
+				});
 			}	
 		});
 		
@@ -186,12 +201,33 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.coinMarketTicker().then(tickers=>{
-					ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);}
-					});
-				}).
-				catch(err=> { ApiService.exchangeErrors('coinmarketcap','api',err,'tickers_api_select',curDateTime);});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);}
+					ApiService.coinMarketTicker().then(tickers=>{
+						tickers=JSON.parse(tickers);
+						_.forEach(tickers,function(ticker){
+							var chart_data=[];
+							_.forEach(charts,function(chart_list){
+								chart_list=JSON.parse(chart_list.tickers);
+								_.forEach(chart_list,function(chart){
+									if(chart.symbol==ticker.symbol){
+										chart_data.push(chart.price_usd);
+									}
+								});
+							});
+							
+							chart_data=_.reverse(chart_data);
+							chart_data.push(ticker.price_usd);
+							ticker.chart=chart_data;
+						});
+							
+						
+						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);}
+						});
+					}).
+					catch(err=> { ApiService.exchangeErrors('coinmarketcap','api',err,'tickers_api_select',curDateTime);});
+				});
 			}	
 		});
 		
@@ -217,28 +253,43 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				products=JSON.parse(data.products);
-				return Promise.all(products.map((product)=>{
-					return ApiService.bitFinexMarketTicker(product).then((ticker)=>{
-						ticker=JSON.parse(ticker);
-						ticker.product_id=product;
-						return ticker;
-					}).
-					catch(err=> { ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);});
-				})).
-				then(tickers => {
-					var tickers_data=[];
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker) && _.isEmpty(ticker.error)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);}	
+					return Promise.all(products.map((product)=>{
+						return ApiService.bitFinexMarketTicker(product).then((ticker)=>{
+							ticker=JSON.parse(ticker);
+							ticker.product_id=product;
+							var chart_data=[];
+							_.forEach(charts,function(chart_list){
+								chart_list=JSON.parse(chart_list.tickers);
+								_.forEach(chart_list,function(chart){
+									if(chart.product_id==product){
+										chart_data.push(chart.bid);
+									}
+								});
+							});
+							chart_data=_.reverse(chart_data);
+							chart_data.push(ticker.bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err=> { ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);});
+					})).
+					then(tickers => {
+						var tickers_data=[];
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) && _.isEmpty(ticker.error)){
+								tickers_data.push(ticker);
+							}
 						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -265,27 +316,42 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ApiService.hitbtcMarketTicker().then(tickers=>{
-					try{
-						tickers=JSON.parse(tickers);
-						_.forEach(tickers,function(ticker){
-							_.forEach(products,function(product){
-								if(product.id==ticker.symbol){
-									ticker.baseCurrency=product.baseCurrency;
-									ticker.quoteCurrency=product.quoteCurrency;
-								}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);}
+					ApiService.hitbtcMarketTicker().then(tickers=>{
+						try{
+							tickers=JSON.parse(tickers);
+							_.forEach(tickers,function(ticker){
+								_.forEach(products,function(product){
+									if(product.id==ticker.symbol){
+										ticker.baseCurrency=product.baseCurrency;
+										ticker.quoteCurrency=product.quoteCurrency;
+										var chart_data=[];
+										_.forEach(charts,function(chart_list){
+											chart_list=JSON.parse(chart_list.tickers);
+											_.forEach(chart_list,function(chart){
+												if(chart.symbol==ticker.symbol){
+													chart_data.push(chart.bid);
+												}
+											});
+										});
+										chart_data=_.reverse(chart_data);
+										chart_data.push(ticker.bid);
+										ticker.chart=chart_data;
+									}
+								});
 							});
-						});
-						
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('hitbtc','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err=>{ ApiService.exchangeErrors('hitbtc','api',err,'tickers_api_select',curDateTime);});
+							
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('hitbtc','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=>{ ApiService.exchangeErrors('hitbtc','api',err,'tickers_api_select',curDateTime);});
+				});
 			}	
 		});	
 		
@@ -311,27 +377,42 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ApiService.gateMarketTicker().then(tickers=>{
-					try{
-						var temp=[];
-						tickers=JSON.parse(tickers);
-						_.forEach(products,function(product){
-							if(!_.isEmpty(tickers[product])){
-								var ticker=tickers[product];
-								ticker.product=product;
-								temp.push(ticker);
-							}
-						});
-						tickers=temp;
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('gate','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('gate','api',err,'tickers_api_select',curDateTime);});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);}
+					ApiService.gateMarketTicker().then(tickers=>{
+						try{
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							_.forEach(products,function(product){
+								if(!_.isEmpty(tickers[product])){
+									var ticker=tickers[product];
+									ticker.product=product;
+									var chart_data=[];
+									_.forEach(charts,function(chart_list){
+										chart_list=JSON.parse(chart_list.tickers);
+										_.forEach(chart_list,function(chart){
+											if(chart.product==product){
+												chart_data.push(chart.last);
+											}
+										});
+									});
+									chart_data=_.reverse(chart_data);
+									chart_data.push(ticker.last);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								}
+							});
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('gate','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=> { ApiService.exchangeErrors('gate','api',err,'tickers_api_select',curDateTime);});
+				});
 			}	
 		});	
 		
@@ -350,30 +431,47 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.kunaMarketTicker().then(tickers=>{
-					try{
-						var temp=[];
-						tickers=JSON.parse(tickers);
-						var products=Object.keys(tickers);
-						_.forEach(products,function(product){
-							if(!_.isEmpty(tickers[product])){
-								var ticker=tickers[product];
-								ticker=ticker.ticker;
-								ticker.product=product;
-								temp.push(ticker);
-							}
-						});
-						tickers=temp;
-						
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch (e){
-						ApiService.exchangeErrors('kuna','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('kuna','api',err,'tickers_api_select',curDateTime);});
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);}
+					ApiService.kunaMarketTicker().then(tickers=>{
+						try{
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							var products=Object.keys(tickers);
+							_.forEach(products,function(product){
+								if(!_.isEmpty(tickers[product])){
+									var ticker=tickers[product];
+									ticker=ticker.ticker;
+									ticker.product=product;
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart_list){
+										chart_list=JSON.parse(chart_list.tickers);
+										_.forEach(chart_list,function(chart){
+											if(chart.product==product){
+												chart_data.push(chart.price);
+											}
+										});
+									});
+									chart_data=_.reverse(chart_data);
+									chart_data.push(ticker.price);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								}
+							});
+							tickers=temp;
+							
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch (e){
+							ApiService.exchangeErrors('kuna','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=> { ApiService.exchangeErrors('kuna','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}	
 		});	
 		
@@ -394,29 +492,45 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-						return ApiService.okexMarketTicker(product).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product=product;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);});
-					})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker) && _.isEmpty(ticker.error_code)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+							return ApiService.okexMarketTicker(product).
+							then(ticker => {
+								ticker=JSON.parse(ticker);
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==product){
+											chart_data.push(chart.ticker.last);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.ticker.last);
+								ticker.chart=chart_data;
+								return ticker;
+							}).
+							catch(err => { ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);});
+						})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) && _.isEmpty(ticker.error_code)){
+								tickers_data.push(ticker);
+							}
 						});
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+					}).
+					catch(err=> { ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}	
 		});
 		
@@ -442,28 +556,44 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products).symbols;
-				ApiService.binanceMarketTicker().
-				then(tickers => {
-					try{
-						tickers=JSON.parse(tickers);
-						_.forEach(products,function(product){
-							_.forEach(tickers,function(ticker){
-								if(product.symbol==ticker.symbol){
-									ticker.baseAsset=product.baseAsset;
-									ticker.quoteAsset=product.quoteAsset;
-								}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);}
+					ApiService.binanceMarketTicker().
+					then(tickers => {
+						try{
+							tickers=JSON.parse(tickers);
+							_.forEach(products,function(product){
+								_.forEach(tickers,function(ticker){
+									if(product.symbol==ticker.symbol){
+										ticker.baseAsset=product.baseAsset;
+										ticker.quoteAsset=product.quoteAsset;
+										
+										var chart_data=[];
+										_.forEach(charts,function(chart_list){
+											chart_list=JSON.parse(chart_list.tickers);
+											_.forEach(chart_list,function(chart){
+												if(chart.symbol==ticker.symbol){
+													chart_data.push(chart.lastPrice);
+												}
+											});
+										});
+										chart_data=_.reverse(chart_data);
+										chart_data.push(ticker.lastPrice);
+										ticker.chart=chart_data;
+									}
+								});
 							});
-						});
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-						date_created:curDateTime},function(err, data){
-							if(err){ ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('binance','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('binance','api',err,'tickers_api_select',curDateTime);});
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('binance','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('binance','api',err,'tickers_api_select',curDateTime);});
+				});
 			}
 		});
 		
@@ -490,40 +620,56 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products).data;
-				return Promise.all(products.map((product) => {
-						return ApiService.huobiMarketTicker(product['base-currency']+product['quote-currency']).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product=product['base-currency']+product['quote-currency'];
-							ticker.base_currency=product['base-currency'];
-							ticker.quote_currency=product['quote-currency'];
-							//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
-							ticker.tick.open=math.format(ticker.tick.open,{lowerExp: -100, upperExp: 100});
-							ticker.tick.close=math.format(ticker.tick.close,{lowerExp: -100, upperExp: 100});
-							ticker.tick.high=math.format(ticker.tick.high,{lowerExp: -100, upperExp: 100});
-							ticker.tick.low=math.format(ticker.tick.low,{lowerExp: -100, upperExp: 100});
-							ticker.tick.ask[0]=math.format(ticker.tick.ask[0],{lowerExp: -100, upperExp: 100});
-							ticker.tick.ask[1]=math.format(ticker.tick.ask[1],{lowerExp: -100, upperExp: 100});
-							ticker.tick.bid[0]=math.format(ticker.tick.bid[0],{lowerExp: -100, upperExp: 100});
-							ticker.tick.bid[1]=math.format(ticker.tick.bid[1],{lowerExp: -100, upperExp: 100});
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);});
-					})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker) && !_.isEmpty(ticker.tick) && _.isEmpty(ticker.error_code)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+							return ApiService.huobiMarketTicker(product['base-currency']+product['quote-currency']).
+							then(ticker => {
+								ticker=JSON.parse(ticker);
+								ticker.product=product['base-currency']+product['quote-currency'];
+								ticker.base_currency=product['base-currency'];
+								ticker.quote_currency=product['quote-currency'];
+								//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
+								ticker.tick.open=math.format(ticker.tick.open,{lowerExp: -100, upperExp: 100});
+								ticker.tick.close=math.format(ticker.tick.close,{lowerExp: -100, upperExp: 100});
+								ticker.tick.high=math.format(ticker.tick.high,{lowerExp: -100, upperExp: 100});
+								ticker.tick.low=math.format(ticker.tick.low,{lowerExp: -100, upperExp: 100});
+								ticker.tick.ask[0]=math.format(ticker.tick.ask[0],{lowerExp: -100, upperExp: 100});
+								ticker.tick.ask[1]=math.format(ticker.tick.ask[1],{lowerExp: -100, upperExp: 100});
+								ticker.tick.bid[0]=math.format(ticker.tick.bid[0],{lowerExp: -100, upperExp: 100});
+								ticker.tick.bid[1]=math.format(ticker.tick.bid[1],{lowerExp: -100, upperExp: 100});
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==product['base-currency']+product['quote-currency']){
+											chart_data.push(chart.tick.bid[0]);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.tick.bid[0]);
+								ticker.chart=chart_data;
+								return ticker;
+							}).
+							catch(err => { ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);});
+						})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) && !_.isEmpty(ticker.tick) && _.isEmpty(ticker.error_code)){
+								tickers_data.push(ticker);
+							}
 						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -549,39 +695,55 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-						return ApiService.geminiMarketTicker(product).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							var keys=Object.keys(ticker.volume);
-							keys=_.remove(keys, function(key){return key!='timestamp';});
-							if(_.toLower(keys[0]+keys[1])==_.toLower(product)){
-								ticker.vol=ticker.volume[keys[1]];
-								ticker.currency=keys[0];
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+							return ApiService.geminiMarketTicker(product).
+							then(ticker => {
+								ticker=JSON.parse(ticker);
+								var keys=Object.keys(ticker.volume);
+								keys=_.remove(keys, function(key){return key!='timestamp';});
+								if(_.toLower(keys[0]+keys[1])==_.toLower(product)){
+									ticker.vol=ticker.volume[keys[1]];
+									ticker.currency=keys[0];
+								}
+								else{
+									ticker.vol=ticker.volume[keys[0]];
+									ticker.currency=keys[1];
+								}
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==product){
+											chart_data.push(chart.bid);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.bid);
+								ticker.chart=chart_data;
+								return ticker;
+							}).
+							catch(err => { ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);});
+						})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
 							}
-							else{
-								ticker.vol=ticker.volume[keys[0]];
-								ticker.currency=keys[1];
-							}
-							ticker.product=product;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);});
-					})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);}
 						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -614,37 +776,53 @@ module.exports = {
 					temp.push({name:product_name,base:products[product_name].base,quote:products[product_name].quote});
 				});
 				products=temp;
-				return Promise.all(products.map((product) => {
-					return ApiService.krakenMarketTicker(product.name).
-					then(ticker => {
-						ticker=JSON.parse(ticker);
-						ticker.product=product.name;
-						ticker.base_currency=product.base;
-						ticker.quote_currency=product.quote;
-						return ticker;
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+						return ApiService.krakenMarketTicker(product.name).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.name;
+							ticker.base_currency=product.base;
+							ticker.quote_currency=product.quote;
+							return ticker;
+						}).
+						catch(err => { ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);});
+					})).
+					then(tickers => {
+						
+						var tickers_data=[];
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) &&_.isEmpty(ticker.error)){
+								ticker.price=ticker.result[ticker.product].b[0];
+								ticker.volume=ticker.result[ticker.product].v[1];
+								ticker.low=ticker.result[ticker.product].l[1];
+								ticker.high=ticker.result[ticker.product].h[1];
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==ticker.product){
+											chart_data.push(chart.price);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.price);
+								ticker.chart=chart_data;
+								tickers_data.push(ticker);
+							}
+						});
+						
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
 					}).
 					catch(err => { ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);});
-				})).
-				then(tickers => {
-					
-					var tickers_data=[];
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker) &&_.isEmpty(ticker.error)){
-							ticker.price=ticker.result[ticker.product].b[0];
-							ticker.volume=ticker.result[ticker.product].v[1];
-							ticker.low=ticker.result[ticker.product].l[1];
-							ticker.high=ticker.result[ticker.product].h[1];
-							tickers_data.push(ticker);
-						}
-					});
-					
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -688,32 +866,47 @@ module.exports = {
 					}
 				});
 				products=temp;
-				
-				return Promise.all(products.map((product) => {
-					return ApiService.bitflyerMarketTicker(product.product_code).
-					then(ticker => {
-						ticker=JSON.parse(ticker);
-						ticker.product=product.product_code;
-						ticker.base_currency=_.join(_.split(product.product_code,'_',1));
-						ticker.quote_currency=_.replace(product.product_code,ticker.base_currency+'_','');
-						return ticker;
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+						return ApiService.bitflyerMarketTicker(product.product_code).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.product_code;
+							ticker.base_currency=_.join(_.split(product.product_code,'_',1));
+							ticker.quote_currency=_.replace(product.product_code,ticker.base_currency+'_','');
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart_list){
+								chart_list=JSON.parse(chart_list.tickers);
+								_.forEach(chart_list,function(chart){
+									if(chart.product==product.product_code){
+										chart_data.push(chart.best_bid);
+									}
+								});
+							});
+							chart_data=_.reverse(chart_data);
+							chart_data.push(ticker.best_bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
 					}).
 					catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);});
-				})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -733,31 +926,47 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.bithumbMarketTicker().
-				then(tickers => {
-					try{
-						tickers=JSON.parse(tickers);
-						if(parseInt(tickers.status)==0){
-							var temp=[];
-							_.forEach(Object.keys(tickers.data),function(currency){
-								var ticker=tickers.data[currency];
-								ticker.base_currency=currency;
-								ticker.quote_currency='KRW';
-								ticker.product=currency+'KRW';
-								temp.push(ticker);
-							});
-							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);}
-							});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);}
+					ApiService.bithumbMarketTicker().
+					then(tickers => {
+						try{
+							tickers=JSON.parse(tickers);
+							if(parseInt(tickers.status)==0){
+								var temp=[];
+								_.forEach(Object.keys(tickers.data),function(currency){
+									var ticker=tickers.data[currency];
+									ticker.base_currency=currency;
+									ticker.quote_currency='KRW';
+									ticker.product=currency+'KRW';
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart_list){
+										chart_list=JSON.parse(chart_list.tickers);
+										_.forEach(chart_list,function(chart){
+											if(chart.product==currency+'KRW'){
+												chart_data.push(chart.sell_price);
+											}
+										});
+									});
+									chart_data=_.reverse(chart_data);
+									chart_data.push(ticker.sell_price);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								});
+								tickers=temp;
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+								date_created:curDateTime},function(err, data){
+									if(err){ ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);}
+								});
+							}
 						}
-					}
-					catch(e){
-						ApiService.exchangeErrors('bithumb','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('bithumb','api',err,'tickers_api_select',curDateTime);});
+						catch(e){
+							ApiService.exchangeErrors('bithumb','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('bithumb','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -783,31 +992,47 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-					return ApiService.bitstampMarketTicker(product.url_symbol).
-					then(ticker => {
-						ticker=JSON.parse(ticker);
-						ticker.product=product.url_symbol;
-						ticker.base_currency=_.join(_.split(product.name,'/',1));
-						ticker.quote_currency=_.replace(product.name,ticker.base_currency+'/','');
-						return ticker;
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+						return ApiService.bitstampMarketTicker(product.url_symbol).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.url_symbol;
+							ticker.base_currency=_.join(_.split(product.name,'/',1));
+							ticker.quote_currency=_.replace(product.name,ticker.base_currency+'/','');
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart_list){
+								chart_list=JSON.parse(chart_list.tickers);
+								_.forEach(chart_list,function(chart){
+									if(chart.product==product.url_symbol){
+										chart_data.push(chart.bid);
+									}
+								});
+							});
+							chart_data=_.reverse(chart_data);
+							chart_data.push(ticker.bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
 					}).
 					catch(err => { ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);});
-				})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);});
+				});
 			}
 		});
 		
@@ -826,31 +1051,47 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.bitzMarketTicker().then(tickers=>{
-					try{
-						var temp=[];
-						tickers=JSON.parse(tickers);
-						if(parseInt(tickers.code)==0){
-							var products=Object.keys(tickers.data);
-							_.forEach(products,function(product){
-								var ticker=tickers.data[product];
-								ticker.product=product;
-								ticker.base_currency=_.join(_.split(product,'_',1));
-								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-								temp.push(ticker);
-							});
-							tickers=temp;
-						
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);}
-							});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);}
+					ApiService.bitzMarketTicker().then(tickers=>{
+						try{
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							if(parseInt(tickers.code)==0){
+								var products=Object.keys(tickers.data);
+								_.forEach(products,function(product){
+									var ticker=tickers.data[product];
+									ticker.product=product;
+									ticker.base_currency=_.join(_.split(product,'_',1));
+									ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart_list){
+										chart_list=JSON.parse(chart_list.tickers);
+										_.forEach(chart_list,function(chart){
+											if(chart.product==product){
+												chart_data.push(chart.sell);
+											}
+										});
+									});
+									chart_data=_.reverse(chart_data);
+									chart_data.push(ticker.sell);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								});
+								tickers=temp;
+							
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+									if(err){ ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);}
+								});
+							}
 						}
-					}
-					catch (e){
-						ApiService.exchangeErrors('bitz','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('bitz','api',err,'tickers_api_select',curDateTime);});
+						catch (e){
+							ApiService.exchangeErrors('bitz','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=> { ApiService.exchangeErrors('bitz','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}	
 		});
 
@@ -875,24 +1116,40 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.lbankMarketTicker().
-				then(tickers => {
-					try{ 
-						tickers=JSON.parse(tickers);
-						_.forEach(tickers,function(ticker){
-							ticker.base_currency=_.join(_.split(ticker.symbol,'_',1));
-							ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'_','');
-						});
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-						date_created:curDateTime},function(err, data){
-							if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('lbank','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('lbank','api',err,'tickers_api_select',curDateTime);});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);}
+					ApiService.lbankMarketTicker().
+					then(tickers => {
+						try{ 
+							tickers=JSON.parse(tickers);
+							_.forEach(tickers,function(ticker){
+								ticker.base_currency=_.join(_.split(ticker.symbol,'_',1));
+								ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'_','');
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.symbol==ticker.symbol){
+											chart_data.push(chart.ticker.latest);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.ticker.latest);
+								ticker.chart=chart_data;
+							});
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('lbank','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('lbank','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -912,33 +1169,49 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.coinoneMarketTicker().
-				then(tickers => {
-					try{ 
-						var temp=[];
-						tickers=JSON.parse(tickers);
-						if(parseInt(tickers.errorCode)==0){
-							_.forEach(Object.keys(tickers),function(currency){
-								if(!_.includes(['errorCode','result','timestamp'],currency)){
-									var ticker=tickers[currency];
-									ticker.base_currency=currency;
-									ticker.quote_currency='krw';
-									ticker.product=currency+'krw';
-									temp.push(ticker);
-								}
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);}
+					ApiService.coinoneMarketTicker().
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							if(parseInt(tickers.errorCode)==0){
+								_.forEach(Object.keys(tickers),function(currency){
+									if(!_.includes(['errorCode','result','timestamp'],currency)){
+										var ticker=tickers[currency];
+										ticker.base_currency=currency;
+										ticker.quote_currency='krw';
+										ticker.product=currency+'krw';
+										
+										var chart_data=[];
+										_.forEach(charts,function(chart_list){
+											chart_list=JSON.parse(chart_list.tickers);
+											_.forEach(chart_list,function(chart){
+												if(chart.product==currency+'krw'){
+													chart_data.push(chart.last);
+												}
+											});
+										});
+										chart_data=_.reverse(chart_data);
+										chart_data.push(ticker.last);
+										ticker.chart=chart_data;
+										temp.push(ticker);
+									}
+								});
+							}	
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);}
 							});
-						}	
-						tickers=temp;
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-						date_created:curDateTime},function(err, data){
-							if(err){ ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('coinone','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('coinone','api',err,'tickers_api_select',curDateTime);});
+						}
+						catch(e){
+							ApiService.exchangeErrors('coinone','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('coinone','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -964,31 +1237,47 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(JSON.parse(data.products).pairs);
-				ApiService.wexMarketTicker(_.join(products,'-')).
-				then(tickers => {
-					try{ 
-						var temp=[];
-						tickers=JSON.parse(tickers);
-					
-						_.forEach(Object.keys(tickers),function(product){
-							var ticker=tickers[product];
-							ticker.base_currency=_.join(_.split(product,'_',1));
-							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-							ticker.product=product;
-							temp.push(ticker);
-						});
-			
-						tickers=temp;
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-						date_created:curDateTime},function(err, data){
-							if(err){ ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('wex','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('wex','api',err,'tickers_api_select',curDateTime);});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);}
+					ApiService.wexMarketTicker(_.join(products,'-')).
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+						
+							_.forEach(Object.keys(tickers),function(product){
+								var ticker=tickers[product];
+								ticker.base_currency=_.join(_.split(product,'_',1));
+								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==product){
+											chart_data.push(chart.last);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.last);
+								ticker.chart=chart_data;
+								temp.push(ticker);
+							});
+				
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('wex','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('wex','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -1014,31 +1303,47 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ApiService.exmoMarketTicker().
-				then(tickers => {
-					try{ 
-						var temp=[];
-						tickers=JSON.parse(tickers);
-						
-						_.forEach(Object.keys(tickers),function(product){
-							var ticker=tickers[product];
-							ticker.base_currency=_.join(_.split(product,'_',1));
-							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-							ticker.product=product;
-							temp.push(ticker);
-						});
-			
-						tickers=temp;
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-						date_created:curDateTime},function(err, data){
-							if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('exmo','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('exmo','api',err,'tickers_api_select',curDateTime);});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);}
+					ApiService.exmoMarketTicker().
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							
+							_.forEach(Object.keys(tickers),function(product){
+								var ticker=tickers[product];
+								ticker.base_currency=_.join(_.split(product,'_',1));
+								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==product){
+											chart_data.push(chart.last_trade);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.last_trade);
+								ticker.chart=chart_data;
+								temp.push(ticker);
+							});
+				
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('exmo','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('exmo','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});	
 		
@@ -1064,31 +1369,47 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(JSON.parse(data.products).pairs);
-				ApiService.liquiMarketTicker(_.join(products,'-')).
-				then(tickers => {
-					try{ 
-						var temp=[];
-						tickers=JSON.parse(tickers);
-						
-						_.forEach(Object.keys(tickers),function(product){
-							var ticker=tickers[product];
-							ticker.base_currency=_.join(_.split(product,'_',1));
-							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-							ticker.product=product;
-							temp.push(ticker);
-						});
-			
-						tickers=temp;
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-						date_created:curDateTime},function(err, data){
-							if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-					catch(e){
-						ApiService.exchangeErrors('liqui','api',e,'tickers_api_select',curDateTime);
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('liqui','api',err,'tickers_api_select',curDateTime);});
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);}
+					ApiService.liquiMarketTicker(_.join(products,'-')).
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							
+							_.forEach(Object.keys(tickers),function(product){
+								var ticker=tickers[product];
+								ticker.base_currency=_.join(_.split(product,'_',1));
+								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart_list){
+									chart_list=JSON.parse(chart_list.tickers);
+									_.forEach(chart_list,function(chart){
+										if(chart.product==product){
+											chart_data.push(chart.last);
+										}
+									});
+								});
+								chart_data=_.reverse(chart_data);
+								chart_data.push(ticker.last);
+								ticker.chart=chart_data;
+								temp.push(ticker);
+							});
+				
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('liqui','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { ApiService.exchangeErrors('liqui','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -1110,31 +1431,47 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-					return ApiService.korbitMarketTicker(product).
-					then(ticker => {
-						ticker=JSON.parse(ticker);
-						ticker.product=product;
-						ticker.base_currency=_.join(_.split(product,'_',1));
-						ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-						return ticker;
+				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+					if(err){ ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);}
+					return Promise.all(products.map((product) => {
+						return ApiService.korbitMarketTicker(product).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product;
+							ticker.base_currency=_.join(_.split(product,'_',1));
+							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart_list){
+								chart_list=JSON.parse(chart_list.tickers);
+								_.forEach(chart_list,function(chart){
+									if(chart.product==product){
+										chart_data.push(chart.last);
+									}
+								});
+							});
+							chart_data=_.reverse(chart_data);
+							chart_data.push(ticker.last);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);}
+							});
+						}
 					}).
 					catch(err => { ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);});
-				})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-				}).
-				catch(err => { ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);});
+				});	
 			}
 		});
 		
@@ -1195,224 +1532,248 @@ module.exports = {
 		});
 		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES
-		return Promise.all([
-			ExchangeDataService.gdaxMarketData(),
-			ExchangeDataService.bittrexMarketData(),
-			ExchangeDataService.coinmarketcapMarketData(),
-			ExchangeDataService.bitfinexMarketData(),
-			ExchangeDataService.hitbtcMarketData(),
-			ExchangeDataService.gateMarketData(),
-			ExchangeDataService.kunaMarketData(),
-			ExchangeDataService.okexMarketData(),
-			ExchangeDataService.binanceMarketData(),
-			ExchangeDataService.huobiMarketData(),
-			ExchangeDataService.geminiMarketData(),
-			ExchangeDataService.krakenMarketData(),
-			ExchangeDataService.bitflyerMarketData(),
-			ExchangeDataService.bithumbMarketData(),
-			ExchangeDataService.bitstampMarketData(),
-			ExchangeDataService.bitzMarketData(),
-			ExchangeDataService.lbankMarketData(),
-			ExchangeDataService.coinoneMarketData(),
-			ExchangeDataService.wexMarketData(),
-			ExchangeDataService.exmoMarketData(),
-			ExchangeDataService.liquiMarketData(),
-			ExchangeDataService.korbitMarketData()
-		]
-		).then(response => { 
-			var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data};
-			var total_crypto_prices=[];
-			_.forEach(Object.keys(exchange_objects),function(exchange){
-				_.forEach(exchange_objects[exchange],function(ticker){
-					var product='';
-					var base_currency='';
-					var quote_currency='';
-					switch(exchange){
-						case 'gdax': 
-							product=_.toLower(_.replace(ticker.id,'-',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.price,volume:ticker.ticker.volume});
-						break;
-						case 'bittrex':
-							product=_.toLower(_.replace(ticker.MarketName,'-',''));
-							base_currency=_.toLower(ticker.BaseCurrency);
-							quote_currency=_.toLower(ticker.MarketCurrency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.Bid,volume:ticker.Volume,high:ticker.High,low:ticker.Low});
-						break;
-						case 'coinmarket':
-							product=_.toLower(ticker.symbol+'USD');
-							base_currency=_.toLower(ticker.symbol);
-							quote_currency=_.toLower('USD');	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price_usd,volume:ticker['24h_volume_usd']});
-						break;
-						case 'bitfinex':
-							product=_.toLower(ticker.product_id);
-							base_currency=_.toLower(ticker.product_id.substr(0,3));
-							quote_currency=_.toLower(_.replace(product,base_currency));	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
-						break;
-						case 'hitbtc':
-							product=_.toLower(ticker.symbol);
-							base_currency=_.toLower(ticker.baseCurrency);
-							quote_currency=_.toLower(ticker.quoteCurrency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
-						break;
-						case 'gate':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(_.join(_.split(ticker.product,'_',1)));
-							quote_currency=_.replace(product,base_currency,'');	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.baseVolume,high:ticker.high24hr,low:ticker.low24hr});
-						break;
-						case 'okex':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(_.join(_.split(ticker.product,'_',1)));
-							quote_currency=_.replace(product,base_currency,'');	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.last,volume:ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low});
-						break;
-						case 'binance':
-							product=_.toLower(ticker.symbol);
-							base_currency=_.toLower(ticker.baseAsset);
-							quote_currency=_.toLower(ticker.QuoteAsset);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastPrice,volume:ticker.volume,high:ticker.highPrice,low:ticker.lowPrice});
-						break;
-						case 'huobi':
-							product=_.toLower(ticker.product);
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.tick.bid[0],volume:ticker.tick.vol,high:ticker.high,low:ticker.low});
-						break;
-						case 'gemini':
-							product=_.toLower(ticker.product);
-							base_currency=_.toLower(ticker.currency);
-							quote_currency=_.toLower(_.replace(product,base_currency,''	));	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.vol});
-						break;
-						case 'kraken':
-							product=_.toLower(ticker.product);
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price,volume:ticker.volume,high:ticker.high,low:ticker.low});
-						break;
-						case 'bitflyer':
-							product=_.toLower(_.replace(ticker.product,'_'));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.best_bid,volume:ticker.volume});
-						break;
-						case 'bithumb':
-							product=_.toLower(ticker.product);
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.volume_1day,high:ticker.max_price,low:ticker.min_price});
-						break;
-						case 'bitstamp':
-							product=_.toLower(ticker.product);
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
-						break;
-						case 'bitz':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell,volume:ticker.vol,high:ticker.high,low:ticker.low});
-						break;
-						case 'lbank':
-							product=_.toLower(_.replace(ticker.symbol,'_',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.latest,volume:ticker.ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low});
-						break;
-						case 'coinone':
-							product=_.toLower(ticker.product);
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
-						break;
-						case 'wex':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
-						break;
-						case 'exmo':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.vol,high:ticker.high,low:ticker.low});
-						break;
-						case 'liqui':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
-						break;
-						case 'korbit':
-							product=_.toLower(_.replace(ticker.product,'_',''));
-							base_currency=_.toLower(ticker.base_currency);
-							quote_currency=_.toLower(ticker.quote_currency);	
-							total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
-						break;
-					}
-				});	
-			});
+		
+		TotalCryptoPrices.find({}).sort('id DESC').limit(10).exec(function(err, charts){
+			if(err){ 
+				console.log(err);
+			}
 			
-			var temp=[];
-			var insert_array=[];
-			_.forEach(total_crypto_prices,function(ticker){
-				var exists=false;
-				_.forEach(temp,function(data){
-					if(data.product==ticker.product){
-						if(!_.isEmpty(ticker.price)){data.prices.push(parseFloat(ticker.price));}
-						if(!_.isEmpty(ticker.volume)){data.volumes.push(parseFloat(ticker.volume));}
-						if(!_.isEmpty(ticker.high)){data.max_prices.push(parseFloat(ticker.high));}
-						if(!_.isEmpty(ticker.low)){data.min_prices.push(parseFloat(ticker.low));}
-						exists=true;
-					}
-				});
-				if(!exists){
-					var prices=[];
-					var volumes=[];
-					var max_prices=[];
-					var min_prices=[];
-					if(!_.isEmpty(ticker.price)){prices.push(parseFloat(ticker.price));}
-					if(!_.isEmpty(ticker.volume)){volumes.push(parseFloat(ticker.volume));}
-					if(!_.isEmpty(ticker.high)){max_prices.push(parseFloat(ticker.high));}
-					if(!_.isEmpty(ticker.low)){min_prices.push(parseFloat(ticker.low));}
-					temp.push({product:ticker.product,base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,prices:prices,volumes:volumes,max_prices:max_prices,min_prices:min_prices});
-				}
-			});
-
-			if(!_.isEmpty(temp)){ 
-				_.forEach(temp,function(data){
-					data.price=_.reduce(data.prices,function(sum,n){return sum+n;},0)/data.prices.length;
-					data.volume=_.reduce(data.volumes,function(sum,n){return sum+n;},0)/data.volumes.length;
-					data.high=Math.max.apply(Math,data.max_prices);
-					data.low=Math.min.apply(Math,data.min_prices);
-					if(data.prices.length>0 && data.volumes.length>0 && data.max_prices.length>0 && data.min_prices.length>0){
-						delete data.prices;
-						delete data.volumes;
-						delete data.max_prices;
-						delete data.min_prices;
-						insert_array.push(data);
-					}
+			return Promise.all([
+				ExchangeDataService.gdaxMarketData(),
+				ExchangeDataService.bittrexMarketData(),
+				ExchangeDataService.coinmarketcapMarketData(),
+				ExchangeDataService.bitfinexMarketData(),
+				ExchangeDataService.hitbtcMarketData(),
+				ExchangeDataService.gateMarketData(),
+				ExchangeDataService.kunaMarketData(),
+				ExchangeDataService.okexMarketData(),
+				ExchangeDataService.binanceMarketData(),
+				ExchangeDataService.huobiMarketData(),
+				ExchangeDataService.geminiMarketData(),
+				ExchangeDataService.krakenMarketData(),
+				ExchangeDataService.bitflyerMarketData(),
+				ExchangeDataService.bithumbMarketData(),
+				ExchangeDataService.bitstampMarketData(),
+				ExchangeDataService.bitzMarketData(),
+				ExchangeDataService.lbankMarketData(),
+				ExchangeDataService.coinoneMarketData(),
+				ExchangeDataService.wexMarketData(),
+				ExchangeDataService.exmoMarketData(),
+				ExchangeDataService.liquiMarketData(),
+				ExchangeDataService.korbitMarketData()
+			]
+			).then(response => { 
+				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data};
+				var total_crypto_prices=[];
+				_.forEach(Object.keys(exchange_objects),function(exchange){
+					_.forEach(exchange_objects[exchange],function(ticker){
+						var product='';
+						var base_currency='';
+						var quote_currency='';
+						switch(exchange){
+							case 'gdax': 
+								product=_.toLower(_.replace(ticker.id,'-',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.price,volume:ticker.ticker.volume});
+							break;
+							case 'bittrex':
+								product=_.toLower(_.replace(ticker.MarketName,'-',''));
+								base_currency=_.toLower(ticker.BaseCurrency);
+								quote_currency=_.toLower(ticker.MarketCurrency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.Bid,volume:ticker.Volume,high:ticker.High,low:ticker.Low});
+							break;
+							case 'coinmarket':
+								product=_.toLower(ticker.symbol+'USD');
+								base_currency=_.toLower(ticker.symbol);
+								quote_currency=_.toLower('USD');	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price_usd,volume:ticker['24h_volume_usd']});
+							break;
+							case 'bitfinex':
+								product=_.toLower(ticker.product_id);
+								base_currency=_.toLower(ticker.product_id.substr(0,3));
+								quote_currency=_.toLower(_.replace(product,base_currency));	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+							case 'hitbtc':
+								product=_.toLower(ticker.symbol);
+								base_currency=_.toLower(ticker.baseCurrency);
+								quote_currency=_.toLower(ticker.quoteCurrency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+							case 'gate':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(_.join(_.split(ticker.product,'_',1)));
+								quote_currency=_.replace(product,base_currency,'');	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.baseVolume,high:ticker.high24hr,low:ticker.low24hr});
+							break;
+							case 'okex':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(_.join(_.split(ticker.product,'_',1)));
+								quote_currency=_.replace(product,base_currency,'');	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.last,volume:ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low});
+							break;
+							case 'binance':
+								product=_.toLower(ticker.symbol);
+								base_currency=_.toLower(ticker.baseAsset);
+								quote_currency=_.toLower(ticker.QuoteAsset);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastPrice,volume:ticker.volume,high:ticker.highPrice,low:ticker.lowPrice});
+							break;
+							case 'huobi':
+								product=_.toLower(ticker.product);
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.tick.bid[0],volume:ticker.tick.vol,high:ticker.high,low:ticker.low});
+							break;
+							case 'gemini':
+								product=_.toLower(ticker.product);
+								base_currency=_.toLower(ticker.currency);
+								quote_currency=_.toLower(_.replace(product,base_currency,''	));	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.vol});
+							break;
+							case 'kraken':
+								product=_.toLower(ticker.product);
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+							case 'bitflyer':
+								product=_.toLower(_.replace(ticker.product,'_'));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.best_bid,volume:ticker.volume});
+							break;
+							case 'bithumb':
+								product=_.toLower(ticker.product);
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.volume_1day,high:ticker.max_price,low:ticker.min_price});
+							break;
+							case 'bitstamp':
+								product=_.toLower(ticker.product);
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+							case 'bitz':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell,volume:ticker.vol,high:ticker.high,low:ticker.low});
+							break;
+							case 'lbank':
+								product=_.toLower(_.replace(ticker.symbol,'_',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.latest,volume:ticker.ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low});
+							break;
+							case 'coinone':
+								product=_.toLower(ticker.product);
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+							case 'wex':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
+							break;
+							case 'exmo':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.vol,high:ticker.high,low:ticker.low});
+							break;
+							case 'liqui':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
+							break;
+							case 'korbit':
+								product=_.toLower(_.replace(ticker.product,'_',''));
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+						}
+					});	
 				});
 				
-				//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
-				_.forEach(insert_array, function(data){
-					data.price=math.format(data.price,{lowerExp: -100, upperExp: 100});
-					data.volume=math.format(data.volume,{lowerExp: -100, upperExp: 100});
-					data.high=math.format(data.high,{lowerExp: -100, upperExp: 100});
-					data.low=math.format(data.low,{lowerExp: -100, upperExp: 100});
+				var temp=[];
+				var insert_array=[];
+				_.forEach(total_crypto_prices,function(ticker){
+					var exists=false;
+					_.forEach(temp,function(data){
+						if(data.product==ticker.product){
+							if(!_.isEmpty(ticker.price)){data.prices.push(parseFloat(ticker.price));}
+							if(!_.isEmpty(ticker.volume)){data.volumes.push(parseFloat(ticker.volume));}
+							if(!_.isEmpty(ticker.high)){data.max_prices.push(parseFloat(ticker.high));}
+							if(!_.isEmpty(ticker.low)){data.min_prices.push(parseFloat(ticker.low));}
+							exists=true;
+						}
+					});
+					if(!exists){
+						var prices=[];
+						var volumes=[];
+						var max_prices=[];
+						var min_prices=[];
+						if(!_.isEmpty(ticker.price)){prices.push(parseFloat(ticker.price));}
+						if(!_.isEmpty(ticker.volume)){volumes.push(parseFloat(ticker.volume));}
+						if(!_.isEmpty(ticker.high)){max_prices.push(parseFloat(ticker.high));}
+						if(!_.isEmpty(ticker.low)){min_prices.push(parseFloat(ticker.low));}
+						temp.push({product:ticker.product,base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,prices:prices,volumes:volumes,max_prices:max_prices,min_prices:min_prices});
+					}
 				});
-				TotalCryptoPrices.create({prices:JSON.stringify(insert_array),date_created:curDateTime},function(err,data){
-					//console.log(err);
-				});
-			}
-		}).
-		catch(err => {  
-			console.log(err);
-		});
+
+				if(!_.isEmpty(temp)){ 
+					_.forEach(temp,function(data){
+						data.price=_.reduce(data.prices,function(sum,n){return sum+n;},0)/data.prices.length;
+						data.volume=_.reduce(data.volumes,function(sum,n){return sum+n;},0)/data.volumes.length;
+						data.high=Math.max.apply(Math,data.max_prices);
+						data.low=Math.min.apply(Math,data.min_prices);
+						if(data.prices.length>0 && data.volumes.length>0 && data.max_prices.length>0 && data.min_prices.length>0){
+							delete data.prices;
+							delete data.volumes;
+							delete data.max_prices;
+							delete data.min_prices;
+							insert_array.push(data);
+						}
+					});
+					
+					//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
+					_.forEach(insert_array, function(data){
+						data.price=math.format(data.price,{lowerExp: -100, upperExp: 100});
+						data.volume=math.format(data.volume,{lowerExp: -100, upperExp: 100});
+						data.high=math.format(data.high,{lowerExp: -100, upperExp: 100});
+						data.low=math.format(data.low,{lowerExp: -100, upperExp: 100});
+					});
+					
+					//PROCESS TO PREPARE CHART DATA
+					_.forEach(insert_array, function(data){
+						var chart_data=[];
+						_.forEach(charts,function(chart_list){
+							chart_list=JSON.parse(chart_list.prices);
+							_.forEach(chart_list,function(chart){
+								if(chart.product==data.product){
+									chart_data.push(chart.price);
+								}
+							});
+						});
+						chart_data=_.reverse(chart_data);
+						chart_data.push(data.price);
+						data.chart=chart_data;
+					});
+						
+					TotalCryptoPrices.create({prices:JSON.stringify(insert_array),date_created:curDateTime},function(err,data){
+						//console.log(err);
+					});
+				}
+			}).
+			catch(err => {  
+				//console.log(err);
+			});
+		});	
 	}
 };

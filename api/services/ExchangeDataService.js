@@ -711,7 +711,7 @@ module.exports = {
 							if(!exists){
 								temp_array.push({date:moment(data.date_created).format('DD'),tc100:data.tc100,tcw100:data.tcw100,total_usd_market_cap:data.total_usd_market_cap});
 							}
-							date_time_array.push(moment(data.date_created).format('DD'));
+							date_time_array.push(moment(data.date_created).format('YYYYMMDD'));
 						}
 						
 						data.date_created=moment(data.date_created).format('MMMM Do YYYY, h:mm:ss a');
