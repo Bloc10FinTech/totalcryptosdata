@@ -4,6 +4,7 @@ module.exports = {
 		var moment = require('moment');
 		var _ = require('lodash');
 		var math = require('mathjs');
+		var date_after = moment().subtract(24, 'hours').toDate();
 	
 		//SEND SOCKET UPDATES ON WEB PAGE
 		FrontendService.marketData(function(){},'socket');
@@ -144,7 +145,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products).result;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
 					if(err){ ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);}
 					ApiService.bittrexMarketSummaries().then(tickers=>{
 						if(_.isEmpty(JSON.parse(tickers).message)){
@@ -170,7 +171,7 @@ module.exports = {
 												}
 											});
 										});
-										chart_data=_.reverse(chart_data);
+							
 										chart_data.push(ticker.Last);
 										ticker.chart=chart_data;
 									}
@@ -201,7 +202,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);}
 					ApiService.coinMarketTicker().then(tickers=>{
 						tickers=JSON.parse(tickers);
@@ -216,12 +217,10 @@ module.exports = {
 								});
 							});
 							
-							chart_data=_.reverse(chart_data);
 							chart_data.push(ticker.price_usd);
 							ticker.chart=chart_data;
 						});
 							
-						
 						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);}
 						});
@@ -253,7 +252,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);}	
 					return Promise.all(products.map((product)=>{
 						return ApiService.bitFinexMarketTicker(product).then((ticker)=>{
@@ -268,7 +267,7 @@ module.exports = {
 									}
 								});
 							});
-							chart_data=_.reverse(chart_data);
+			
 							chart_data.push(ticker.bid);
 							ticker.chart=chart_data;
 							return ticker;
@@ -316,7 +315,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);}
 					ApiService.hitbtcMarketTicker().then(tickers=>{
 						try{
@@ -335,7 +334,7 @@ module.exports = {
 												}
 											});
 										});
-										chart_data=_.reverse(chart_data);
+				
 										chart_data.push(ticker.bid);
 										ticker.chart=chart_data;
 									}
@@ -377,7 +376,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);}
 					ApiService.gateMarketTicker().then(tickers=>{
 						try{
@@ -396,7 +395,7 @@ module.exports = {
 											}
 										});
 									});
-									chart_data=_.reverse(chart_data);
+									
 									chart_data.push(ticker.last);
 									ticker.chart=chart_data;
 									temp.push(ticker);
@@ -432,7 +431,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);}
 					ApiService.kunaMarketTicker().then(tickers=>{
 						try{
@@ -454,7 +453,7 @@ module.exports = {
 											}
 										});
 									});
-									chart_data=_.reverse(chart_data);
+									
 									chart_data.push(ticker.price);
 									ticker.chart=chart_data;
 									temp.push(ticker);
@@ -492,7 +491,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 							return ApiService.okexMarketTicker(product).
@@ -509,7 +508,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.ticker.last);
 								ticker.chart=chart_data;
 								return ticker;
@@ -556,7 +555,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products).symbols;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);}
 					ApiService.binanceMarketTicker().
 					then(tickers => {
@@ -620,7 +619,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products).data;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 							return ApiService.huobiMarketTicker(product['base-currency']+product['quote-currency']).
@@ -648,7 +647,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.tick.bid[0]);
 								ticker.chart=chart_data;
 								return ticker;
@@ -695,7 +694,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
 					if(err){ ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 							return ApiService.geminiMarketTicker(product).
@@ -722,7 +721,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.bid);
 								ticker.chart=chart_data;
 								return ticker;
@@ -776,7 +775,7 @@ module.exports = {
 					temp.push({name:product_name,base:products[product_name].base,quote:products[product_name].quote});
 				});
 				products=temp;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 						return ApiService.krakenMarketTicker(product.name).
@@ -808,7 +807,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.price);
 								ticker.chart=chart_data;
 								tickers_data.push(ticker);
@@ -866,7 +865,7 @@ module.exports = {
 					}
 				});
 				products=temp;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 						return ApiService.bitflyerMarketTicker(product.product_code).
@@ -885,7 +884,7 @@ module.exports = {
 									}
 								});
 							});
-							chart_data=_.reverse(chart_data);
+							
 							chart_data.push(ticker.best_bid);
 							ticker.chart=chart_data;
 							return ticker;
@@ -926,7 +925,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);}
 					ApiService.bithumbMarketTicker().
 					then(tickers => {
@@ -949,7 +948,7 @@ module.exports = {
 											}
 										});
 									});
-									chart_data=_.reverse(chart_data);
+									
 									chart_data.push(ticker.sell_price);
 									ticker.chart=chart_data;
 									temp.push(ticker);
@@ -992,7 +991,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 						return ApiService.bitstampMarketTicker(product.url_symbol).
@@ -1011,7 +1010,7 @@ module.exports = {
 									}
 								});
 							});
-							chart_data=_.reverse(chart_data);
+							
 							chart_data.push(ticker.bid);
 							ticker.chart=chart_data;
 							return ticker;
@@ -1051,7 +1050,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);}
 					ApiService.bitzMarketTicker().then(tickers=>{
 						try{
@@ -1074,7 +1073,7 @@ module.exports = {
 											}
 										});
 									});
-									chart_data=_.reverse(chart_data);
+									
 									chart_data.push(ticker.sell);
 									ticker.chart=chart_data;
 									temp.push(ticker);
@@ -1116,7 +1115,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);}
 					ApiService.lbankMarketTicker().
 					then(tickers => {
@@ -1135,7 +1134,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.ticker.latest);
 								ticker.chart=chart_data;
 							});
@@ -1169,7 +1168,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);}
 					ApiService.coinoneMarketTicker().
 					then(tickers => {
@@ -1193,7 +1192,7 @@ module.exports = {
 												}
 											});
 										});
-										chart_data=_.reverse(chart_data);
+										
 										chart_data.push(ticker.last);
 										ticker.chart=chart_data;
 										temp.push(ticker);
@@ -1237,7 +1236,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(JSON.parse(data.products).pairs);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);}
 					ApiService.wexMarketTicker(_.join(products,'-')).
 					then(tickers => {
@@ -1260,7 +1259,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.last);
 								ticker.chart=chart_data;
 								temp.push(ticker);
@@ -1303,7 +1302,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);}
 					ApiService.exmoMarketTicker().
 					then(tickers => {
@@ -1326,7 +1325,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.last_trade);
 								ticker.chart=chart_data;
 								temp.push(ticker);
@@ -1369,7 +1368,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(JSON.parse(data.products).pairs);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);}
 					ApiService.liquiMarketTicker(_.join(products,'-')).
 					then(tickers => {
@@ -1392,7 +1391,7 @@ module.exports = {
 										}
 									});
 								});
-								chart_data=_.reverse(chart_data);
+								
 								chart_data.push(ticker.last);
 								ticker.chart=chart_data;
 								temp.push(ticker);
@@ -1431,7 +1430,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id}).sort('id DESC').limit(10).exec(function(err, charts){
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);}
 					return Promise.all(products.map((product) => {
 						return ApiService.korbitMarketTicker(product).
@@ -1450,7 +1449,7 @@ module.exports = {
 									}
 								});
 							});
-							chart_data=_.reverse(chart_data);
+							
 							chart_data.push(ticker.last);
 							ticker.chart=chart_data;
 							return ticker;
@@ -1533,7 +1532,7 @@ module.exports = {
 		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES
 		
-		TotalCryptoPrices.find({}).sort('id DESC').limit(10).exec(function(err, charts){
+		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 			if(err){ 
 				console.log(err);
 			}
@@ -1761,7 +1760,7 @@ module.exports = {
 								}
 							});
 						});
-						chart_data=_.reverse(chart_data);
+						
 						chart_data.push(data.price);
 						data.chart=chart_data;
 					});
