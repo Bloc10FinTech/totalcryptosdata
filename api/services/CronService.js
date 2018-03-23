@@ -4,7 +4,7 @@ module.exports = {
 		var moment = require('moment');
 		var _ = require('lodash');
 		var math = require('mathjs');
-		var date_after = moment().subtract(24, 'hours').toDate();
+		var date_after = moment().subtract(6, 'hours').toDate();
 	
 		//SEND SOCKET UPDATES ON WEB PAGE
 		FrontendService.marketData(function(){},'socket');
