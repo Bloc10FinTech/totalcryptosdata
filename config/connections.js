@@ -45,7 +45,10 @@ module.exports.connections = {
      host: process.env.DBHOST,
      user: process.env.DBUSER, //optional
      password: process.env.DBPASSWORD, //optional
-     database: process.env.DBNAME //optional
+     database: process.env.DBNAME, //optional
+	 pool: true, //override sails-mysql
+     connectionLimit: 500, //override sails-mysql
+     waitForConnections: true //override sails-mysql 
    },
 
   /***************************************************************************

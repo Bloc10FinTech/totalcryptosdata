@@ -1,16 +1,10 @@
 module.exports = {
-	updateExchange:function(){
-		console.log('crone job working');
+	createExchange:function(){
+		console.log('crone job for create exchange working');
 		var moment = require('moment');
-		var _ = require('lodash');
-		var math = require('mathjs');
-		var date_after = moment().subtract(1, 'hours').toDate();
-	
-		//SEND SOCKET UPDATES ON WEB PAGE
-		FrontendService.marketData(function(){},'socket');
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		
 		//PROCESS TO INSERT GDAX STATIC DATA
-		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		ExchangeList.count({name: 'gdax'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
@@ -25,101 +19,6 @@ module.exports = {
 				}).
 				catch(err => { ApiService.exchangeErrors('gdax','api',err,'exchange_api_select',curDateTime);});
 			}
-		});
-		
-		//PROCESS TO INSERT GDAX PRODUCTS TICKERS
-		ExchangeList.findOne({name:'gdax'},function(err,data){
-			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-						return ApiService.gdaxMarketTicker(product.id).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product_id=product.id;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('gdax','api',err,'tickers_api_select',curDateTime);});
-					})).
-				then(tickers => {
-					var tickers_data=[];	
-					_.forEach(tickers,function(ticker){
-						if(!_.isEmpty(ticker) && _.isEmpty(ticker.message)){
-							tickers_data.push(ticker);
-						}
-					});
-					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('gdax','api',err,'tickers_api_select',curDateTime);});
-			}	
-		});
-		
-		//PROCESS TO INSERT GDAX PRODUCTS STATS
-		ExchangeList.findOne({name:'gdax'},function(err,data){
-			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'stats_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-						return ApiService.gdaxMarketStat(product.id).
-						then(stat => {
-							stat=JSON.parse(stat);
-							stat.product_id=product.id;
-							return stat;
-						}).
-						catch(err => { ApiService.exchangeErrors('gdax','api',err,'stats_api_select',curDateTime);});
-					})).
-				then(stats => {
-					var stats_data=[];
-					_.forEach(stats,function(stat){
-						if(!_.isEmpty(stat) && _.isEmpty(stat.message)){
-							stats_data.push(stat);
-						}
-					});
-					if(!_.isEmpty(stats_data)){
-						ExchangeStats.create({exchange_id:exchange_id,stats:JSON.stringify(stats_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'stats_insert',curDateTime);}
-						});	
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('gdax','api',err,'stats_api_select',curDateTime);});
-			}	
-		});
-		
-		//PROCESS TO INSERT GDAX PRODUCTS TRADES
-		ExchangeList.findOne({name:'gdax'},function(err,data){
-			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'trades_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				return Promise.all(products.map((product) => {
-						return ApiService.gdaxMarketTrade(product.id).
-						then(trade => {
-							trade=JSON.parse(trade);
-							return {product_id:product.id,data:trade};
-						}).
-						catch(err => { ApiService.exchangeErrors('gdax','api',err,'trades_api_select',curDateTime);});
-					})).
-				then(trades => {
-					var trades_data=[];
-					_.forEach(trades,function(trade){
-						if(!_.isEmpty(trade) && _.isEmpty(trade.data.message)){
-							trades_data.push(trade);
-						}
-					});
-					if(!_.isEmpty(trades_data)){
-						ExchangeTrades.create({exchange_id:exchange_id,trades:JSON.stringify(trades_data),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'trades_insert',curDateTime);}
-						});	
-					}
-				}).
-				catch(err=> { ApiService.exchangeErrors('gdax','api',err,'trades_api_select',curDateTime);});
-			}	
 		});
 		
 		//PROCESS TO INSERT BITTREX STATIC DATA
@@ -139,54 +38,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT BITTEX PRODUCTS/MARKETS TICKERS
-		ExchangeList.findOne({name:'bittrex'},function(err,data){
-			if(err){ ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products).result;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
-					if(err){ ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);}
-					ApiService.bittrexMarketSummaries().then(tickers=>{
-						if(_.isEmpty(JSON.parse(tickers).message)){
-							 tickers=JSON.parse(tickers);
-							_.forEach(products,function(product){
-								_.forEach(tickers.result,function(ticker){
-									if(ticker.MarketName==product.MarketName){
-										ticker.BaseCurrency=product.BaseCurrency;
-										ticker.MarketCurrency=product.MarketCurrency;
-										//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
-										ticker.High=math.format(ticker.High,{lowerExp: -100, upperExp: 100});
-										ticker.Low=math.format(ticker.Low,{lowerExp: -100, upperExp: 100});
-										ticker.Last=math.format(ticker.Last,{lowerExp: -100, upperExp: 100});
-										ticker.Bid=math.format(ticker.Bid,{lowerExp: -100, upperExp: 100});
-										ticker.Ask=math.format(ticker.Ask,{lowerExp: -100, upperExp: 100});
-										ticker.PrevDay=math.format(ticker.PrevDay,{lowerExp: -100, upperExp: 100});
-										var chart_data=[];
-										_.forEach(charts,function(chart_list){
-											chart_list=JSON.parse(chart_list.tickers).result;
-											_.forEach(chart_list,function(chart){
-												if(chart.MarketName==product.MarketName){
-													chart_data.push(chart.Last);
-												}
-											});
-										});
-							
-										chart_data.push(ticker.Last);
-										ticker.chart=chart_data;
-									}
-								});
-							});
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err=> { ApiService.exchangeErrors('bittrex','api',err,'tickers_api_select',curDateTime);});
-				});
-			}	
-		});
-		
 		//PROCESS TO INSERT COINMARKETCAP STATIC DATA
 		ExchangeList.count({name: 'coinmarketcap'},function(err,count){
 			if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'exchange_select',curDateTime);}
@@ -195,39 +46,6 @@ module.exports = {
 					if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
-		});
-		
-		//PROCESS TO INSERT COINMARKETCAP PRODUCTS/MARKETS TICKERS
-		ExchangeList.findOne({name:'coinmarketcap'},function(err,data){
-			if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);}
-					ApiService.coinMarketTicker().then(tickers=>{
-						tickers=JSON.parse(tickers);
-						_.forEach(tickers,function(ticker){
-							var chart_data=[];
-							_.forEach(charts,function(chart_list){
-								chart_list=JSON.parse(chart_list.tickers);
-								_.forEach(chart_list,function(chart){
-									if(chart.symbol==ticker.symbol){
-										chart_data.push(chart.price_usd);
-									}
-								});
-							});
-							
-							chart_data.push(ticker.price_usd);
-							ticker.chart=chart_data;
-						});
-							
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-							if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);}
-						});
-					}).
-					catch(err=> { ApiService.exchangeErrors('coinmarketcap','api',err,'tickers_api_select',curDateTime);});
-				});
-			}	
 		});
 		
 		//PROCESS TO INSERT BITFINEX STATIC DATA
@@ -243,52 +61,6 @@ module.exports = {
 					});
 				}).
 				catch(err => { ApiService.exchangeErrors('bitfinex','api',err,'exchange_api_select',curDateTime);});
-			}
-		});
-		
-		//PROCESS TO INSERT BITFINEX PRODUCTS/MARKETS TICKERS
-		ExchangeList.findOne({name:'bitfinex'},function(err,data){
-			if(err){ ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);}	
-					return Promise.all(products.map((product)=>{
-						return ApiService.bitFinexMarketTicker(product).then((ticker)=>{
-							ticker=JSON.parse(ticker);
-							ticker.product_id=product;
-							var chart_data=[];
-							_.forEach(charts,function(chart_list){
-								chart_list=JSON.parse(chart_list.tickers);
-								_.forEach(chart_list,function(chart){
-									if(chart.product_id==product){
-										chart_data.push(chart.bid);
-									}
-								});
-							});
-			
-							chart_data.push(ticker.bid);
-							ticker.chart=chart_data;
-							return ticker;
-						}).
-						catch(err=> { ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);});
-					})).
-					then(tickers => {
-						var tickers_data=[];
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker) && _.isEmpty(ticker.error)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);});
-				});	
 			}
 		});
 		
@@ -309,51 +81,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT HITBTC PRODUCTS/MARKETS TICKERS
-		ExchangeList.findOne({name:'hitbtc'},function(err,data){
-			if(err){ ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);}
-					ApiService.hitbtcMarketTicker().then(tickers=>{
-						try{
-							tickers=JSON.parse(tickers);
-							_.forEach(tickers,function(ticker){
-								_.forEach(products,function(product){
-									if(product.id==ticker.symbol){
-										ticker.baseCurrency=product.baseCurrency;
-										ticker.quoteCurrency=product.quoteCurrency;
-										var chart_data=[];
-										_.forEach(charts,function(chart_list){
-											chart_list=JSON.parse(chart_list.tickers);
-											_.forEach(chart_list,function(chart){
-												if(chart.symbol==ticker.symbol){
-													chart_data.push(chart.bid);
-												}
-											});
-										});
-				
-										chart_data.push(ticker.bid);
-										ticker.chart=chart_data;
-									}
-								});
-							});
-							
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('hitbtc','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err=>{ ApiService.exchangeErrors('hitbtc','api',err,'tickers_api_select',curDateTime);});
-				});
-			}	
-		});	
-		
 		//PRCOESS TO INSERT GATE STATIC DATA
 		ExchangeList.count({name: 'gate'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gate','query_select',err,'exchange_select',curDateTime);}
@@ -370,51 +97,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT GATE TICKERS
-		ExchangeList.findOne({name:'gate'},function(err,data){
-			if(err){ ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);}
-					ApiService.gateMarketTicker().then(tickers=>{
-						try{
-							var temp=[];
-							tickers=JSON.parse(tickers);
-							_.forEach(products,function(product){
-								if(!_.isEmpty(tickers[product])){
-									var ticker=tickers[product];
-									ticker.product=product;
-									var chart_data=[];
-									_.forEach(charts,function(chart_list){
-										chart_list=JSON.parse(chart_list.tickers);
-										_.forEach(chart_list,function(chart){
-											if(chart.product==product){
-												chart_data.push(chart.last);
-											}
-										});
-									});
-									
-									chart_data.push(ticker.last);
-									ticker.chart=chart_data;
-									temp.push(ticker);
-								}
-							});
-							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('gate','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err=> { ApiService.exchangeErrors('gate','api',err,'tickers_api_select',curDateTime);});
-				});
-			}	
-		});	
-		
 		//PROCESS TO INSERT KUNA STATIC DATA
 		ExchangeList.count({name:'kuna'},function(err,count){
 			if(err){ ApiService.exchangeErrors('kuna','query_select',err,'exchange_select',curDateTime);}
@@ -425,54 +107,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT KUNA TICKERS
-		ExchangeList.findOne({name:'kuna'},function(err,data){
-			if(err){ ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);}
-					ApiService.kunaMarketTicker().then(tickers=>{
-						try{
-							var temp=[];
-							tickers=JSON.parse(tickers);
-							var products=Object.keys(tickers);
-							_.forEach(products,function(product){
-								if(!_.isEmpty(tickers[product])){
-									var ticker=tickers[product];
-									ticker=ticker.ticker;
-									ticker.product=product;
-									
-									var chart_data=[];
-									_.forEach(charts,function(chart_list){
-										chart_list=JSON.parse(chart_list.tickers);
-										_.forEach(chart_list,function(chart){
-											if(chart.product==product){
-												chart_data.push(chart.price);
-											}
-										});
-									});
-									
-									chart_data.push(ticker.price);
-									ticker.chart=chart_data;
-									temp.push(ticker);
-								}
-							});
-							tickers=temp;
-							
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch (e){
-							ApiService.exchangeErrors('kuna','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err=> { ApiService.exchangeErrors('kuna','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}	
-		});	
 		
 		//PROCESS TO INSERT OKEX STATIC DATA
 		ExchangeList.count({name:'okex'},function(err,count){
@@ -483,54 +117,6 @@ module.exports = {
 					if(err){ ApiService.exchangeErrors('okex','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
-		});
-		
-		//PROCESS TO INSERT OKEX PRODUCTS TICKERS
-		ExchangeList.findOne({name:'okex'},function(err,data){
-			if(err){ ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-							return ApiService.okexMarketTicker(product).
-							then(ticker => {
-								ticker=JSON.parse(ticker);
-								ticker.product=product;
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==product){
-											chart_data.push(chart.ticker.last);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.ticker.last);
-								ticker.chart=chart_data;
-								return ticker;
-							}).
-							catch(err => { ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);});
-						})).
-					then(tickers => {
-						var tickers_data=[];	
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker) && _.isEmpty(ticker.error_code)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err=> { ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}	
 		});
 		
 		//PROCESS TO INSERT BINANCE STATIC DATA
@@ -546,53 +132,6 @@ module.exports = {
 					});
 				}).
 				catch(err => { ApiService.exchangeErrors('binance','api',err,'exchange_api_select',curDateTime);});
-			}
-		});
-		
-		//PROCESS TO INSERT BINANCE TICKERS
-		ExchangeList.findOne({name:'binance'},function(err, data){
-			if(err){ ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products).symbols;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);}
-					ApiService.binanceMarketTicker().
-					then(tickers => {
-						try{
-							tickers=JSON.parse(tickers);
-							_.forEach(products,function(product){
-								_.forEach(tickers,function(ticker){
-									if(product.symbol==ticker.symbol){
-										ticker.baseAsset=product.baseAsset;
-										ticker.quoteAsset=product.quoteAsset;
-										
-										var chart_data=[];
-										_.forEach(charts,function(chart_list){
-											chart_list=JSON.parse(chart_list.tickers);
-											_.forEach(chart_list,function(chart){
-												if(chart.symbol==ticker.symbol){
-													chart_data.push(chart.lastPrice);
-												}
-											});
-										});
-										chart_data=_.reverse(chart_data);
-										chart_data.push(ticker.lastPrice);
-										ticker.chart=chart_data;
-									}
-								});
-							});
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('binance','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('binance','api',err,'tickers_api_select',curDateTime);});
-				});
 			}
 		});
 		
@@ -613,65 +152,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT HUOBI MARKET TICKERS
-		ExchangeList.findOne({name:'huobi'},function(err, data){
-			if(err){ ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products).data;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-							return ApiService.huobiMarketTicker(product['base-currency']+product['quote-currency']).
-							then(ticker => {
-								ticker=JSON.parse(ticker);
-								ticker.product=product['base-currency']+product['quote-currency'];
-								ticker.base_currency=product['base-currency'];
-								ticker.quote_currency=product['quote-currency'];
-								//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
-								ticker.tick.open=math.format(ticker.tick.open,{lowerExp: -100, upperExp: 100});
-								ticker.tick.close=math.format(ticker.tick.close,{lowerExp: -100, upperExp: 100});
-								ticker.tick.high=math.format(ticker.tick.high,{lowerExp: -100, upperExp: 100});
-								ticker.tick.low=math.format(ticker.tick.low,{lowerExp: -100, upperExp: 100});
-								ticker.tick.ask[0]=math.format(ticker.tick.ask[0],{lowerExp: -100, upperExp: 100});
-								ticker.tick.ask[1]=math.format(ticker.tick.ask[1],{lowerExp: -100, upperExp: 100});
-								ticker.tick.bid[0]=math.format(ticker.tick.bid[0],{lowerExp: -100, upperExp: 100});
-								ticker.tick.bid[1]=math.format(ticker.tick.bid[1],{lowerExp: -100, upperExp: 100});
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==product['base-currency']+product['quote-currency']){
-											chart_data.push(chart.tick.bid[0]);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.tick.bid[0]);
-								ticker.chart=chart_data;
-								return ticker;
-							}).
-							catch(err => { ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);});
-						})).
-					then(tickers => {
-						var tickers_data=[];	
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker) && !_.isEmpty(ticker.tick) && _.isEmpty(ticker.error_code)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}
-		});
-		
 		//PROCESS TO INSERT GEMINI STATIC DATA
 		ExchangeList.count({name:'gemini'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gemini','query_select',err,'exchange_select',curDateTime);}
@@ -685,64 +165,6 @@ module.exports = {
 					});
 				}).
 				catch(err => { ApiService.exchangeErrors('gemini','api',err,'exchange_api_select',curDateTime);});
-			}
-		});
-		
-		//PROCESS TO INSERT GEMINI MARKET TICKERS
-		ExchangeList.findOne({name:'gemini'},function(err, data){
-			if(err){ ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
-					if(err){ ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-							return ApiService.geminiMarketTicker(product).
-							then(ticker => {
-								ticker=JSON.parse(ticker);
-								var keys=Object.keys(ticker.volume);
-								keys=_.remove(keys, function(key){return key!='timestamp';});
-								if(_.toLower(keys[0]+keys[1])==_.toLower(product)){
-									ticker.vol=ticker.volume[keys[1]];
-									ticker.currency=keys[0];
-								}
-								else{
-									ticker.vol=ticker.volume[keys[0]];
-									ticker.currency=keys[1];
-								}
-								ticker.product=product;
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==product){
-											chart_data.push(chart.bid);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.bid);
-								ticker.chart=chart_data;
-								return ticker;
-							}).
-							catch(err => { ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);});
-						})).
-					then(tickers => {
-						var tickers_data=[];	
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);});
-				});	
 			}
 		});
 		
@@ -760,68 +182,6 @@ module.exports = {
 					});
 				}).
 				catch(err => { ApiService.exchangeErrors('kraken','api',err,'exchange_api_select',curDateTime);});
-			}
-		});
-		
-		//PROCESS TO INSERT KRAKEN MARKET TICKERS
-		ExchangeList.findOne({name:'kraken'},function(err,data){
-			if(err){ ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var temp=[];
-				var products=JSON.parse(data.products).result;
-	
-				_.forEach(Object.keys(products),function(product_name){
-					temp.push({name:product_name,base:products[product_name].base,quote:products[product_name].quote});
-				});
-				products=temp;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-						return ApiService.krakenMarketTicker(product.name).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product=product.name;
-							ticker.base_currency=product.base;
-							ticker.quote_currency=product.quote;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);});
-					})).
-					then(tickers => {
-						
-						var tickers_data=[];
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker) &&_.isEmpty(ticker.error)){
-								ticker.price=ticker.result[ticker.product].b[0];
-								ticker.volume=ticker.result[ticker.product].v[1];
-								ticker.low=ticker.result[ticker.product].l[1];
-								ticker.high=ticker.result[ticker.product].h[1];
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==ticker.product){
-											chart_data.push(chart.price);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.price);
-								ticker.chart=chart_data;
-								tickers_data.push(ticker);
-							}
-						});
-						
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);});
-				});	
 			}
 		});
 		
@@ -851,63 +211,6 @@ module.exports = {
 				catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'exchange_api_select',curDateTime);});
 			}
 		});
-
-		//PROCESS TO INSERT BITFLYER MARKET TICKERS
-		ExchangeList.findOne({name:'bitflyer'},function(err,data){
-			if(err){ ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				var temp=[];
-				_.forEach(products,function(product){
-					if(_.isEmpty(product.alias) && 	(((product.product_code.match(/_/g) || []).length)==1)){
-						temp.push(product);
-					}
-				});
-				products=temp;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-						return ApiService.bitflyerMarketTicker(product.product_code).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product=product.product_code;
-							ticker.base_currency=_.join(_.split(product.product_code,'_',1));
-							ticker.quote_currency=_.replace(product.product_code,ticker.base_currency+'_','');
-							
-							var chart_data=[];
-							_.forEach(charts,function(chart_list){
-								chart_list=JSON.parse(chart_list.tickers);
-								_.forEach(chart_list,function(chart){
-									if(chart.product==product.product_code){
-										chart_data.push(chart.best_bid);
-									}
-								});
-							});
-							
-							chart_data.push(ticker.best_bid);
-							ticker.chart=chart_data;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);});
-					})).
-					then(tickers => {
-						var tickers_data=[];	
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}
-		});
 		
 		//PROCESS TO INSERT BITHUMB STATIC DATA
 		ExchangeList.count({name:'bithumb'},function(err,count){
@@ -917,55 +220,6 @@ module.exports = {
 				ExchangeList.create({name:'bithumb',url:'https://www.bithumb.com',is_exchange:'yes',currencies:JSON.stringify(currencies),products:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('bithumb','query_insert',err,'exchange_insert',curDateTime);}
 				});
-			}
-		});
-		
-		//PROCESS TO INSERT BITHUMB MARKET TICKERS
-		ExchangeList.findOne({name:'bithumb'},function(err, data){
-			if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);}
-					ApiService.bithumbMarketTicker().
-					then(tickers => {
-						try{
-							tickers=JSON.parse(tickers);
-							if(parseInt(tickers.status)==0){
-								var temp=[];
-								_.forEach(Object.keys(tickers.data),function(currency){
-									var ticker=tickers.data[currency];
-									ticker.base_currency=currency;
-									ticker.quote_currency='KRW';
-									ticker.product=currency+'KRW';
-									
-									var chart_data=[];
-									_.forEach(charts,function(chart_list){
-										chart_list=JSON.parse(chart_list.tickers);
-										_.forEach(chart_list,function(chart){
-											if(chart.product==currency+'KRW'){
-												chart_data.push(chart.sell_price);
-											}
-										});
-									});
-									
-									chart_data.push(ticker.sell_price);
-									ticker.chart=chart_data;
-									temp.push(ticker);
-								});
-								tickers=temp;
-								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-								date_created:curDateTime},function(err, data){
-									if(err){ ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);}
-								});
-							}
-						}
-						catch(e){
-							ApiService.exchangeErrors('bithumb','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('bithumb','api',err,'tickers_api_select',curDateTime);});
-				});	
 			}
 		});
 		
@@ -985,56 +239,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT BITSTAMP MARKET TICKERS
-		ExchangeList.findOne({name:'bitstamp'},function(err,data){
-			if(err){ ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-						return ApiService.bitstampMarketTicker(product.url_symbol).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product=product.url_symbol;
-							ticker.base_currency=_.join(_.split(product.name,'/',1));
-							ticker.quote_currency=_.replace(product.name,ticker.base_currency+'/','');
-							
-							var chart_data=[];
-							_.forEach(charts,function(chart_list){
-								chart_list=JSON.parse(chart_list.tickers);
-								_.forEach(chart_list,function(chart){
-									if(chart.product==product.url_symbol){
-										chart_data.push(chart.bid);
-									}
-								});
-							});
-							
-							chart_data.push(ticker.bid);
-							ticker.chart=chart_data;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);});
-					})).
-					then(tickers => {
-						var tickers_data=[];	
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);});
-				});
-			}
-		});
-		
 		//PROCESS TO INSERT BIT-Z STATIC DATA
 		ExchangeList.count({name:'bitz'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitz','query_select',err,'exchange_select',curDateTime);}
@@ -1045,55 +249,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT BIT-Z MARKET TICKERS
-		ExchangeList.findOne({name:'bitz'},function(err,data){
-			if(err){ ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);}
-					ApiService.bitzMarketTicker().then(tickers=>{
-						try{
-							var temp=[];
-							tickers=JSON.parse(tickers);
-							if(parseInt(tickers.code)==0){
-								var products=Object.keys(tickers.data);
-								_.forEach(products,function(product){
-									var ticker=tickers.data[product];
-									ticker.product=product;
-									ticker.base_currency=_.join(_.split(product,'_',1));
-									ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-									
-									var chart_data=[];
-									_.forEach(charts,function(chart_list){
-										chart_list=JSON.parse(chart_list.tickers);
-										_.forEach(chart_list,function(chart){
-											if(chart.product==product){
-												chart_data.push(chart.sell);
-											}
-										});
-									});
-									
-									chart_data.push(ticker.sell);
-									ticker.chart=chart_data;
-									temp.push(ticker);
-								});
-								tickers=temp;
-							
-								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
-									if(err){ ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);}
-								});
-							}
-						}
-						catch (e){
-							ApiService.exchangeErrors('bitz','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err=> { ApiService.exchangeErrors('bitz','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}	
-		});
-
 		//PROCESS TO INSERT LBANK STATIC DATA
 		ExchangeList.count({name:'lbank'},function(err,count){
 			if(err){ ApiService.exchangeErrors('lbank','query_select',err,'exchange_select',curDateTime);}
@@ -1110,48 +265,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT LBANK MARKET TICKERS
-		ExchangeList.findOne({name:'lbank'},function(err, data){
-			if(err){ ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);}
-					ApiService.lbankMarketTicker().
-					then(tickers => {
-						try{ 
-							tickers=JSON.parse(tickers);
-							_.forEach(tickers,function(ticker){
-								ticker.base_currency=_.join(_.split(ticker.symbol,'_',1));
-								ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'_','');
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.symbol==ticker.symbol){
-											chart_data.push(chart.ticker.latest);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.ticker.latest);
-								ticker.chart=chart_data;
-							});
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('lbank','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('lbank','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}
-		});
-		
 		//PROCESS TO INSERT COINONE STATIC DATA
 		ExchangeList.count({name:'coinone'},function(err,count){
 			if(err){ ApiService.exchangeErrors('coinone','query_select',err,'exchange_select',curDateTime);}
@@ -1160,57 +273,6 @@ module.exports = {
 				ExchangeList.create({name:'coinone',url:'https://coinone.co.kr',is_exchange:'yes',currencies:JSON.stringify(currencies),products:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('coinone','query_insert',err,'exchange_insert',curDateTime);}
 				});
-			}
-		});
-		
-		//PROCESS TO INSERT COINONE MARKET TICKERS
-		ExchangeList.findOne({name:'coinone'},function(err, data){
-			if(err){ ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);}
-					ApiService.coinoneMarketTicker().
-					then(tickers => {
-						try{ 
-							var temp=[];
-							tickers=JSON.parse(tickers);
-							if(parseInt(tickers.errorCode)==0){
-								_.forEach(Object.keys(tickers),function(currency){
-									if(!_.includes(['errorCode','result','timestamp'],currency)){
-										var ticker=tickers[currency];
-										ticker.base_currency=currency;
-										ticker.quote_currency='krw';
-										ticker.product=currency+'krw';
-										
-										var chart_data=[];
-										_.forEach(charts,function(chart_list){
-											chart_list=JSON.parse(chart_list.tickers);
-											_.forEach(chart_list,function(chart){
-												if(chart.product==currency+'krw'){
-													chart_data.push(chart.last);
-												}
-											});
-										});
-										
-										chart_data.push(ticker.last);
-										ticker.chart=chart_data;
-										temp.push(ticker);
-									}
-								});
-							}	
-							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('coinone','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('coinone','api',err,'tickers_api_select',curDateTime);});
-				});	
 			}
 		});
 		
@@ -1227,56 +289,6 @@ module.exports = {
 					});
 				}).
 				catch(err => { ApiService.exchangeErrors('wex','api',err,'exchange_api_select',curDateTime);});
-			}
-		});
-		
-		//PROCESS TO INSERT WEX MARKER TICKERS
-		ExchangeList.findOne({name:'wex'},function(err, data){
-			if(err){ ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=Object.keys(JSON.parse(data.products).pairs);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);}
-					ApiService.wexMarketTicker(_.join(products,'-')).
-					then(tickers => {
-						try{ 
-							var temp=[];
-							tickers=JSON.parse(tickers);
-						
-							_.forEach(Object.keys(tickers),function(product){
-								var ticker=tickers[product];
-								ticker.base_currency=_.join(_.split(product,'_',1));
-								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-								ticker.product=product;
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==product){
-											chart_data.push(chart.last);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.last);
-								ticker.chart=chart_data;
-								temp.push(ticker);
-							});
-				
-							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('wex','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('wex','api',err,'tickers_api_select',curDateTime);});
-				});	
 			}
 		});
 		
@@ -1297,55 +309,6 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT EXMO MARKET TICKERS
-		ExchangeList.findOne({name:'exmo'},function(err, data){
-			if(err){ ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);}
-					ApiService.exmoMarketTicker().
-					then(tickers => {
-						try{ 
-							var temp=[];
-							tickers=JSON.parse(tickers);
-							
-							_.forEach(Object.keys(tickers),function(product){
-								var ticker=tickers[product];
-								ticker.base_currency=_.join(_.split(product,'_',1));
-								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-								ticker.product=product;
-								
-								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==product){
-											chart_data.push(chart.last_trade);
-										}
-									});
-								});
-								
-								chart_data.push(ticker.last_trade);
-								ticker.chart=chart_data;
-								temp.push(ticker);
-							});
-				
-							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
-							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-						catch(e){
-							ApiService.exchangeErrors('exmo','api',e,'tickers_api_select',curDateTime);
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('exmo','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}
-		});	
-		
 		//PROCESS TO INSERT LIQUI STATIC DATA
 		ExchangeList.count({name:'liqui'},function(err,count){
 			if(err){ ApiService.exchangeErrors('liqui','query_select',err,'exchange_select',curDateTime);}
@@ -1362,14 +325,1318 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT LIQUI MARKET TICKERS
-		ExchangeList.findOne({name:'liqui'},function(err, data){
-			if(err){ ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);}
+		//PROCESS TO INSERT KORBIT STATIC DATA
+		ExchangeList.count({name:'korbit'},function(err,count){
+			if(err){ ApiService.exchangeErrors('korbit','query_select',err,'exchange_select',curDateTime);}
+			if(count==0){
+				var currencies=['BTC', 'ETC', 'ETH', 'XRP', 'BCH'];
+				var products=['etc_krw', 'eth_krw', 'xrp_krw', 'bch_krw'];
+				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:JSON.stringify(currencies),products:JSON.stringify(products),date_created: curDateTime},function(err,data){
+					if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'exchange_insert',curDateTime);}
+				});
+			}
+		});
+	},
+	
+	createExchangeTickers1:function(){
+		console.log('crone job for create tickers1 working');
+		var moment = require('moment');
+		var _ = require('lodash');
+		
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		var date_after = moment().subtract(1, 'hours').toDate();
+		
+		//PROCESS TO INSERT GDAX PRODUCTS TICKERS
+		ExchangeList.findOne({name:'gdax'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('gdax','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				return Promise.all(products.map((product) => {
+						return ApiService.gdaxMarketTicker(product.id).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product_id=product.id;
+							return ticker;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('gdax','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+				then(tickers => {
+					var tickers_data=[];	
+					_.forEach(tickers,function(ticker){
+						if(!_.isEmpty(ticker) && _.isEmpty(ticker.message)){
+							tickers_data.push(ticker);
+						}
+					});
+					if(!_.isEmpty(tickers_data)){
+						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							if(err){ 
+								ApiService.exchangeErrors('gdax','query_insert',err,'tickers_insert',curDateTime);
+							}
+						});
+					}
+				}).
+				catch(err=> { 
+					ApiService.exchangeErrors('gdax','api',err,'tickers_api_select',curDateTime);
+				});
+			}	
+		});
+		
+		//PROCESS TO INSERT GDAX PRODUCTS STATS
+		ExchangeList.findOne({name:'gdax'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('gdax','query_select',err,'stats_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				return Promise.all(products.map((product) => {
+						return ApiService.gdaxMarketStat(product.id).
+						then(stat => {
+							stat=JSON.parse(stat);
+							stat.product_id=product.id;
+							return stat;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('gdax','api',err,'stats_api_select',curDateTime);
+						});
+					})).
+				then(stats => {
+					var stats_data=[];
+					_.forEach(stats,function(stat){
+						if(!_.isEmpty(stat) && _.isEmpty(stat.message)){
+							stats_data.push(stat);
+						}
+					});
+					if(!_.isEmpty(stats_data)){
+						ExchangeStats.create({exchange_id:exchange_id,stats:JSON.stringify(stats_data),date_created:curDateTime},function(err,data){
+							if(err){ 
+								ApiService.exchangeErrors('gdax','query_insert',err,'stats_insert',curDateTime);
+							}
+						});	
+					}
+				}).
+				catch(err=> { 
+					ApiService.exchangeErrors('gdax','api',err,'stats_api_select',curDateTime);
+				});
+			}	
+		});
+		
+		//PROCESS TO INSERT GDAX PRODUCTS TRADES
+		ExchangeList.findOne({name:'gdax'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('gdax','query_select',err,'trades_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				return Promise.all(products.map((product) => {
+						return ApiService.gdaxMarketTrade(product.id).
+						then(trade => {
+							trade=JSON.parse(trade);
+							return {product_id:product.id,data:trade};
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('gdax','api',err,'trades_api_select',curDateTime);
+						});
+					})).
+				then(trades => {
+					var trades_data=[];
+					_.forEach(trades,function(trade){
+						if(!_.isEmpty(trade) && _.isEmpty(trade.data.message)){
+							trades_data.push(trade);
+						}
+					});
+					if(!_.isEmpty(trades_data)){
+						ExchangeTrades.create({exchange_id:exchange_id,trades:JSON.stringify(trades_data),date_created:curDateTime},function(err,data){
+							if(err){ 
+								ApiService.exchangeErrors('gdax','query_insert',err,'trades_insert',curDateTime);
+							}
+						});	
+					}
+				}).
+				catch(err=> { 
+					ApiService.exchangeErrors('gdax','api',err,'trades_api_select',curDateTime);
+				});
+			}	
+		});
+		
+		//PROCESS TO INSERT KUNA TICKERS
+		ExchangeList.findOne({name:'kuna'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.kunaMarketTicker().then(tickers=>{
+						try{
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							var products=Object.keys(tickers);
+							
+							_.forEach(products,function(product){
+								if(!_.isEmpty(tickers[product])){
+									var ticker=tickers[product];
+									ticker=ticker.ticker;
+									ticker.product=product;
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers),{product,product});
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.price);
+										}
+									});
+									
+									chart_data.push(ticker.price);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								}
+							});	
+							
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch (e){
+							ApiService.exchangeErrors('kuna','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('kuna','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}	
+		});	
+		
+		//PROCESS TO INSERT OKEX PRODUCTS TICKERS
+		ExchangeList.findOne({name:'okex'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+							return ApiService.okexMarketTicker(product).
+							then(ticker => {
+								ticker=JSON.parse(ticker);
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.ticker.last);
+									}
+								});
+								
+								chart_data.push(ticker.ticker.last);
+								ticker.chart=chart_data;
+								return ticker;
+							}).
+							catch(err => { 
+								ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);
+							});
+						})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) && _.isEmpty(ticker.error_code)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('okex','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}	
+		});
+		
+		//PROCESS TO INSERT GEMINI MARKET TICKERS
+		ExchangeList.findOne({name:'gemini'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
+					if(err){ 
+						ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+							return ApiService.geminiMarketTicker(product).
+							then(ticker => {
+								ticker=JSON.parse(ticker);
+								var keys=Object.keys(ticker.volume);
+								keys=_.remove(keys, function(key){return key!='timestamp';});
+								if(_.toLower(keys[0]+keys[1])==_.toLower(product)){
+									ticker.vol=ticker.volume[keys[1]];
+									ticker.currency=keys[0];
+								}
+								else{
+									ticker.vol=ticker.volume[keys[0]];
+									ticker.currency=keys[1];
+								}
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.bid);
+									}
+								});
+								
+								chart_data.push(ticker.bid);
+								ticker.chart=chart_data;
+								return ticker;
+							}).
+							catch(err => { 
+								ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);
+							});
+						})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('gemini','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT KRAKEN MARKET TICKERS
+		ExchangeList.findOne({name:'kraken'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var temp=[];
+				var products=JSON.parse(data.products).result;
+	
+				_.forEach(Object.keys(products),function(product_name){
+					temp.push({name:product_name,base:products[product_name].base,quote:products[product_name].quote});
+				});
+				products=temp;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+						return ApiService.krakenMarketTicker(product.name).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.name;
+							ticker.base_currency=product.base;
+							ticker.quote_currency=product.quote;
+							return ticker;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+					then(tickers => {
+						
+						var tickers_data=[];
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) &&_.isEmpty(ticker.error)){
+								ticker.price=ticker.result[ticker.product].b[0];
+								ticker.volume=ticker.result[ticker.product].v[1];
+								ticker.low=ticker.result[ticker.product].l[1];
+								ticker.high=ticker.result[ticker.product].h[1];
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:ticker.product});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.price);
+									}
+								});
+								
+								chart_data.push(ticker.price);
+								ticker.chart=chart_data;
+								tickers_data.push(ticker);
+							}
+						});
+						
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('kraken','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT BITFLYER MARKET TICKERS
+		ExchangeList.findOne({name:'bitflyer'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				var temp=[];
+				_.forEach(products,function(product){
+					if(_.isEmpty(product.alias) && 	(((product.product_code.match(/_/g) || []).length)==1)){
+						temp.push(product);
+					}
+				});
+				products=temp;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+						return ApiService.bitflyerMarketTicker(product.product_code).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.product_code;
+							ticker.base_currency=_.join(_.split(product.product_code,'_',1));
+							ticker.quote_currency=_.replace(product.product_code,ticker.base_currency+'_','');
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart){
+								chart=_.filter(JSON.parse(chart.tickers),{product:product.product_code});
+								if(!_.isEmpty(chart)){
+									chart=_.head(chart);
+									chart_data.push(chart.best_bid);
+								}
+							});
+							
+							chart_data.push(ticker.best_bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('bitflyer','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT BITHUMB MARKET TICKERS
+		ExchangeList.findOne({name:'bithumb'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.bithumbMarketTicker().
+					then(tickers => {
+						try{
+							tickers=JSON.parse(tickers);
+							if(parseInt(tickers.status)==0){
+								var temp=[];
+								_.forEach(Object.keys(tickers.data),function(currency){
+									var ticker=tickers.data[currency];
+									ticker.base_currency=currency;
+									ticker.quote_currency='KRW';
+									ticker.product=currency+'KRW';
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers),{product:currency+'KRW'});
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.sell_price);
+										}
+									});
+									
+									chart_data.push(ticker.sell_price);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								});
+								tickers=temp;
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+								date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+							}
+						}
+						catch(e){
+							ApiService.exchangeErrors('bithumb','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('bithumb','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT BITSTAMP MARKET TICKERS
+		ExchangeList.findOne({name:'bitstamp'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+						return ApiService.bitstampMarketTicker(product.url_symbol).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.url_symbol;
+							ticker.base_currency=_.join(_.split(product.name,'/',1));
+							ticker.quote_currency=_.replace(product.name,ticker.base_currency+'/','');
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart){
+								chart=_.filter(JSON.parse(chart.tickers),{product:product.url_symbol});
+								if(!_.isEmpty(chart)){
+									chart=_.head(chart);
+									chart_data.push(chart.bid);
+								}
+							});
+							
+							chart_data.push(ticker.bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('bitstamp','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}
+		});
+		
+		//PROCESS TO INSERT LBANK MARKET TICKERS
+		ExchangeList.findOne({name:'lbank'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.lbankMarketTicker().
+					then(tickers => {
+						try{ 
+							tickers=JSON.parse(tickers);
+							_.forEach(tickers,function(ticker){
+								ticker.base_currency=_.join(_.split(ticker.symbol,'_',1));
+								ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'_','');
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{symbol:ticker.symbol});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.ticker.latest);
+									}
+								});
+								
+								chart_data.push(ticker.ticker.latest);
+								ticker.chart=chart_data;
+							});
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ 
+									ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('lbank','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('lbank','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT COINONE MARKET TICKERS
+		ExchangeList.findOne({name:'coinone'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.coinoneMarketTicker().
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							if(parseInt(tickers.errorCode)==0){
+								_.forEach(Object.keys(tickers),function(currency){
+									if(!_.includes(['errorCode','result','timestamp'],currency)){
+										var ticker=tickers[currency];
+										ticker.base_currency=currency;
+										ticker.quote_currency='krw';
+										ticker.product=currency+'krw';
+										
+										var chart_data=[];
+										_.forEach(charts,function(chart){
+											chart=_.filter(JSON.parse(chart.tickers),{product:currency+'krw'});
+											if(!_.isEmpty(chart)){
+												chart=_.head(chart);
+												chart_data.push(chart.last);
+											}
+										});
+
+										chart_data.push(ticker.last);
+										ticker.chart=chart_data;
+										temp.push(ticker);
+									}
+								});
+							}	
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ 
+									ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('coinone','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('coinone','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT WEX MARKET TICKERS
+		ExchangeList.findOne({name:'wex'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);
+			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(JSON.parse(data.products).pairs);
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);}
+					if(err){ 
+						ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.wexMarketTicker(_.join(products,'-')).
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+						
+							_.forEach(Object.keys(tickers),function(product){
+								var ticker=tickers[product];
+								ticker.base_currency=_.join(_.split(product,'_',1));
+								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.last);
+									}
+								});
+								
+								chart_data.push(ticker.last);
+								ticker.chart=chart_data;
+								temp.push(ticker);
+							});
+				
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ 
+									ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){ 
+							ApiService.exchangeErrors('wex','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('wex','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT EXMO MARKET TICKERS
+		ExchangeList.findOne({name:'exmo'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.exmoMarketTicker().
+					then(tickers => {
+						try{ 
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							
+							_.forEach(Object.keys(tickers),function(product){
+								var ticker=tickers[product];
+								ticker.base_currency=_.join(_.split(product,'_',1));
+								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+								ticker.product=product;
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.last_trade);
+									}
+								});
+								
+								chart_data.push(ticker.last_trade);
+								ticker.chart=chart_data;
+								temp.push(ticker);
+							});
+				
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ 
+									ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('exmo','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('exmo','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});	
+		
+		//PROCESS TO INSERT KORBIT MARKET TICKERS
+		ExchangeList.findOne({name:'korbit'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+						return ApiService.korbitMarketTicker(product).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product;
+							ticker.base_currency=_.join(_.split(product,'_',1));
+							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart){
+								chart=_.filter(JSON.parse(chart.tickers),{product:product});
+								if(!_.isEmpty(chart)){
+									chart=_.head(chart);
+									chart_data.push(chart.last);
+								}
+							});
+							
+							chart_data.push(ticker.last);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+	},
+	
+	createExchangeTickers2:function(){
+		console.log('crone job for create tickers2 working');
+		var moment = require('moment');
+		var _ = require('lodash');
+		var math = require('mathjs');
+	
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		var date_after = moment().subtract(1, 'hours').toDate();
+
+		//PROCESS TO INSERT BITTEX PRODUCTS/MARKETS TICKERS
+		ExchangeList.findOne({name:'bittrex'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products).result; 
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
+					if(err){ 
+						ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.bittrexMarketSummaries().then(tickers=>{
+						if(_.isEmpty(JSON.parse(tickers).message)){
+							 tickers=JSON.parse(tickers);
+							 
+							 _.forEach(tickers.result,function(ticker){
+								 var product=_.filter(products,{MarketName:ticker.MarketName});
+								 if(!_.isEmpty(product)){
+									product=_.head(product);
+									ticker.BaseCurrency=product.BaseCurrency;
+									ticker.MarketCurrency=product.MarketCurrency;
+									//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
+									ticker.High=math.format(ticker.High,{lowerExp: -100, upperExp: 100});
+									ticker.Low=math.format(ticker.Low,{lowerExp: -100, upperExp: 100});
+									ticker.Last=math.format(ticker.Last,{lowerExp: -100, upperExp: 100});
+									ticker.Bid=math.format(ticker.Bid,{lowerExp: -100, upperExp: 100});
+									ticker.Ask=math.format(ticker.Ask,{lowerExp: -100, upperExp: 100});
+									ticker.PrevDay=math.format(ticker.PrevDay,{lowerExp: -100, upperExp: 100});
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers).result,{MarketName:ticker.MarketName});
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.Last);
+										}
+									});
+									chart_data.push(ticker.Last);
+									ticker.chart=chart_data;
+								 }
+							 });
+							 
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('bittrex','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});
+		
+		//PROCESS TO INSERT COINMARKETCAP PRODUCTS/MARKETS TICKERS
+		ExchangeList.findOne({name:'coinmarketcap'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.coinMarketTicker().then(tickers=>{
+						tickers=JSON.parse(tickers);
+						
+						_.forEach(tickers,function(ticker){
+							var chart_data=[];
+							_.forEach(charts,function(chart){
+								chart=_.filter(JSON.parse(chart.tickers),{symbol:ticker.symbol});
+								if(!_.isEmpty(chart)){
+									chart=_.head(chart);
+									chart_data.push(chart.price_usd);
+								}
+							});
+							chart_data.push(ticker.price_usd);
+							ticker.chart=chart_data;
+						});
+						
+						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+							if(err){ 
+								ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);
+							}
+						});
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('coinmarketcap','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});
+		
+		//PROCESS TO INSERT BITFINEX PRODUCTS/MARKETS TICKERS
+		ExchangeList.findOne({name:'bitfinex'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);
+					}	
+					return Promise.all(products.map((product)=>{
+						return ApiService.bitFinexMarketTicker(product).then((ticker)=>{
+							ticker=JSON.parse(ticker);
+							ticker.product_id=product;
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart){
+								chart=_.filter(JSON.parse(chart.tickers),{product_id:product});
+								if(!_.isEmpty(chart)){
+									chart=_.head(chart);
+									chart_data.push(chart.bid);
+								}
+							});
+							
+							chart_data.push(ticker.bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err=> { 
+							ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+					then(tickers => {
+						var tickers_data=[];
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) && _.isEmpty(ticker.error)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('bitfinex','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+		
+		//PROCESS TO INSERT HITBTC PRODUCTS/MARKETS TICKERS
+		ExchangeList.findOne({name:'hitbtc'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.hitbtcMarketTicker().then(tickers=>{
+						try{ 
+							tickers=JSON.parse(tickers);
+							
+							_.forEach(tickers,function(ticker){
+								var product=_.filter(products,{id:ticker.symbol});
+								if(!_.isEmpty(product)){
+									product=_.head(product);
+									ticker.baseCurrency=product.baseCurrency;
+									ticker.quoteCurrency=product.quoteCurrency;
+									var chart_data=[];
+									
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers),{symbol:ticker.symbol});
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.bid);
+										}
+									});	
+									
+									chart_data.push(ticker.bid);
+									ticker.chart=chart_data;
+								}
+							});
+							
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){ 
+							ApiService.exchangeErrors('hitbtc','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=>{ 
+						ApiService.exchangeErrors('hitbtc','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});	
+		
+		//PROCESS TO INSERT GATE TICKERS
+		ExchangeList.findOne({name:'gate'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.gateMarketTicker().then(tickers=>{
+						try{
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							
+							_.forEach(products,function(product){
+								if(!_.isEmpty(tickers[product])){
+									var ticker=tickers[product];
+									ticker.product=product;
+									var chart_data=[];
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers),{product:product});
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.last);
+										}
+									});
+									chart_data.push(ticker.last);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								}
+							});
+							
+							tickers=temp;
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('gate','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('gate','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});	
+		
+		//PROCESS TO INSERT BINANCE TICKERS
+		ExchangeList.findOne({name:'binance'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products).symbols;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.binanceMarketTicker().
+					then(tickers => {
+						try{
+							tickers=JSON.parse(tickers);
+							
+							_.forEach(tickers,function(ticker){
+								var product=_.filter(products,{symbol:ticker.symbol});
+								if(!_.isEmpty(product)){
+									product=_.head(product);
+									ticker.baseAsset=product.baseAsset;
+									ticker.quoteAsset=product.quoteAsset;
+									var chart_data=[];
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers));
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.lastPrice);
+										}
+									});
+									chart_data.push(ticker.lastPrice);
+									ticker.chart=chart_data;
+								}
+							});
+							
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							date_created:curDateTime},function(err, data){
+								if(err){ 
+									ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						catch(e){
+							ApiService.exchangeErrors('binance','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('binance','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}
+		});
+		
+		//PROCESS TO INSERT HUOBI MARKET TICKERS
+		ExchangeList.findOne({name:'huobi'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=JSON.parse(data.products).data;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+							return ApiService.huobiMarketTicker(product['base-currency']+product['quote-currency']).
+							then(ticker => {
+								ticker=JSON.parse(ticker);
+								ticker.product=product['base-currency']+product['quote-currency'];
+								ticker.base_currency=product['base-currency'];
+								ticker.quote_currency=product['quote-currency'];
+								//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
+								ticker.tick.open=math.format(ticker.tick.open,{lowerExp: -100, upperExp: 100});
+								ticker.tick.close=math.format(ticker.tick.close,{lowerExp: -100, upperExp: 100});
+								ticker.tick.high=math.format(ticker.tick.high,{lowerExp: -100, upperExp: 100});
+								ticker.tick.low=math.format(ticker.tick.low,{lowerExp: -100, upperExp: 100});
+								ticker.tick.ask[0]=math.format(ticker.tick.ask[0],{lowerExp: -100, upperExp: 100});
+								ticker.tick.ask[1]=math.format(ticker.tick.ask[1],{lowerExp: -100, upperExp: 100});
+								ticker.tick.bid[0]=math.format(ticker.tick.bid[0],{lowerExp: -100, upperExp: 100});
+								ticker.tick.bid[1]=math.format(ticker.tick.bid[1],{lowerExp: -100, upperExp: 100});
+								
+								var chart_data=[];
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:product['base-currency']+product['quote-currency']});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.tick.bid[0]);
+									}
+								});
+								
+								chart_data.push(ticker.tick.bid[0]);
+								ticker.chart=chart_data;
+								return ticker;
+							}).
+							catch(err => { 
+								ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);
+							});
+						})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker) && !_.isEmpty(ticker.tick) && _.isEmpty(ticker.error_code)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('huobi','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}
+		});
+	
+		//PROCESS TO INSERT BIT-Z MARKET TICKERS
+		ExchangeList.findOne({name:'bitz'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);
+					}
+					ApiService.bitzMarketTicker().then(tickers=>{
+						try{
+							var temp=[];
+							tickers=JSON.parse(tickers);
+							if(parseInt(tickers.code)==0){
+								var products=Object.keys(tickers.data);
+								_.forEach(products,function(product){
+									var ticker=tickers.data[product];
+									ticker.product=product;
+									ticker.base_currency=_.join(_.split(product,'_',1));
+									ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+									
+									var chart_data=[];
+									_.forEach(charts,function(chart){
+										chart=_.filter(JSON.parse(chart.tickers),{product:product});
+										if(!_.isEmpty(chart)){
+											chart=_.head(chart);
+											chart_data.push(chart.sell);
+										}
+									});
+									
+									chart_data.push(ticker.sell);
+									ticker.chart=chart_data;
+									temp.push(ticker);
+								});
+								tickers=temp;
+							
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+							}
+						}
+						catch (e){
+							ApiService.exchangeErrors('bitz','api',e,'tickers_api_select',curDateTime);
+						}
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('bitz','api',err,'tickers_api_select',curDateTime);
+					});
+				});	
+			}	
+		});
+		
+		//PROCESS TO INSERT LIQUI MARKET TICKERS
+		ExchangeList.findOne({name:'liqui'},function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=Object.keys(JSON.parse(data.products).pairs);
+				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);
+					}
 					ApiService.liquiMarketTicker(_.join(products,'-')).
 					then(tickers => {
 						try{ 
@@ -1383,13 +1650,12 @@ module.exports = {
 								ticker.product=product;
 								
 								var chart_data=[];
-								_.forEach(charts,function(chart_list){
-									chart_list=JSON.parse(chart_list.tickers);
-									_.forEach(chart_list,function(chart){
-										if(chart.product==product){
-											chart_data.push(chart.last);
-										}
-									});
+								_.forEach(charts,function(chart){
+									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.last);
+									}
 								});
 								
 								chart_data.push(ticker.last);
@@ -1400,83 +1666,27 @@ module.exports = {
 							tickers=temp;
 							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
 							date_created:curDateTime},function(err, data){
-								if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);}
+								if(err){ 
+									ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);
+								}
 							});
 						}
-						catch(e){
+						catch(e){ 
 							ApiService.exchangeErrors('liqui','api',e,'tickers_api_select',curDateTime);
 						}
 					}).
-					catch(err => { ApiService.exchangeErrors('liqui','api',err,'tickers_api_select',curDateTime);});
-				});	
-			}
-		});
-		
-		//PROCESS TO INSERT KORBIT STATIC DATA
-		ExchangeList.count({name:'korbit'},function(err,count){
-			if(err){ ApiService.exchangeErrors('korbit','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
-				var currencies=['BTC', 'ETC', 'ETH', 'XRP', 'BCH'];
-				var products=['etc_krw', 'eth_krw', 'xrp_krw', 'bch_krw'];
-				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:JSON.stringify(currencies),products:JSON.stringify(products),date_created: curDateTime},function(err,data){
-					if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'exchange_insert',curDateTime);}
-				});
-			}
-		});
-		
-		//PROCESS TO INSERT KORBIT MARKET TICKERS
-		ExchangeList.findOne({name:'korbit'},function(err,data){
-			if(err){ ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);}
-			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);}
-					return Promise.all(products.map((product) => {
-						return ApiService.korbitMarketTicker(product).
-						then(ticker => {
-							ticker=JSON.parse(ticker);
-							ticker.product=product;
-							ticker.base_currency=_.join(_.split(product,'_',1));
-							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
-							
-							var chart_data=[];
-							_.forEach(charts,function(chart_list){
-								chart_list=JSON.parse(chart_list.tickers);
-								_.forEach(chart_list,function(chart){
-									if(chart.product==product){
-										chart_data.push(chart.last);
-									}
-								});
-							});
-							
-							chart_data.push(ticker.last);
-							ticker.chart=chart_data;
-							return ticker;
-						}).
-						catch(err => { ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);});
-					})).
-					then(tickers => {
-						var tickers_data=[];	
-						_.forEach(tickers,function(ticker){
-							if(!_.isEmpty(ticker)){
-								tickers_data.push(ticker);
-							}
-						});
-						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
-								if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);}
-							});
-						}
-					}).
-					catch(err => { ApiService.exchangeErrors('korbit','api',err,'tickers_api_select',curDateTime);});
+					catch(err => { 
+						ApiService.exchangeErrors('liqui','api',err,'tickers_api_select',curDateTime);
+					});
 				});	
 			}
 		});
 		
 		//PROCESS TO CALCULATE TOTAL CRYPTO PRICE
 		TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
-			if(err){ ApiService.exchangeErrors('totalcryptoprices','query_select',err,'exchange_select',curDateTime);}
+			if(err){ 
+				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'exchange_select',curDateTime);
+			}
 			var tc100=0;
 			var total_usd_market_cap=0;
 			var tcw100=0;
@@ -1497,13 +1707,17 @@ module.exports = {
 				tc100=tc100/temp.length;
 		
 				ExchangeList.findOne({name:'coinmarketcap'},function(err, coinmarketcapExchange){
-					if(err){ ApiService.exchangeErrors('totalcryptoprices','query_select',err,'exchange_select',curDateTime);}
+					if(err){ 
+						ApiService.exchangeErrors('totalcryptoprice','query_select',err,'exchange_select',curDateTime);
+					}
 					if(!_.isEmpty(coinmarketcapExchange)){
 						var coinMarketTickers=ExchangeTickers.findOne();
 						coinMarketTickers.where({exchange_id:coinmarketcapExchange.id});
 						coinMarketTickers.sort('id DESC');
 						coinMarketTickers.exec(function(err,coinMarketTickers){
-							if(err){ ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);}
+							if(err){ 
+								ApiService.exchangeErrors('totalcryptoprice','query_select',err,'tickers_select',curDateTime);
+							}
 							if(!_.isEmpty(coinMarketTickers)){
 								coinMarketTickers=JSON.parse(coinMarketTickers.tickers);
 								coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
@@ -1521,7 +1735,7 @@ module.exports = {
 								tcw100=tcw100/coinMarketTickers.length;
 								
 								TotalCryptoPrice.create({tc100: tc100, total_usd_market_cap: total_usd_market_cap, tcw100: tcw100,date_created: curDateTime},function(err,data){ if(err){
-									ApiService.exchangeErrors('totalcryptoprices','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('totalcryptoprice','query_insert',err,'tickers_insert',curDateTime);
 								}});
 							}
 						});
@@ -1531,10 +1745,9 @@ module.exports = {
 		});
 		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES
-		
 		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 			if(err){ 
-				console.log(err);
+				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);
 			}
 			
 			return Promise.all([
@@ -1766,13 +1979,17 @@ module.exports = {
 					});
 						
 					TotalCryptoPrices.create({prices:JSON.stringify(insert_array),date_created:curDateTime},function(err,data){
-						//console.log(err);
+						ApiService.exchangeErrors('totalcryptoprices','query_insert',err,'tickers_insert',curDateTime);
 					});
 				}
 			}).
 			catch(err => {  
-				//console.log(err);
+				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);
 			});
 		});	
+	},
+	
+	socketUpdates:function(){
+		FrontendService.marketData(function(){},'socket');
 	}
 };

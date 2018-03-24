@@ -18,13 +18,12 @@ module.exports = {
 								if(!_.isEmpty(stats))
 								{
 									var gdaxTickers=JSON.parse(tickers.tickers);
-									var gdaxStats=JSON.parse(stats.stats);
 									_.forEach(gdaxTickers,function(ticker){
-										_.forEach(gdaxStats,function(stat){
-											if(ticker.product_id==stat.product_id){
-												ticker.variation=(parseFloat(ticker.price)-parseFloat(stat.open))*100/parseFloat(stat.open);
-											}
-										});
+										var stat=_.filter(JSON.parse(stats.stats),{product_id:ticker.product_id});
+										if(!_.isEmpty(stat)){
+											stat=_.head(stat);
+											ticker.variation=(parseFloat(ticker.price)-parseFloat(stat.open))*100/parseFloat(stat.open);
+										}
 									});
 									
 									var trades=ExchangeTrades.findOne();
@@ -33,32 +32,32 @@ module.exports = {
 									trades.exec(function(err, trades){
 										if(!_.isEmpty(trades)){
 											var gdaxTrades=JSON.parse(trades.trades);
-											_.forEach(gdaxTrades,function(trade){
-												_.forEach(gdaxTickers,function(ticker){
-													if(trade.product_id==ticker.product_id){
-														trade.data.sort(function(a,b){
-															if(parseInt(a.trade_id)>parseInt(b.trade_id)){
-																return 1;
-															}
-															else{
-																return -1;
-															}
-														});
-														ticker.chart=_.map(trade.data,function(trade){
-															return parseFloat(trade.price);
-														});
-													}
-												});
+											
+											_.forEach(gdaxTickers,function(ticker){
+												var trade=_.filter(JSON.parse(trades.trades),{product_id:ticker.product_id});
+												if(!_.isEmpty(trade)){
+													trade=_.head(trade);
+													trade.data.sort(function(a,b){
+														if(parseInt(a.trade_id)>parseInt(b.trade_id)){
+															return 1;
+														}
+														else{
+															return -1;
+														}
+													});
+													ticker.chart=_.map(trade.data,function(trading){
+														return parseFloat(trading.price);
+													});
+												}
 											});
 											
 											var temp=[];
 											_.forEach(gdaxProducts,function(product){
-												_.forEach(gdaxTickers,function(ticker){
-													if(ticker.product_id==product.id){
-														product.ticker=ticker;
-														temp.push(product);
-													}
-												})
+												var ticker=_.filter(gdaxTickers,{product_id:product.id});
+												if(!_.isEmpty(ticker)){
+													product.ticker=_.head(ticker);
+													temp.push(product);
+												}
 											});
 											gdaxProducts=temp;
 											return resolve({name:gdaxExchange.name,url:gdaxExchange.url,is_exchange:gdaxExchange.is_exchange,data:gdaxProducts});
