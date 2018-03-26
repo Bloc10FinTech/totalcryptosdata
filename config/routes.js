@@ -42,6 +42,8 @@ module.exports.routes = {
   '/exchange/:exchangeName':'HomeController.exchange',
   '/tc-history':'HomeController.tc_history',
   '/gainers-and-loosers':'HomeController.gainers_and_loosers',
+  '/apis/symbolsUSDPrices':'ApiController.symbolsUSDPrices',
+  '/apis/productsPrices':'ApiController.productsPrices',
   '/home': {
     view: 'homepage'
   },
