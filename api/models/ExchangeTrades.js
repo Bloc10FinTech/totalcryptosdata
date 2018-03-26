@@ -12,7 +12,7 @@ module.exports = {
 	attributes  : {
 	id: {type: 'integer', primaryKey: true},	
 	exchange_id: {type : 'integer', required: true},
-	trades: {type: 'mediumtext', required: true},
+	trades: {type: 'json', required: true},
 	date_created: {type: 'datetime', required: true}
   }
 };

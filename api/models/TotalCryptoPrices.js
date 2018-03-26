@@ -11,7 +11,7 @@ module.exports = {
 	autoUpdatedAt: false,
 	attributes  : {
 	id: {type: 'integer', primaryKey: true},	
-	prices: {type: 'mediumtext', required: true},
+	prices: {type: 'json', required: true},
 	date_created: {type: 'datetime', required: true}
   }
 };

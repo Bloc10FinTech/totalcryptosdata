@@ -14,8 +14,8 @@ module.exports = {
 	name: {type : 'string', required: true},
 	url: {type : 'string', required: true},
 	is_exchange: {type : 'string', enum:['yes','no'], required: true},
-	currencies: {type: 'mediumtext'},
-	products: {type: 'mediumtext'},
+	currencies: {type: 'json'},
+	products: {type: 'json'},
 	date_created: {type: 'datetime', required: true}
   }
 };

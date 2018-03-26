@@ -12,7 +12,7 @@ module.exports = {
 	attributes  : {
 	id: {type: 'integer', primaryKey: true},	
 	exchange_id: {model: 'ExchangeList'},
-	stats: {type: 'mediumtext', required: true},
+	stats: {type: 'json', required: true},
 	date_created: {type: 'datetime', required: true}
   }
 };

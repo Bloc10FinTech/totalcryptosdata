@@ -715,10 +715,10 @@ module.exports = {
 	},
 	
 	exchangeErrors:function(name,error_type,error,custom_message,date_time){ 
-		/*ExchangeErrors.create({name: name, error_type: error_type, error: error, custom_message: custom_message,date_created:date_time},function(err,data){
+		ExchangeErrors.create({name: name, error_type: error_type, error: error, custom_message: custom_message,date_created:date_time},function(err,data){
 			if(err){
 				console.log('Exchange log failed for:'+name+' .Error:'+err);
 			}
-		});*/
+		});
 	}
 };

@@ -7,17 +7,17 @@ module.exports = {
 		//PROCESS TO INSERT GDAX STATIC DATA
 		ExchangeList.count({name: 'gdax'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count==0){ 
 				Promise.all([
 					ApiService.gdaxCurrencies(),
 					ApiService.gdaxProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'gdax',url:'https://www.gdax.com',is_exchange:'yes',currencies:response[0],products:response[1],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'gdax',url:'https://www.gdax.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
-				catch(err => { ApiService.exchangeErrors('gdax','api',err,'exchange_api_select',curDateTime);});
+				catch(err => { console.log(err); ApiService.exchangeErrors('gdax','api',err,'exchange_api_select',curDateTime);});
 			}
 		});
 		
@@ -30,7 +30,7 @@ module.exports = {
 					ApiService.bittrexProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'bittrex',url:'https://bittrex.com',is_exchange:'yes',currencies:response[0],products:response[1],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'bittrex',url:'https://bittrex.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -56,7 +56,7 @@ module.exports = {
 					ApiService.bitfinexProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'bitfinex',url:'https://www.bitfinex.com',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'bitfinex',url:'https://www.bitfinex.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -73,7 +73,7 @@ module.exports = {
 					ApiService.hitbtcProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'hitbtc',url:'https://hitbtc.com',is_exchange:'yes',currencies:response[0],products:response[1],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'hitbtc',url:'https://hitbtc.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -89,7 +89,7 @@ module.exports = {
 					ApiService.gateProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'gate',url:'https://gate.io',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'gate',url:'https://gate.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gate','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -113,7 +113,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('okex','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
 				var products=['ltc_btc', 'eth_btc', 'etc_btc', 'bch_btc', 'btc_usdt', 'eth_usdt' ,'ltc_usdt', 'etc_usdt', 'bch_usdt', 'etc_eth', 'bt1_btc' ,'bt2_btc' ,'btg_btc' ,'qtum_btc' ,'hsr_btc', 'neo_btc', 'gas_btc' ,'qtum_usdt' ,'hsr_usdt' ,'neo_usdt' ,'gas_usdt'];
-				ExchangeList.create({name:'okex',url:'https://www.okex.com',is_exchange:'yes',currencies:null,products:JSON.stringify(products),date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'okex',url:'https://www.okex.com',is_exchange:'yes',currencies:null,products:products,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('okex','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -127,7 +127,7 @@ module.exports = {
 					ApiService.binanceProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'binance',url:'https://www.binance.com',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'binance',url:'https://www.binance.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('binance','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -144,7 +144,7 @@ module.exports = {
 					ApiService.huobiProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'huobi',url:'https://www.huobi.pro',is_exchange:'yes',currencies:response[0],products:response[1],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'huobi',url:'https://www.huobi.pro',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -160,7 +160,7 @@ module.exports = {
 					ApiService.geminiProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'gemini',url:'https://gemini.com',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'gemini',url:'https://gemini.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -177,7 +177,7 @@ module.exports = {
 					ApiService.krakenProducts()
 				]).
 				then(response => {
-					ExchangeList.create({name:'kraken',url:'https://www.kraken.com',is_exchange:'yes',currencies:response[0],products:response[1],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'kraken',url:'https://www.kraken.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -204,7 +204,7 @@ module.exports = {
 						products.push({product_code: "BTC_USD"});
 					}
 					
-					ExchangeList.create({name:'bitflyer',url:'https://bitflyer.jp',is_exchange:'yes',currencies:null,products:JSON.stringify(products),date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'bitflyer',url:'https://bitflyer.jp',is_exchange:'yes',currencies:null,products:products,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -217,7 +217,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
 				currencies=['BTC', 'ETH', 'DASH', 'LTC', 'ETC', 'XRP', 'BCH', 'XMR', 'ZEC', 'QTUM', 'BTG', 'EOS'];
-				ExchangeList.create({name:'bithumb',url:'https://www.bithumb.com',is_exchange:'yes',currencies:JSON.stringify(currencies),products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'bithumb',url:'https://www.bithumb.com',is_exchange:'yes',currencies:currencies,products:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('bithumb','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -231,7 +231,7 @@ module.exports = {
 					ApiService.bitstampProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'bitstamp',url:'https://www.bitstamp.net',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'bitstamp',url:'https://www.bitstamp.net',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -257,7 +257,7 @@ module.exports = {
 					ApiService.lbankProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'lbank',url:'https://www.lbank.info',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'lbank',url:'https://www.lbank.info',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -270,7 +270,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('coinone','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
 				currencies=['btc', 'bch', 'eth', 'etc', 'xrp', 'qtum', 'iota', 'ltc', 'btg'];
-				ExchangeList.create({name:'coinone',url:'https://coinone.co.kr',is_exchange:'yes',currencies:JSON.stringify(currencies),products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'coinone',url:'https://coinone.co.kr',is_exchange:'yes',currencies:currencies,products:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('coinone','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -284,7 +284,7 @@ module.exports = {
 					ApiService.wexProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'wex',url:'https://wex.nz',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'wex',url:'https://wex.nz',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('wex','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -301,7 +301,7 @@ module.exports = {
 					ApiService.exmoProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'exmo',url:'https://exmo.com',is_exchange:'yes',currencies:response[0],products:response[1],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'exmo',url:'https://exmo.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -317,7 +317,7 @@ module.exports = {
 					ApiService.liquiProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'liqui',url:'https://liqui.io',is_exchange:'yes',currencies:null,products:response[0],date_created: curDateTime},function(err,data){
+					ExchangeList.create({name:'liqui',url:'https://liqui.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
@@ -331,7 +331,7 @@ module.exports = {
 			if(count==0){
 				var currencies=['BTC', 'ETC', 'ETH', 'XRP', 'BCH'];
 				var products=['etc_krw', 'eth_krw', 'xrp_krw', 'bch_krw'];
-				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:JSON.stringify(currencies),products:JSON.stringify(products),date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:currencies,products:products,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -353,7 +353,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				return Promise.all(products.map((product) => {
 						return ApiService.gdaxMarketTicker(product.id).
 						then(ticker => {
@@ -373,7 +373,7 @@ module.exports = {
 						}
 					});
 					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+						ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 							if(err){ 
 								ApiService.exchangeErrors('gdax','query_insert',err,'tickers_insert',curDateTime);
 							}
@@ -393,7 +393,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				return Promise.all(products.map((product) => {
 						return ApiService.gdaxMarketStat(product.id).
 						then(stat => {
@@ -413,7 +413,7 @@ module.exports = {
 						}
 					});
 					if(!_.isEmpty(stats_data)){
-						ExchangeStats.create({exchange_id:exchange_id,stats:JSON.stringify(stats_data),date_created:curDateTime},function(err,data){
+						ExchangeStats.create({exchange_id:exchange_id,stats:stats_data,date_created:curDateTime},function(err,data){
 							if(err){ 
 								ApiService.exchangeErrors('gdax','query_insert',err,'stats_insert',curDateTime);
 							}
@@ -433,7 +433,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				return Promise.all(products.map((product) => {
 						return ApiService.gdaxMarketTrade(product.id).
 						then(trade => {
@@ -452,7 +452,7 @@ module.exports = {
 						}
 					});
 					if(!_.isEmpty(trades_data)){
-						ExchangeTrades.create({exchange_id:exchange_id,trades:JSON.stringify(trades_data),date_created:curDateTime},function(err,data){
+						ExchangeTrades.create({exchange_id:exchange_id,trades:trades_data,date_created:curDateTime},function(err,data){
 							if(err){ 
 								ApiService.exchangeErrors('gdax','query_insert',err,'trades_insert',curDateTime);
 							}
@@ -491,7 +491,7 @@ module.exports = {
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers),{product,product});
+										chart=_.filter(chart.tickers,{product,product});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.price);
@@ -505,7 +505,7 @@ module.exports = {
 							});	
 							
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -529,7 +529,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);
@@ -542,7 +542,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									chart=_.filter(chart.tickers,{product:product});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.ticker.last);
@@ -565,7 +565,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -586,7 +586,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
 					if(err){ 
 						ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);
@@ -609,7 +609,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									chart=_.filter(chart.tickers,{product:product});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.bid);
@@ -632,7 +632,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -654,7 +654,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var temp=[];
-				var products=JSON.parse(data.products).result;
+				var products=data.products.result;
 	
 				_.forEach(Object.keys(products),function(product_name){
 					temp.push({name:product_name,base:products[product_name].base,quote:products[product_name].quote});
@@ -689,7 +689,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:ticker.product});
+									chart=_.filter(chart.tickers,{product:ticker.product});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.price);
@@ -703,7 +703,7 @@ module.exports = {
 						});
 						
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -724,7 +724,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				var temp=[];
 				_.forEach(products,function(product){
 					if(_.isEmpty(product.alias) && 	(((product.product_code.match(/_/g) || []).length)==1)){
@@ -746,7 +746,7 @@ module.exports = {
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
-								chart=_.filter(JSON.parse(chart.tickers),{product:product.product_code});
+								chart=_.filter(chart.tickers,{product:product.product_code});
 								if(!_.isEmpty(chart)){
 									chart=_.head(chart);
 									chart_data.push(chart.best_bid);
@@ -769,7 +769,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -808,7 +808,7 @@ module.exports = {
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers),{product:currency+'KRW'});
+										chart=_.filter(chart.tickers,{product:currency+'KRW'});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.sell_price);
@@ -820,7 +820,7 @@ module.exports = {
 									temp.push(ticker);
 								});
 								tickers=temp;
-								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 								date_created:curDateTime},function(err, data){
 									if(err){ 
 										ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);
@@ -846,7 +846,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);
@@ -861,7 +861,7 @@ module.exports = {
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
-								chart=_.filter(JSON.parse(chart.tickers),{product:product.url_symbol});
+								chart=_.filter(chart.tickers,{product:product.url_symbol});
 								if(!_.isEmpty(chart)){
 									chart=_.head(chart);
 									chart_data.push(chart.bid);
@@ -884,7 +884,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -919,7 +919,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{symbol:ticker.symbol});
+									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.ticker.latest);
@@ -929,7 +929,7 @@ module.exports = {
 								chart_data.push(ticker.ticker.latest);
 								ticker.chart=chart_data;
 							});
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 							date_created:curDateTime},function(err, data){
 								if(err){ 
 									ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);
@@ -973,7 +973,7 @@ module.exports = {
 										
 										var chart_data=[];
 										_.forEach(charts,function(chart){
-											chart=_.filter(JSON.parse(chart.tickers),{product:currency+'krw'});
+											chart=_.filter(chart.tickers,{product:currency+'krw'});
 											if(!_.isEmpty(chart)){
 												chart=_.head(chart);
 												chart_data.push(chart.last);
@@ -987,7 +987,7 @@ module.exports = {
 								});
 							}	
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 							date_created:curDateTime},function(err, data){
 								if(err){ 
 									ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);
@@ -1012,7 +1012,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=Object.keys(JSON.parse(data.products).pairs);
+				var products=Object.keys(data.products.pairs);
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);
@@ -1031,7 +1031,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									chart=_.filter(chart.tickers,{product:product});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.last);
@@ -1044,7 +1044,7 @@ module.exports = {
 							});
 				
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 							date_created:curDateTime},function(err, data){
 								if(err){ 
 									ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);
@@ -1087,7 +1087,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									chart=_.filter(chart.tickers,{product:product});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.last_trade);
@@ -1100,7 +1100,7 @@ module.exports = {
 							});
 				
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 							date_created:curDateTime},function(err, data){
 								if(err){ 
 									ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);
@@ -1125,7 +1125,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);
@@ -1140,7 +1140,7 @@ module.exports = {
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
-								chart=_.filter(JSON.parse(chart.tickers),{product:product});
+								chart=_.filter(chart.tickers,{product:product});
 								if(!_.isEmpty(chart)){
 									chart=_.head(chart);
 									chart_data.push(chart.last);
@@ -1163,7 +1163,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -1194,7 +1194,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products).result; 
+				var products=data.products.result; 
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
 					if(err){ 
 						ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);
@@ -1219,7 +1219,7 @@ module.exports = {
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers).result,{MarketName:ticker.MarketName});
+										chart=_.filter(chart.tickers.result,{MarketName:ticker.MarketName});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.Last);
@@ -1230,7 +1230,7 @@ module.exports = {
 								 }
 							 });
 							 
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -1261,7 +1261,7 @@ module.exports = {
 						_.forEach(tickers,function(ticker){
 							var chart_data=[];
 							_.forEach(charts,function(chart){
-								chart=_.filter(JSON.parse(chart.tickers),{symbol:ticker.symbol});
+								chart=_.filter(chart.tickers,{symbol:ticker.symbol});
 								if(!_.isEmpty(chart)){
 									chart=_.head(chart);
 									chart_data.push(chart.price_usd);
@@ -1271,7 +1271,7 @@ module.exports = {
 							ticker.chart=chart_data;
 						});
 						
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+						ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
 							if(err){ 
 								ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);
 							}
@@ -1291,7 +1291,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				products=JSON.parse(data.products);
+				products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);
@@ -1303,7 +1303,7 @@ module.exports = {
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
-								chart=_.filter(JSON.parse(chart.tickers),{product_id:product});
+								chart=_.filter(chart.tickers,{product_id:product});
 								if(!_.isEmpty(chart)){
 									chart=_.head(chart);
 									chart_data.push(chart.bid);
@@ -1326,7 +1326,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -1347,7 +1347,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);
@@ -1365,7 +1365,7 @@ module.exports = {
 									var chart_data=[];
 									
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers),{symbol:ticker.symbol});
+										chart=_.filter(chart.tickers,{symbol:ticker.symbol});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.bid);
@@ -1377,7 +1377,7 @@ module.exports = {
 								}
 							});
 							
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -1401,7 +1401,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products);
+				var products=data.products;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);
@@ -1417,7 +1417,7 @@ module.exports = {
 									ticker.product=product;
 									var chart_data=[];
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers),{product:product});
+										chart=_.filter(chart.tickers,{product:product});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.last);
@@ -1430,7 +1430,7 @@ module.exports = {
 							});
 							
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -1454,7 +1454,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products).symbols;
+				var products=data.products.symbols;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);
@@ -1472,7 +1472,7 @@ module.exports = {
 									ticker.quoteAsset=product.quoteAsset;
 									var chart_data=[];
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers));
+										chart=_.filter(chart.tickers,{symbol:ticker.symbol});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.lastPrice);
@@ -1483,7 +1483,7 @@ module.exports = {
 								}
 							});
 							
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 							date_created:curDateTime},function(err, data){
 								if(err){ 
 									ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);
@@ -1508,7 +1508,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=JSON.parse(data.products).data;
+				var products=data.products.data;
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);
@@ -1532,7 +1532,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:product['base-currency']+product['quote-currency']});
+									chart=_.filter(chart.tickers,{product:product['base-currency']+product['quote-currency']});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.tick.bid[0]);
@@ -1555,7 +1555,7 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers_data),date_created:curDateTime},function(err,data){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
 								if(err){ 
 									ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);
 								}
@@ -1594,7 +1594,7 @@ module.exports = {
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
-										chart=_.filter(JSON.parse(chart.tickers),{product:product});
+										chart=_.filter(chart.tickers,{product:product});
 										if(!_.isEmpty(chart)){
 											chart=_.head(chart);
 											chart_data.push(chart.sell);
@@ -1607,7 +1607,7 @@ module.exports = {
 								});
 								tickers=temp;
 							
-								ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),date_created:curDateTime},function(err,data){
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
 									if(err){ 
 										ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);
 									}
@@ -1632,7 +1632,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				var products=Object.keys(JSON.parse(data.products).pairs);
+				var products=Object.keys(data.products.pairs);
 				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);
@@ -1651,7 +1651,7 @@ module.exports = {
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
-									chart=_.filter(JSON.parse(chart.tickers),{product:product});
+									chart=_.filter(chart.tickers,{product:product});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.last);
@@ -1664,7 +1664,7 @@ module.exports = {
 							});
 				
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:JSON.stringify(tickers),
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
 							date_created:curDateTime},function(err, data){
 								if(err){ 
 									ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);
@@ -1685,14 +1685,14 @@ module.exports = {
 		//PROCESS TO CALCULATE TOTAL CRYPTO PRICE
 		TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 			if(err){ 
-				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'exchange_select',curDateTime);
+				ApiService.exchangeErrors('totalcryptoprice','query_select',err,'exchange_select',curDateTime);
 			}
 			var tc100=0;
 			var total_usd_market_cap=0;
 			var tcw100=0;
 			if(!_.isEmpty(totalCryptoPrices)){ 
 				totalCryptoPrices=_.head(totalCryptoPrices);
-				totalCryptoPrices=JSON.parse(totalCryptoPrices.prices);
+				totalCryptoPrices=totalCryptoPrices.prices;
 				var temp=[];
 				_.forEach(totalCryptoPrices,function(ticker){
 					if(ticker.quote_currency=='usd'){
@@ -1719,7 +1719,7 @@ module.exports = {
 								ApiService.exchangeErrors('totalcryptoprice','query_select',err,'tickers_select',curDateTime);
 							}
 							if(!_.isEmpty(coinMarketTickers)){
-								coinMarketTickers=JSON.parse(coinMarketTickers.tickers);
+								coinMarketTickers=coinMarketTickers.tickers;
 								coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 								coinMarketTickers=_.slice(coinMarketTickers,0,99);
 							
@@ -1941,10 +1941,10 @@ module.exports = {
 
 				if(!_.isEmpty(temp)){ 
 					_.forEach(temp,function(data){
-						data.price=_.reduce(data.prices,function(sum,n){return sum+n;},0)/data.prices.length;
-						data.volume=_.reduce(data.volumes,function(sum,n){return sum+n;},0)/data.volumes.length;
-						data.high=Math.max.apply(Math,data.max_prices);
-						data.low=Math.min.apply(Math,data.min_prices);
+						data.price=math.format(_.reduce(data.prices,function(sum,n){return sum+n;},0)/data.prices.length, {lowerExp: -100, upperExp: 100});
+						data.volume=math.format(_.reduce(data.volumes,function(sum,n){return sum+n;},0)/data.volumes.length, {lowerExp: -100, upperExp: 100});
+						data.high=math.format(Math.max.apply(Math,data.max_prices), {lowerExp: -100, upperExp: 100});
+						data.low=math.format(Math.min.apply(Math,data.min_prices), {lowerExp: -100, upperExp: 100});
 						if(data.prices.length>0 && data.volumes.length>0 && data.max_prices.length>0 && data.min_prices.length>0){
 							delete data.prices;
 							delete data.volumes;
@@ -1954,32 +1954,24 @@ module.exports = {
 						}
 					});
 					
-					//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
-					_.forEach(insert_array, function(data){
-						data.price=math.format(data.price,{lowerExp: -100, upperExp: 100});
-						data.volume=math.format(data.volume,{lowerExp: -100, upperExp: 100});
-						data.high=math.format(data.high,{lowerExp: -100, upperExp: 100});
-						data.low=math.format(data.low,{lowerExp: -100, upperExp: 100});
-					});
-					
 					//PROCESS TO PREPARE CHART DATA
 					_.forEach(insert_array, function(data){
 						var chart_data=[];
-						_.forEach(charts,function(chart_list){
-							chart_list=JSON.parse(chart_list.prices);
-							_.forEach(chart_list,function(chart){
-								if(chart.product==data.product){
-									chart_data.push(chart.price);
-								}
-							});
+						_.forEach(charts,function(chart){
+							chart=_.filter(chart.prices,{product:data.product});
+							if(!_.isEmpty(chart)){
+								chart=_.head(chart);
+								chart_data.push(chart.price);
+							}
 						});
 						
 						chart_data.push(data.price);
 						data.chart=chart_data;
 					});
-						
-					TotalCryptoPrices.create({prices:JSON.stringify(insert_array),date_created:curDateTime},function(err,data){
-						ApiService.exchangeErrors('totalcryptoprices','query_insert',err,'tickers_insert',curDateTime);
+					TotalCryptoPrices.create({prices:insert_array,date_created:curDateTime},function(err,data){
+						if(err){
+							ApiService.exchangeErrors('totalcryptoprices','query_insert',err,'tickers_insert',curDateTime);
+						}
 					});
 				}
 			}).

@@ -5,7 +5,7 @@ module.exports = {
 		return new Promise(function(resolve, reject) {
 			ExchangeList.findOne({name:'gdax'},function(err, gdaxExchange){
 				if(!_.isEmpty(gdaxExchange)){
-					var gdaxProducts=JSON.parse(gdaxExchange.products);
+					var gdaxProducts=gdaxExchange.products;
 					var tickers=ExchangeTickers.findOne();
 					tickers.where({exchange_id:gdaxExchange.id});
 					tickers.sort('id DESC');
@@ -17,9 +17,9 @@ module.exports = {
 							stats.exec(function(err, stats){
 								if(!_.isEmpty(stats))
 								{
-									var gdaxTickers=JSON.parse(tickers.tickers);
+									var gdaxTickers=tickers.tickers;
 									_.forEach(gdaxTickers,function(ticker){
-										var stat=_.filter(JSON.parse(stats.stats),{product_id:ticker.product_id});
+										var stat=_.filter(stats.stats,{product_id:ticker.product_id});
 										if(!_.isEmpty(stat)){
 											stat=_.head(stat);
 											ticker.variation=(parseFloat(ticker.price)-parseFloat(stat.open))*100/parseFloat(stat.open);
@@ -31,10 +31,10 @@ module.exports = {
 									trades.sort('id DESC');
 									trades.exec(function(err, trades){
 										if(!_.isEmpty(trades)){
-											var gdaxTrades=JSON.parse(trades.trades);
+											var gdaxTrades=trades.trades;
 											
 											_.forEach(gdaxTickers,function(ticker){
-												var trade=_.filter(JSON.parse(trades.trades),{product_id:ticker.product_id});
+												var trade=_.filter(trades.trades,{product_id:ticker.product_id});
 												if(!_.isEmpty(trade)){
 													trade=_.head(trade);
 													trade.data.sort(function(a,b){
@@ -94,7 +94,7 @@ module.exports = {
 					bittrexTickers.sort('id DESC');
 					bittrexTickers.exec(function(err,bittrexTickers){
 						if(!_.isEmpty(bittrexTickers)){
-							bittrexTickers=JSON.parse(bittrexTickers.tickers).result;
+							bittrexTickers=bittrexTickers.tickers.result;
 							bittrexTickers.sort(function(a,b){ if(parseFloat(a.Volume)>parseFloat(b.Volume)){return -1;}else {return 1;}});
 							return resolve({name:bittrexExchange.name,url:bittrexExchange.url,is_exchange:bittrexExchange.is_exchange,data:bittrexTickers});
 						}
@@ -120,7 +120,7 @@ module.exports = {
 					coinMarketTickers.sort('id DESC');
 					coinMarketTickers.exec(function(err,coinMarketTickers){
 						if(!_.isEmpty(coinMarketTickers)){
-							coinMarketTickers=JSON.parse(coinMarketTickers.tickers);
+							coinMarketTickers=coinMarketTickers.tickers;
 							coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 							return resolve({name:coinmarketcapExchange.name,url:coinmarketcapExchange.url,is_exchange:coinmarketcapExchange.is_exchange,data:coinMarketTickers});
 						}
@@ -146,7 +146,7 @@ module.exports = {
 					bitfinexTickers.sort('id DESC');
 					bitfinexTickers.exec(function(err,bitfinexTickers){
 						if(!_.isEmpty(bitfinexTickers)){
-							bitfinexTickers=JSON.parse(bitfinexTickers.tickers);
+							bitfinexTickers=bitfinexTickers.tickers;
 							bitfinexTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:bitfinexExchange.name,url:bitfinexExchange.url,is_exchange:bitfinexExchange.is_exchange,data:bitfinexTickers});
 						}
@@ -172,7 +172,7 @@ module.exports = {
 					hitbtcTickers.sort('id DESC');							
 					hitbtcTickers.exec(function(err,hitbtcTickers){
 						if(!_.isEmpty(hitbtcTickers)){
-							hitbtcTickers=JSON.parse(hitbtcTickers.tickers);
+							hitbtcTickers=hitbtcTickers.tickers;
 							hitbtcTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:hitbtcExchange.name,url:hitbtcExchange.url,is_exchange:hitbtcExchange.is_exchange,data:hitbtcTickers});
 						}
@@ -198,7 +198,7 @@ module.exports = {
 					gateTickers.sort('id DESC');							
 					gateTickers.exec(function(err,gateTickers){
 						if(!_.isEmpty(gateTickers)){
-							gateTickers=JSON.parse(gateTickers.tickers);
+							gateTickers=gateTickers.tickers;
 							gateTickers.sort(function(a,b){ if(parseFloat(a.baseVolume)>parseFloat(b.baseVolume)){return -1;}else {return 1;}});
 							return resolve({name:gateExchange.name,url:gateExchange.url,is_exchange:gateExchange.is_exchange,data:gateTickers});
 						}
@@ -224,7 +224,7 @@ module.exports = {
 					kunaTickers.sort('id DESC');
 					kunaTickers.exec(function(err,kunaTickers){
 						if(!_.isEmpty(kunaTickers)){
-							kunaTickers=JSON.parse(kunaTickers.tickers);
+							kunaTickers=kunaTickers.tickers;
 							kunaTickers.sort(function(a,b){if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
 							return resolve({name:kunaExchange.name,url:kunaExchange.url,is_exchange:kunaExchange.is_exchange,data:kunaTickers});
 						}
@@ -245,13 +245,13 @@ module.exports = {
 		return new Promise(function(resolve, reject) {
 			ExchangeList.findOne({name:'okex'},function(err, okexExchange){
 				if(!_.isEmpty(okexExchange)){
-					var okexProducts=JSON.parse(okexExchange.products);
+					var okexProducts=okexExchange.products;
 					var tickers=ExchangeTickers.findOne();
 					tickers.where({exchange_id:okexExchange.id});
 					tickers.sort('id DESC');
 					tickers.exec(function(err,okexTickers){
 						if(!_.isEmpty(okexTickers)){
-							var okexTickers=JSON.parse(okexTickers.tickers);
+							var okexTickers=okexTickers.tickers;
 							okexTickers.sort(function(a,b){ if(parseFloat(a.ticker.vol)>parseFloat(b.ticker.vol)){return -1;}else{ return 1;}});
 							return resolve({name:okexExchange.name,url:okexExchange.url,is_exchange:okexExchange.is_exchange,data:okexTickers});
 						}
@@ -277,7 +277,7 @@ module.exports = {
 					tickers.sort('id DESC');
 					tickers.exec(function(err, binanceTickers){
 						if(!_.isEmpty(binanceTickers)){
-							binanceTickers=JSON.parse(binanceTickers.tickers);
+							binanceTickers=binanceTickers.tickers;
 							binanceTickers.sort(function(a,b){if(parseFloat(a.volume)>parseFloat(b.volume)){ return -1;}else{ return 1;}});
 							return resolve({name:binanceExchange.name,url:binanceExchange.url,is_exchange:binanceExchange.is_exchange,data:binanceTickers});
 						}
@@ -303,7 +303,7 @@ module.exports = {
 					tickers.sort('id DESC');
 					tickers.exec(function(err, huobiTickers){
 						if(!_.isEmpty(huobiTickers)){
-							huobiTickers=JSON.parse(huobiTickers.tickers);
+							huobiTickers=huobiTickers.tickers;
 							huobiTickers.sort(function(a,b){ if(parseFloat(a.tick.vol)>parseFloat(b.tick.vol)){ return -1;}else{ return 1;}});
 							return resolve({name:huobiExchange.name,url:huobiExchange.url,is_exchange:huobiExchange.is_exchange,data:huobiTickers});
 						}
@@ -324,13 +324,13 @@ module.exports = {
 		return new Promise(function(resolve, reject){
 			ExchangeList.findOne({name:'gemini'}, function(err, geminiExchange){
 				if(!_.isEmpty(geminiExchange)){
-					var geminiProducts=JSON.parse(geminiExchange.products);
+					var geminiProducts=geminiExchange.products;
 					var tickers=ExchangeTickers.findOne();
 					tickers.where({exchange_id:geminiExchange.id});
 					tickers.sort('id DESC');
 					tickers.exec(function(err, geminiTickers){
 						if(!_.isEmpty(geminiTickers)){
-							geminiTickers=JSON.parse(geminiTickers.tickers);
+							geminiTickers=geminiTickers.tickers;
 							geminiTickers.sort(function(a,b){if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else{ return 1;}});
 							return resolve({name:geminiExchange.name,url:geminiExchange.url,is_exchange:geminiExchange.is_exchange,data:geminiTickers});
 						}
@@ -356,7 +356,7 @@ module.exports = {
 					krakenTickers.sort('id DESC');
 					krakenTickers.exec(function(err,krakenTickers){
 						if(!_.isEmpty(krakenTickers)){
-							krakenTickers=JSON.parse(krakenTickers.tickers);
+							krakenTickers=krakenTickers.tickers;
 							krakenTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:krakenExchange.name,url:krakenExchange.url,is_exchange:krakenExchange.is_exchange,data:krakenTickers});
 						}
@@ -382,7 +382,7 @@ module.exports = {
 					bitflyerTickers.sort('id DESC');
 					bitflyerTickers.exec(function(err,bitflyerTickers){
 						if(!_.isEmpty(bitflyerTickers)){
-							bitflyerTickers=JSON.parse(bitflyerTickers.tickers);
+							bitflyerTickers=bitflyerTickers.tickers;
 							bitflyerTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:bitflyerExchange.name,url:bitflyerExchange.url,is_exchange:bitflyerExchange.is_exchange,data:bitflyerTickers});
 						}
@@ -408,7 +408,7 @@ module.exports = {
 					bithumbTickers.sort('id DESC');
 					bithumbTickers.exec(function(err,bithumbTickers){
 						if(!_.isEmpty(bithumbTickers)){
-							bithumbTickers=JSON.parse(bithumbTickers.tickers);
+							bithumbTickers=bithumbTickers.tickers;
 							bithumbTickers.sort(function(a,b){ if(parseFloat(a.volume_1day)>parseFloat(b.volume_1day)){return -1;}else {return 1;}});
 							return resolve({name:bithumbExchange.name,url:bithumbExchange.url,is_exchange:bithumbExchange.is_exchange,data:bithumbTickers});
 						}
@@ -434,7 +434,7 @@ module.exports = {
 					bitstampTickers.sort('id DESC');
 					bitstampTickers.exec(function(err,bitstampTickers){
 						if(!_.isEmpty(bitstampTickers)){
-							bitstampTickers=JSON.parse(bitstampTickers.tickers);
+							bitstampTickers=bitstampTickers.tickers;
 							bitstampTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:bitstampExchange.name,url:bitstampExchange.url,is_exchange:bitstampExchange.is_exchange,data:bitstampTickers});
 						}
@@ -460,7 +460,7 @@ module.exports = {
 					bitzTickers.sort('id DESC');
 					bitzTickers.exec(function(err,bitzTickers){
 						if(!_.isEmpty(bitzTickers)){
-							bitzTickers=JSON.parse(bitzTickers.tickers);
+							bitzTickers=bitzTickers.tickers;
 							bitzTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
 							return resolve({name:bitzExchange.name,url:bitzExchange.url,is_exchange:bitzExchange.is_exchange,data:bitzTickers});
 						}
@@ -486,7 +486,7 @@ module.exports = {
 					lbankTickers.sort('id DESC');
 					lbankTickers.exec(function(err,lbankTickers){
 						if(!_.isEmpty(lbankTickers)){
-							lbankTickers=JSON.parse(lbankTickers.tickers);
+							lbankTickers=lbankTickers.tickers;
 							lbankTickers.sort(function(a,b){ if(parseFloat(a.ticker.vol)>parseFloat(b.ticker.vol)){return -1;}else {return 1;}});
 							return resolve({name:lbankExchange.name,url:lbankExchange.url,is_exchange:lbankExchange.is_exchange,data:lbankTickers});
 						}
@@ -512,7 +512,7 @@ module.exports = {
 					coinoneTickers.sort('id DESC');
 					coinoneTickers.exec(function(err,coinoneTickers){
 						if(!_.isEmpty(coinoneTickers)){
-							coinoneTickers=JSON.parse(coinoneTickers.tickers);
+							coinoneTickers=coinoneTickers.tickers;
 							coinoneTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:coinoneExchange.name,url:coinoneExchange.url,is_exchange:coinoneExchange.is_exchange,data:coinoneTickers});
 						}
@@ -538,7 +538,7 @@ module.exports = {
 					wexTickers.sort('id DESC');
 					wexTickers.exec(function(err,wexTickers){
 						if(!_.isEmpty(wexTickers)){
-							wexTickers=JSON.parse(wexTickers.tickers);
+							wexTickers=wexTickers.tickers;
 							wexTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
 							return resolve({name:wexExchange.name,url:wexExchange.url,is_exchange:wexExchange.is_exchange,data:wexTickers});
 						}
@@ -564,7 +564,7 @@ module.exports = {
 					exmoTickers.sort('id DESC');
 					exmoTickers.exec(function(err,exmoTickers){
 						if(!_.isEmpty(exmoTickers)){
-							exmoTickers=JSON.parse(exmoTickers.tickers);
+							exmoTickers=exmoTickers.tickers;
 							exmoTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
 							return resolve({name:exmoExchange.name,url:exmoExchange.url,is_exchange:exmoExchange.is_exchange,data:exmoTickers});
 						}
@@ -590,7 +590,7 @@ module.exports = {
 					liquiTickers.sort('id DESC');
 					liquiTickers.exec(function(err,liquiTickers){
 						if(!_.isEmpty(liquiTickers)){
-							liquiTickers=JSON.parse(liquiTickers.tickers);
+							liquiTickers=liquiTickers.tickers;
 							liquiTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
 							return resolve({name:liquiExchange.name,url:liquiExchange.url,is_exchange:liquiExchange.is_exchange,data:liquiTickers});
 						}
@@ -616,7 +616,7 @@ module.exports = {
 					korbitTickers.sort('id DESC');
 					korbitTickers.exec(function(err,korbitTickers){
 						if(!_.isEmpty(korbitTickers)){
-							korbitTickers=JSON.parse(korbitTickers.tickers);
+							korbitTickers=korbitTickers.tickers;
 							korbitTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							return resolve({name:korbitExchange.name,url:korbitExchange.url,is_exchange:korbitExchange.is_exchange,data:korbitTickers});
 						}
@@ -638,7 +638,7 @@ module.exports = {
 			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 				if(!_.isEmpty(totalCryptoPrices)){ 
 					totalCryptoPrices=_.head(totalCryptoPrices);
-					totalCryptoPrices=JSON.parse(totalCryptoPrices.prices);
+					totalCryptoPrices=totalCryptoPrices.prices;
 					var temp=[];
 					_.forEach(totalCryptoPrices,function(ticker){
 						if(ticker.quote_currency=='usd'){
@@ -662,7 +662,7 @@ module.exports = {
 			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 				if(!_.isEmpty(totalCryptoPrices)){ 
 					totalCryptoPrices=_.head(totalCryptoPrices);
-					totalCryptoPrices=JSON.parse(totalCryptoPrices.prices);
+					totalCryptoPrices=totalCryptoPrices.prices;
 					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 					return resolve({name:'total cryptos pair price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
 				}
