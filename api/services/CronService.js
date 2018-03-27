@@ -473,8 +473,8 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
-					if(err){ 
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){ 
+					if(err){  
 						ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);
 					}
 					ApiService.kunaMarketTicker().then(tickers=>{
@@ -530,7 +530,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);
 					}
@@ -587,7 +587,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){ 
 					if(err){ 
 						ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);
 					}
@@ -660,7 +660,7 @@ module.exports = {
 					temp.push({name:product_name,base:products[product_name].base,quote:products[product_name].quote});
 				});
 				products=temp;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);
 					}
@@ -732,7 +732,7 @@ module.exports = {
 					}
 				});
 				products=temp;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);
 					}
@@ -790,7 +790,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);
 					}
@@ -847,7 +847,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);
 					}
@@ -905,7 +905,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);
 					}
@@ -954,7 +954,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1013,7 +1013,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(data.products.pairs);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1069,7 +1069,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1126,7 +1126,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1195,7 +1195,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products.result; 
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){ 
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){ 
 					if(err){ 
 						ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1251,7 +1251,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1292,7 +1292,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);
 					}	
@@ -1348,7 +1348,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1402,7 +1402,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1455,7 +1455,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products.symbols;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1509,7 +1509,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=data.products.data;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1576,7 +1576,7 @@ module.exports = {
 			}
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);
 					}
@@ -1633,7 +1633,7 @@ module.exports = {
 			if(!_.isEmpty(data)){
 				var exchange_id=data.id;
 				var products=Object.keys(data.products.pairs);
-				ExchangeTickers.find({exchange_id:exchange_id},{ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
 					if(err){ 
 						ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);
 					}

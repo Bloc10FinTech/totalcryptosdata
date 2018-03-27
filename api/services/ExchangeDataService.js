@@ -639,15 +639,9 @@ module.exports = {
 				if(!_.isEmpty(totalCryptoPrices)){ 
 					totalCryptoPrices=_.head(totalCryptoPrices);
 					totalCryptoPrices=totalCryptoPrices.prices;
-					var temp=[];
-					_.forEach(totalCryptoPrices,function(ticker){
-						if(ticker.quote_currency=='usd'){
-							temp.push(ticker);
-						}
-					});
-					
-					temp.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-					return resolve({name:'total cryptos usd price',url:'http://totalcryptos.com',is_exchange:'yes',data:temp});
+					totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
+					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					return resolve({name:'total cryptos usd price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
 				}
 				else{
 					return resolve({name:'',url:'',is_exchange:'',data:[]});

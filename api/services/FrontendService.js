@@ -1851,5 +1851,12 @@ module.exports = {
 				}
 			});
 		});	
+	},
+	
+	documentation:function(callBack){
+		var _=require('lodash');
+		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+			callBack({cryptoData:cryptoData});
+		});
 	}
 };
