@@ -1,3 +1,47 @@
+.nav li{
+	display:inline-block;
+    transform: skew(25deg);
+
+}
+
+.nav li a{
+	display:block;
+    transform: skew(-25deg);
+}
+
+.nav .open ,
+.nav .open:hover,
+.nav .open:focus {
+  background: #293846;
+  transform: skew(25deg);
+}
+
+.nav .open > a.dropdown-toggle,
+.nav .open > a.dropdown-toggle:hover,
+.nav .open > a.dropdown-toggle:focus {
+    border: none;
+    background: none;
+    color: white;
+  	transform: skew(-25deg);
+}
+
+ul.dropdown-menu li a{
+  transform:skew(-50deg);
+}
+
+.dropdown-menu>li>a:focus,
+.dropdown-menu>li>a:hover {
+
+    background: none;
+}
+.inner-menu{
+	z-index: 99;
+}
+
+.Vol24Hex{
+	margin-top: 4%;
+}
+
 .nav-bar-float{
 	margin-top: 20px;
 }

@@ -345,16 +345,16 @@ body.mini-navbar .navbar-default .nav > li > .nav-second-level li a {
   -moz-border-right-colors: none;
   -moz-border-top-colors: none;
   background: none;
-  border-color: #dddddd #dddddd rgba(0, 0, 0, 0);
-  border-bottom: #f3f3f4;
-  border-image: none;
-  border-style: solid;
-  border-width: 1px;
-  color: #555555;
+  /*border-color: #dddddd #dddddd rgba(0, 0, 0, 0);*/ /*this*/
+  /*border-bottom: #f3f3f4;*/ /*this*/
+  border-image: none;     
+  /*border-style: solid;*/    /*this*/
+  /*border-width: 1px;  */    /*this*/
+  color: #FFF;
   cursor: default;
 }
 .nav.nav-tabs li {
-  background: none;
+  /*background: none;*/ /*this*/
   border: none;
 }
 body.fixed-nav #wrapper .navbar-static-side,
@@ -3774,11 +3774,28 @@ body.body-small .footer.fixed {
   font-weight: 600;
   padding: 10px 20px 10px 25px;
 }
+/*Edited by me */ /*this*/
+.nav-tabs > li:hover,
+.nav-tabs > li:focus {
+ background-color: #293846;
+ color: #676a6c;
+ transform: skew(25deg);
+}
 .nav-tabs > li > a:hover,
 .nav-tabs > li > a:focus {
-  background-color: #e6e6e6;
-  color: #676a6c;
+ transform: skew(-25deg);
+ color: #FFF;
 }
+/* End of Edited by me */
+
+
+/*This was the original*/
+/*.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus {
+  background-color: #e6e6e6;  
+  color: #676a6c;
+}*/
+/*End of the original*/
 .ui-tab .tab-content {
   padding: 20px 0;
 }
