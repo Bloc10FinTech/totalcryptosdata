@@ -42,8 +42,12 @@ module.exports.routes = {
   '/exchange/:exchangeName':'HomeController.exchange',
   '/tc-history':'HomeController.tc_history',
   '/gainers-and-loosers':'HomeController.gainers_and_loosers',
-  '/apis/symbolsUSDPrices':'ApiController.symbolsUSDPrices',
-  '/apis/productsPrices':'ApiController.productsPrices',
+  '/api/documentation':'HomeController.documentation',
+  '/api/tcPrices':'ApiController.tcPrices',
+  '/api/symbolsUSDPrices':'ApiController.symbolsUSDPrices',
+  '/api/symbolsUSDPrices/:currency':'ApiController.symbolUSDPrice',
+  '/api/productsPrices':'ApiController.productsPrices',
+  '/api/productsPrices/:product':'ApiController.productPrice',
   '/home': {
     view: 'homepage'
   },
