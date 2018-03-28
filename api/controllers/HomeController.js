@@ -46,6 +46,11 @@ module.exports = {
 	  FrontendService.gainers_and_loosers(function(data){
 		 return response.view('gainers_and_loosers',{data: data.gainer_loosers, cryptoData: data.cryptoData, title: 'Total Cryptos'}); 
 	  });
-  }
+  },
+  documentation:function(request, response){
+	  FrontendService.documentation(function(data){
+		 return response.view('documentation',{cryptoData: data.cryptoData, title: 'Total Cryptos'}); 
+	  });
+  }	
 };
 

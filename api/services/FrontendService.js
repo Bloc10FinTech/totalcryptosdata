@@ -1784,7 +1784,7 @@ module.exports = {
 					tickers.where({exchange_id:coin_market_exchange.id});
 					tickers.sort('id DESC');
 					tickers.then(function(tickers){
-						var tickers=JSON.parse(tickers.tickers);
+						var tickers=tickers.tickers;
 						//PROCESS TO GET LAST 1 HOUR GAINERS AND LOOSERS
 						tickers.sort(function(a,b){ if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
 						var temp=[];
@@ -1851,5 +1851,12 @@ module.exports = {
 				}
 			});
 		});	
+	},
+	
+	documentation:function(callBack){
+		var _=require('lodash');
+		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+			callBack({cryptoData:cryptoData});
+		});
 	}
 };
