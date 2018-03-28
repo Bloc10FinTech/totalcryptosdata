@@ -1700,7 +1700,7 @@ module.exports = {
 					}
 				});
 				temp.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-				temp=_.slice(temp,0,99);
+				temp=_.slice(temp,0,100);
 				_.forEach(temp,function(ticker){
 					tc100+=parseFloat(ticker.price);
 				});
@@ -1721,7 +1721,7 @@ module.exports = {
 							if(!_.isEmpty(coinMarketTickers)){
 								coinMarketTickers=coinMarketTickers.tickers;
 								coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
-								coinMarketTickers=_.slice(coinMarketTickers,0,99);
+								coinMarketTickers=_.slice(coinMarketTickers,0,100);
 							
 								_.forEach(coinMarketTickers,function(ticker){
 									total_usd_market_cap=total_usd_market_cap+parseFloat(ticker.market_cap_usd);

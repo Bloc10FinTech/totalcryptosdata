@@ -32,9 +32,7 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    controller: 'home'
-  },
+  '/': {controller: 'home'},
   '/volume-24-hour-currency':'HomeController.volume_24_hour_currency',
   '/volume-24-hour-currency/:symbol':'HomeController.volume_24_hour_currency_symbol',
   '/volume-24-hour-market/:market':'HomeController.volume_24_hour_market',
@@ -48,12 +46,9 @@ module.exports.routes = {
   '/api/symbolsUSDPrices/:currency':'ApiController.symbolUSDPrice',
   '/api/productsPrices':'ApiController.productsPrices',
   '/api/productsPrices/:product':'ApiController.productPrice',
-  '/home': {
-    view: 'homepage'
-  },
-  '/login':{
-	  view: 'login'
-  },
+  '/api/topProductsPrices':'ApiController.topProductsPrices',
+  '/home': {view: 'homepage'},
+  '/login':{view: 'login'},
   'post /doLogin':'AuthController.doLogin'
 
   /***************************************************************************

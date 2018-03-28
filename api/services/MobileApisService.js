@@ -165,6 +165,38 @@ module.exports = {
 		});
 	},
 	
+	topProductsPrices:function(callBack,request){
+		var _ = require('lodash');
+		MobileApisService.checkUpdateApiCalls(request.ip,'topProductsPrices').
+		then(response => {
+			if(response){
+				return new Promise(function(resolve,reject){
+					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
+						if(err){
+							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+						}
+						if(!_.isEmpty(productPrices)){ 
+							productPrices=_.head(productPrices);
+							productPrices=productPrices.prices;
+							productPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+							productPrices=_.slice(productPrices,0,10);
+							callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
+						}
+						else{
+							callBack({errCode:404,message:'Record not found.',data:[]});
+						}
+					});
+				});
+			}
+			else{
+				callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+			}
+		}).
+		catch(err => {
+			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+		});
+	},
+	
 	checkUpdateApiCalls:function(ip_address,api_name){
 		var moment = require('moment');
 		var _ = require('lodash');
