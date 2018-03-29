@@ -36,6 +36,11 @@ module.exports = {
 	  MobileApisService.topProductsPrices(function(data){
 		return response.send(data);
 	},request);
+  },
+  topGainersLoosers:function(request, response) {
+	  MobileApisService.topGainersLoosers(function(data){
+		return response.send(data);
+	},request);
   }
 };
 

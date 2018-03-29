@@ -28,18 +28,19 @@ module.exports = {
 			ExchangeDataService.korbitMarketData(),
 			ExchangeDataService.totalCryptoPricesUsd(),
 			ExchangeDataService.totalCryptoPricesPairs(),
-			ExchangeDataService.totalCryptosPrice()
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
 		]
 		).then(response => { 
 			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24]});
+				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data});
 			}else{
-				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24]});
+				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data});
 			}
 		}).
 		catch(err => { 
 			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[]});
+				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[]});
 			}else{
 				//NO NEED TO SEND SOCKET DATA IN THIS CASE
 			}
@@ -48,7 +49,12 @@ module.exports = {
 
 	volume_24_hour_currency:function(callBack){
 		var _ = require('lodash');
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+		
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
 			ExchangeList.find({},function(err, currencies){
 				if(!_.isEmpty(currencies)){
 					var exchange_array=[];
@@ -316,10 +322,10 @@ module.exports = {
 								return exchange;
 						}
 					})).
-					then(response =>{
+					then(response_data =>{
 						var temp_array=[];
 						var return_array=[];
-						_.forEach(response,function(exchange_data){
+						_.forEach(response_data,function(exchange_data){
 							if(!_.isEmpty(exchange_data.data)){
 								temp_array.push(exchange_data);
 							}
@@ -361,18 +367,24 @@ module.exports = {
 							currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({currency:return_array,cryptoData:cryptoData});
+						callBack({currency:return_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({currency:[],cryptoData:cryptoData});});
+					catch(err => { callBack({currency:[],cryptoData:response[0],topproducts:response[1].data});});
 				}
 			});
-		});		
+		}).
+		catch(err => { callBack({currency:[],cryptoData:{},topproducts:[]});});	
 	},
 	
 	volume_24_hour_currency_symbol(symbol,callBack){
 		var _ = require('lodash');
 		symbol=_.toLower(symbol);
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+		
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
 			ExchangeList.find({},function(err, currencies){
 				if(!_.isEmpty(currencies)){
 					var exchange_array=[];
@@ -682,10 +694,10 @@ module.exports = {
 								return exchange;
 						}
 					})).
-					then(response =>{
+					then(symbol_response =>{
 						var temp_array=[];
 						var return_array=[];
-						_.forEach(response,function(exchange_data){
+						_.forEach(symbol_response,function(exchange_data){
 							if(!_.isEmpty(exchange_data.data)){
 								temp_array.push(exchange_data);
 							}
@@ -727,18 +739,23 @@ module.exports = {
 							currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({symbol:return_array,cryptoData:cryptoData});
+						callBack({symbol:return_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({symbol:[],cryptoData:cryptoData});});
+					catch(err => { callBack({symbol:[],cryptoData:response[0],topproducts:response[1].data});});
 				}
 			});
-		});		
+		}).
+		catch(err => { callBack({symbol:[],cryptoData:{},topproducts:[]});});		
 	},
 	
 	volume_24_hour_market:function(market,callBack){
 		var _ = require('lodash');
 		market=_.toLower(market);
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
 			ExchangeList.find({},function(err, exchanges){
 				if(!_.isEmpty(exchanges)){
 					var exchange_array=[];
@@ -1062,10 +1079,10 @@ module.exports = {
 								return exchange;
 						}
 					})).
-					then(response =>{
+					then(market_response =>{
 						var temp_array=[];
 						var return_array=[];
-						_.forEach(response,function(exchange_data){
+						_.forEach(market_response,function(exchange_data){
 							if(!_.isEmpty(exchange_data.data)){
 								temp_array.push(exchange_data);
 							}
@@ -1107,17 +1124,22 @@ module.exports = {
 							markets.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({market:return_array,cryptoData:cryptoData});
+						callBack({market:return_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({market:[],cryptoData:cryptoData});});
+					catch(err => { callBack({market:[],cryptoData:response[0],topproducts:response[1].data});});
 				}
 			});
-		});		
+		}).
+		catch(err => {callBack({market:[],cryptoData:{},topproducts:[]});});		
 	},
 	
 	volume_24_hour_exchange:function(callBack){
 		var _ = require('lodash');
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
 			ExchangeList.find({},function(err, exchanges){
 				if(!_.isEmpty(exchanges)){
 					var exchange_array=[];
@@ -1385,10 +1407,10 @@ module.exports = {
 								return exchange;
 						}
 					})).
-					then(response =>{
+					then(exchange_response =>{
 						var temp_array=[];
 						var return_array=[];
-						_.forEach(response,function(exchange_data){
+						_.forEach(exchange_response,function(exchange_data){
 							if(!_.isEmpty(exchange_data.data)){
 								exchange_data.displayName=_.toUpper(exchange_data.name);
 								temp_array.push(exchange_data);
@@ -1400,18 +1422,23 @@ module.exports = {
 							exchange_data.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({exchange:temp_array,cryptoData:cryptoData});
+						callBack({exchange:temp_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({exchange:[],cryptoData:cryptoData});});
+					catch(err => { callBack({exchange:[],cryptoData:response[0],topproducts:response[1].data});});
 				}
 			});
-		});		
+		}).
+		catch(err => { callBack({exchange:[],cryptoData:{},topproducts:[]});});;		
 	},
 	
 	exchange:function(exchangeName,callBack){	
 		var _ = require('lodash');
 		var exchange_data_array=[];
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
 			switch(exchangeName){
 				
 				case 'gdax':
@@ -1424,9 +1451,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 					
 				case 'bittrex':
@@ -1439,9 +1466,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => { callBack({name:'',url:'',data:exchange_data_array,ccryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'bitfinex':
@@ -1454,9 +1481,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'hitbtc':
@@ -1469,9 +1496,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'gate':
@@ -1484,9 +1511,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'coinmarketcap':
@@ -1499,9 +1526,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'kuna':
@@ -1514,9 +1541,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'okex':
@@ -1529,9 +1556,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'binance':
@@ -1544,9 +1571,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'huobi':
@@ -1559,9 +1586,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'gemini':
@@ -1574,9 +1601,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'kraken':
@@ -1589,9 +1616,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'bitflyer':
@@ -1604,9 +1631,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'bithumb':
@@ -1619,9 +1646,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'bitstamp':
@@ -1634,9 +1661,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'bitz':
@@ -1649,9 +1676,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'lbank':
@@ -1664,9 +1691,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'coinone':
@@ -1679,9 +1706,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'wex':
@@ -1694,9 +1721,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'exmo':
@@ -1709,9 +1736,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'liqui':
@@ -1724,9 +1751,9 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 				
 				case 'korbit':
@@ -1739,37 +1766,40 @@ module.exports = {
 						//SORT DATA IN DESC ORDER OF VOLUME
 						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:cryptoData});
+						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});
 					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:cryptoData});});
+					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data});});
 				break;
 
 				default:
-				callBack([]);
+				callBack({name:'',url:'',data:[],cryptoData:response[0],topproducts:response[1].data});
 			}
-		});	
+		}).
+		catch(err => {callBack({name:'',url:'',data:[],cryptoData:{},topproducts:[]});});	
 	},
 	
 	tc_history:function(callBack){
 		var Promise = require("bluebird");
 		var moment = require("moment");
-		
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
-			return Promise.all([
-				ExchangeDataService.totalCryptosPriceHistory(moment().format('HH'),'day'),
-				ExchangeDataService.totalCryptosPriceHistory(24*7,'week')
-			]).
-			then(response => { 
-				callBack({history1_day:response[0],history7_day:response[1],cryptoData:cryptoData});
-			}).
-			catch(err => { callBack({history1_day:[],history7_day:[],cryptoData:cryptoData});});
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices(),
+			ExchangeDataService.totalCryptosPriceHistory(moment().format('HH'),'day'),
+			ExchangeDataService.totalCryptosPriceHistory(24*7,'week')
+		]).
+		then(response => { 
+			callBack({history1_day:response[2],history7_day:response[3],cryptoData:response[0],topproducts:response[1].data});
 		}).
-		catch(err => { callBack({history1_day:[],history7_day:[],cryptoData:cryptoData});});	
+		catch(err => { callBack({history1_day:[],history7_day:[],cryptoData:{},topproducts:[]});});
 	},
 	
 	gainers_and_loosers:function(callBack){
 		var _=require('lodash');
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
 			ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
 				var gainer_loosers=[];
 				gainer_loosers['gainer_1_h']=[];
@@ -1843,20 +1873,28 @@ module.exports = {
 						});
 						gainer_loosers['looser_7_d']=temp;
 						
-						callBack({gainer_loosers:gainer_loosers,cryptoData:cryptoData});
+						callBack({gainer_loosers:gainer_loosers,cryptoData:response[0],topproducts:response[1].data});
 					});
 				}
 				else{
-					callBack({gainer_loosers:gainer_loosers,cryptoData:cryptoData});
+					callBack({gainer_loosers:gainer_loosers,cryptoData:response[0],topproducts:response[1].data});
 				}
 			});
-		});	
+		}).
+		catch(err => {callBack({gainer_loosers:[],cryptoData:{},topproducts:[]});});	
 	},
 	
 	documentation:function(callBack){
 		var _=require('lodash');
-		ExchangeDataService.totalCryptosPrice().then(cryptoData => {
-			callBack({cryptoData:cryptoData});
+		return Promise.all([
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices()
+		]).
+		then(response => {
+			callBack({cryptoData:response[0],topproducts:response[1].data});
+		}).
+		catch(err => {
+			callBack({cryptoData:{},topproducts:[]});
 		});
 	}
 };

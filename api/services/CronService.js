@@ -344,7 +344,7 @@ module.exports = {
 		var _ = require('lodash');
 		
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
-		var date_after = moment().subtract(1, 'hours').toDate();
+		var date_after = moment().subtract(24, 'hours').toDate();
 		
 		//PROCESS TO INSERT GDAX PRODUCTS TICKERS
 		ExchangeList.findOne({name:'gdax'},function(err,data){
@@ -1185,7 +1185,7 @@ module.exports = {
 		var math = require('mathjs');
 	
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
-		var date_after = moment().subtract(1, 'hours').toDate();
+		var date_after = moment().subtract(24, 'hours').toDate();
 
 		//PROCESS TO INSERT BITTEX PRODUCTS/MARKETS TICKERS
 		ExchangeList.findOne({name:'bittrex'},function(err,data){
@@ -1795,7 +1795,7 @@ module.exports = {
 								quote_currency=_.toLower(ticker.MarketCurrency);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.Bid,volume:ticker.Volume,high:ticker.High,low:ticker.Low});
 							break;
-							case 'coinmarket':
+							case 'coinmarketcap':
 								product=_.toLower(ticker.symbol+'USD');
 								base_currency=_.toLower(ticker.symbol);
 								quote_currency=_.toLower('USD');	
@@ -1954,7 +1954,7 @@ module.exports = {
 						}
 					});
 					
-					//PROCESS TO PREPARE CHART DATA
+					//PROCESS TO PREPARE CHART DATA/CHANGE 1 HOUR AND CHANGE 24 HOURS
 					_.forEach(insert_array, function(data){
 						var chart_data=[];
 						_.forEach(charts,function(chart){
@@ -1967,6 +1967,8 @@ module.exports = {
 						
 						chart_data.push(data.price);
 						data.chart=chart_data;
+						data.change_perc_1h=(chart_data[chart_data.length-1]-chart_data[chart_data.length-2])*100/chart_data[chart_data.length-2];
+						data.change_perc_24h=(chart_data[chart_data.length-1]-chart_data[0])*100/chart_data[0];
 					});
 					TotalCryptoPrices.create({prices:insert_array,date_created:curDateTime},function(err,data){
 						if(err){
