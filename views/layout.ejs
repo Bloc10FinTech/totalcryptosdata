@@ -15,28 +15,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
 
-
-    <!--
-        Stylesheets and Preprocessors
-        ==============================  
-
-        You can always bring in CSS files manually with `<link>` tags, or asynchronously
-        using a solution like AMD (RequireJS).  Or, if you like, you can take advantage
-        of Sails' conventional asset pipeline (boilerplate Gruntfile).
-
-        By default, stylesheets from your `assets/styles` folder are included
-        here automatically (between STYLES and STYLES END). Both CSS (.css) and LESS (.less)
-        are supported. In production, your styles will be minified and concatenated into
-        a single file.
-
-        To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-        For example, here are a few things you could do:
-
-            + Change the order of your CSS files
-            + Import stylesheets from other directories
-            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
-    -->
-
     <!--STYLES-->
     <link rel="stylesheet" href="/styles/animate.css">
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
@@ -64,57 +42,126 @@
 	});
 
 	</script>
+
+<nav class="navbar navbar-inverse navbar-fixed-top hidden-xs">
+  <div class="container-fluid ">
+  <div class="row Header">
+    <div class="col-lg-2 col-md-2 col-sm-2">
+      <h3>
+        <strong>
+          <a href="/">
+            <img class="img-responsive" src="/images/Logo2.png" height="70px" alt="TotalCryptosLogo">
+          </a>
+        </strong>
+      </h3>
+    </div>
+    <div class="col-lg-8 col-md-8 col-sm-8">
+      <div class="row h-50 menu">
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/">HOME</a></li>
+            <li><a href="/api/documentation">API</a></li>
+            <li><a href="#">CONTAC US</a></li>
+            <li><a href="#">ABOUT US</a></li>           
+          </ul>
+      </div>
+      <!--
+      <div class="row col-md-12 h-50">
+           Saved for future use in ADS 
+      </div>
+      -->
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-2">
+      <a href="http://www.bloc10.com/">
+        <img class="img-responsive" src="/images/LogoBloc.png" height="70px" alt="Bloc10.com">
+      </a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h3><a class="aBanner" href="/tc-history">Price of TC 100: <strong><span class="tc100">$<%=cryptoData.tc100%></span></strong></a></h3>
+    </div>
+    <div class="col-md-4">
+      <h3><a class="aBanner" href="/tc-history">Total Market Cap in USD: <strong><span class="FormatNum total_usd_market_cap">$<%=cryptoData.total_usd_market_cap%></span></strong></a></h3>
+    </div>
+    <div class="col-md-4">
+      <h3>
+        <a class="aBanner" href="/tc-history">TCw100: <strong><span class="tcw100"><%=cryptoData.tcw100%></span></strong></a>
+      </h3>
+    </div>
+  </div>
+  </div>
+</nav>
+
+<nav class="navbar navbar-inverse navbar-fixed-top hidden-sm hidden-md hidden-lg">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        <img class="img-responsive" src="/images/LogoSmall.png" height="70px" alt="TotalCryptosLogo">
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/">HOME</a></li>
+    <li><a href="/api/documentation">API</a></li>
+    <li><a href="#">CONTAC US</a></li>
+    <li><a href="#">ABOUT US</a></li> 
+      </ul>
+    </div>
+  </div>
+</nav> 
+
+  <div class="content-fluid">
+  
     <%- body %>
-	
-	
-    <!--
-        Client-side Templates
-        ========================
-
-        HTML templates are important prerequisites of modern, rich client applications.
-        To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
-        that you load these templates client-side.
-
-        By default, your Gruntfile is configured to automatically load and precompile
-        client-side JST templates in your `assets/templates` folder, then
-        include them here automatically (between TEMPLATES and TEMPLATES END).
-
-        To customize this behavior to fit your needs, just edit `tasks/pipeline.js`.
-        For example, here are a few things you could do:
-
-            + Import templates from other directories
-            + Use a different template engine (handlebars, jade, dust, etc.)
-            + Internationalize your client-side templates using a server-side
-              stringfile before they're served.
-    -->
-
-    <!--TEMPLATES-->
     
-    <!--TEMPLATES END-->
-
-
-    <!--
-
-      Client-side Javascript
-      ========================
-
-      You can always bring in JS files manually with `script` tags, or asynchronously
-      on the client using a solution like AMD (RequireJS).  Or, if you like, you can
-      take advantage of Sails' conventional asset pipeline (boilerplate Gruntfile).
-
-      By default, files in your `assets/js` folder are included here
-      automatically (between SCRIPTS and SCRIPTS END).  Both JavaScript (.js) and
-      CoffeeScript (.coffee) are supported. In production, your scripts will be minified
-      and concatenated into a single file.
-
-      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-      For example, here are a few things you could do:
-
-          + Change the order of your scripts
-          + Import scripts from other directories
-          + Use a different preprocessor, like TypeScript
-
-    -->
+  </div>
+	
+<div class="row">
+  <div class="col-lg-12 center" style="padding: 20px 0px;font-weight:bold;background-color:#DCDCDC;">
+    <div class="col-lg-2 col-lg-offset-1">
+      <%=topproducts[0].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[0].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[1].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[1].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[2].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[2].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[3].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[3].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[4].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[4].price).toFixed(8)%>
+    </div>
+  </div>
+  <div class="col-lg-12 center" style="font-weight:bold;background-color:#DCDCDC;">
+    <div class="col-lg-2 col-lg-offset-1">
+      <%=topproducts[5].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[0].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[6].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[1].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[7].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[2].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[8].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[3].price).toFixed(8)%>
+    </div>
+    <div class="col-lg-2">
+      <%=topproducts[9].base_currency.toUpperCase()%>: $<%=parseFloat(topproducts[4].price).toFixed(8)%>
+    </div>
+  </div>
+  <div class="col-lg-12 center" style="padding: 20px 0px 20px 0px;background-color:#DCDCDC;">
+    <strong>Price Data brought to you free by <a href="">www.totalcryptos.com</a></strong>
+  </div>
+</div>	
+    
     <!--SCRIPTS Media-->
     <script src="/js/dependencies/sails.io.js"></script>
     <script src="/js/bootstrap.min.js"></script>
