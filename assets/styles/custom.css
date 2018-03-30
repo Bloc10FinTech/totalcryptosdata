@@ -134,7 +134,40 @@ table.dataTable thead .sorting_desc_disabled {
   background: #67819c !important;
 }
 
+.table-hover > tbody > tr:hover {
+    background-color: #2F374A;
+}
+
 /*End of Table css*/
+
+/*Left Banner*/
+.left-banner{
+	background-color:#dadad9;
+	border: solid #2f374a 1px;
+}
+.Cintillo{
+	background-color: #293846;
+    padding: 5% 0%;
+    color: whitesmoke;
+    font-size: 1.2em;
+    text-align: center;
+}
+.DataBanner{
+	overflow-x: hidden;
+	font-size: 10pt;
+	font-weight: bold;
+}
+.spacer-banner{
+	padding-top: 2%;
+	margin-bottom: 2%;
+	padding-left: 15%;
+}
+.FirstBannerRow{
+	background-color: #67819c;
+    color: whitesmoke;
+    padding-bottom: 1%;
+}
+/*End of Left Banner*/
 
 .Vol24Hex{
 	margin-top: 7%;
