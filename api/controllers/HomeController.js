@@ -8,8 +8,28 @@
 require('dotenv').config();
 module.exports = {
 	index: function (request, response) {
+		var a;
+		var b;
+		var c;
+
+	FrontendService.gainers_and_loosers(function(data){
+		 a=data;
+
+		 if (a.gainer_loosers.gainer_24_h.length>=5){
+		 	b=5;
+		 } else{
+		 	b=a.gainer_loosers.gainer_24_h.length;
+		 }
+		 if (a.gainer_loosers.looser_24_h.length>=5){
+		 	c=5;
+		 } else{
+		 	c=a.gainer_loosers.looser_24_h.length;
+		 }
+
+	  });
+
 	FrontendService.marketData(function(data){ 
-		return response.view('home', {gdax: data.gdax, bittrex: data.bittrex, coinmarket: data.coinmarket,bitfinex:data.bitfinex,hitbtc:data.hitbtc,gate:data.gate,kuna:data.kuna, okex: data.okex, binance:data.binance,huobi:data.huobi, gemini:data.gemini, kraken:data.kraken, bitflyer:data.bitflyer, bithumb:data.bithumb,bitstamp:data.bitstamp, bitz:data.bitz, lbank:data.lbank, coinone:data.coinone,wex:data.wex,exmo:data.exmo,liqui:data.liqui,korbit:data.korbit,totalcryptospriceusd:data.totalcryptospriceusd,totalcryptospricepairs:data.totalcryptospricepairs,cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
+		return response.view('home', {contgain: b, contlooser: c,data: a.gainer_loosers, cryptoData: a.cryptoData, topproducts:a.topproducts, gdax: data.gdax, bittrex: data.bittrex, coinmarket: data.coinmarket,bitfinex:data.bitfinex,hitbtc:data.hitbtc,gate:data.gate,kuna:data.kuna, okex: data.okex, binance:data.binance,huobi:data.huobi, gemini:data.gemini, kraken:data.kraken, bitflyer:data.bitflyer, bithumb:data.bithumb,bitstamp:data.bitstamp, bitz:data.bitz, lbank:data.lbank, coinone:data.coinone,wex:data.wex,exmo:data.exmo,liqui:data.liqui,korbit:data.korbit,totalcryptospriceusd:data.totalcryptospriceusd,totalcryptospricepairs:data.totalcryptospricepairs,cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
 	});
   },
   volume_24_hour_currency:function(request, response) {
@@ -47,6 +67,7 @@ module.exports = {
 		 return response.view('gainers_and_loosers',{data: data.gainer_loosers, cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
 	  });
   },
+
   documentation:function(request, response){
 	  FrontendService.documentation(function(data){
 		 return response.view('documentation',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
