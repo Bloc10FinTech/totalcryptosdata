@@ -106,6 +106,36 @@ ul.dropdown-menu li a{
 /*
 End of Menu
 */
+/*Table Color*/
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #2F374A;
+}
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: #67819c; 
+}
+.table{
+	color: whitesmoke;
+}
+.table tr td a{
+	color: whitesmoke;
+	font-weight: bold;
+}
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td {
+  background-color: #2F374A !important;
+  border-bottom-width: 1px;
+}
+table.dataTable thead .sorting,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc,
+table.dataTable thead .sorting_asc_disabled,
+table.dataTable thead .sorting_desc_disabled {
+  background: #67819c !important;
+}
+
+/*End of Table css*/
+
 .Vol24Hex{
 	margin-top: 7%;
 }
@@ -191,15 +221,32 @@ nav.navbar.navbar-inverse.shrink {
 	.fadeInRight {
 		margin-top: 50px !important;
 	}
+	.col-md-4 h3{
+		font-size: 1.1em;
+	}
 }
 @media all and (max-width: 765px) {
 	.fadeInRight {
-		margin-top: 175px !important;
+		margin-top: 22px !important;
+	}
+	.navbar{
+		min-height: 80px;
+		background: #c5c5c5 !important;
+	}
+	#myNavbar ul li a{
+		color: black;
 	}
 }
 @media all and (max-width: 390px) {
 	.fadeInRight {
-		margin-top: 195px !important;
+		margin-top: 58px !important;
+	}
+	.navbar{
+		min-height: 80px;
+		background: #c5c5c5 !important;
+	}
+	#myNavbar ul li a{
+		color: black;
 	}
 }
 
