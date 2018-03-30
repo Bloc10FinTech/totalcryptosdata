@@ -48,6 +48,7 @@ module.exports.routes = {
   '/api/productsPrices/:product':'ApiController.productPrice',
   '/api/topProductsPrices':'ApiController.topProductsPrices',
   '/api/topGainersLoosers':'ApiController.topGainersLoosers',
+  '/api/userRegistration':'ApiController.userRegistration',
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},
   'post /doLogin':'AuthController.doLogin'
