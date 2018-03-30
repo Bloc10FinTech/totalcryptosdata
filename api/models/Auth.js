@@ -10,11 +10,10 @@ module.exports = {
 	autoCreatedAt: false,
 	autoUpdatedAt: false,
 	attributes  : {
-	id: {type: 'integer', primaryKey: true},	
+	id: {type: 'integer', primaryKey: true, autoIncrement: true},	
     name: {type: 'string', required: true},
-	email: {type: 'string', required: true},
-	phone_no: {type: 'string', required: true},
-	username: {type: 'string', required: true},
+	email: {type: 'string', required: true, unique: true},
+	img_path: {type: 'string'},
 	password: {type: 'string', required: true},
 	date_created: {type: 'datetime', required: true}
   }

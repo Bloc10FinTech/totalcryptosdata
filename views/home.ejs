@@ -1,5 +1,5 @@
 <div id="wrapper">
-	<%- partial('./partials/TopMenu.ejs') %>
+	<%- partial('./partials/frontEndTopMenu.ejs') %>
 	<div class="animated fadeInRight">
 		<div class="row wrapper border-bottom white-bg page-heading">
 			<div class="col-lg-12 marquee_div">
@@ -149,6 +149,7 @@
 										<tr id="<%=summary.product%>_totalcryptos_usd">
 											<td><%=index+1%></td>
 											<td>
+											<img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
 											<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
 											<%=summary.base_currency.toUpperCase()%>
 											</a>
@@ -210,6 +211,7 @@
 										<tr id="<%=summary.product%>_totalcryptos_pairs">
 											<td><%=index+1%></td>
 											<td>
+											<img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
 											<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
 											<%=summary.base_currency.toUpperCase()%>
 											</a>

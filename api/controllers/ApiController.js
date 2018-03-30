@@ -41,6 +41,11 @@ module.exports = {
 	  MobileApisService.topGainersLoosers(function(data){
 		return response.send(data);
 	},request);
+  },
+  userRegistration:function(request, response) {
+	  MobileApisService.userRegistration(function(data){
+		return response.send(data);
+	},request);
   }
 };
 
