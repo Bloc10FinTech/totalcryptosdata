@@ -1,5 +1,5 @@
 <div id="wrapper">
-	<%- partial('./partials/frontEndTopMenu.ejs') %>
+	<%- partial('./partials/TopMenu.ejs') %>
 	<div class="animated fadeInRight">
 		<div class="row">
 			<div class="col-lg-10 col-lg-offset-1"><h2><strong><%=data.name%></strong></h2></div>
@@ -47,6 +47,7 @@
 			</div>
 		</div>
 	</div>
+	<%- partial('./partials/frontEndFooter.ejs') %>
 </div>
 <script>
 $(document).ready(function(){

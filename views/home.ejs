@@ -1,5 +1,5 @@
 <div id="wrapper">
-	<%- partial('./partials/frontEndTopMenu.ejs') %>
+	<%- partial('./partials/TopMenu.ejs') %>
 	<div class="animated fadeInRight">
 		<div class="row wrapper border-bottom white-bg page-heading">
 			<div class="col-lg-12 marquee_div">
@@ -120,10 +120,10 @@
 						<div class="col-lg-12" style="margin-top:20px;">
 							<ul class="nav nav-tabs">
 								<li class="active">
-									<a data-toggle="tab" href="#totalcryptospriceusd" class="Button-shape">COINS</a>
+									<a data-toggle="tab" href="#totalcryptospriceusd" class="Button-shape">USD BASED</a>
 								</li>
 								<li>
-									<a data-toggle="tab" href="#totalcryptospricepairs" class="Button-shape">PRODUCTS</a>
+									<a data-toggle="tab" href="#totalcryptospricepairs" class="Button-shape">CRYPTO BASED</a>
 								</li>
 							</ul>	
 							
@@ -139,6 +139,8 @@
 											<th>Volume</th>
 											<th>High</th>
 											<th>Low</th>
+											<th>Change % (1h)</th>
+											<th>Change % (24h)</th>
 											<th>Chart 1d</th>
 										</tr>
 										</thead>
@@ -151,10 +153,30 @@
 											<%=summary.base_currency.toUpperCase()%>
 											</a>
 											</td>
-											<td id="<%=summary.product%>_price_totalcryptos_usd"><%=parseFloat(summary.price).toFixed(8)%></td>
+											<td id="<%=summary.product%>_price_totalcryptos_usd">
+											<%if(summary.change_perc_1h>0){%>
+											<span style="color:green;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
+											<%}else{%>
+											<span style="color:red;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
+											<%}%>
+											</td>
 											<td id="<%=summary.product%>_vol_totalcryptos_usd"><%=Math.round(parseFloat(summary.volume))%></td>
 											<td id="<%=summary.product%>_high_totalcryptos_usd"><%=parseFloat(summary.high).toFixed(8)%></td>
 											<td id="<%=summary.product%>_low_totalcryptos_usd"><%=parseFloat(summary.low).toFixed(8)%></td>
+											<td id="<%=summary.product%>_change_perc_1h_totalcryptos_usd">
+											<%if(summary.change_perc_1h>0){%>
+											<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
+											<%}else{%>
+											<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
+											<%}%>
+											</td>
+											<td id="<%=summary.product%>_change_perc_24h_totalcryptos_usd">
+											<%if(summary.change_perc_24h>0){%>
+											<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
+											<%}else{%>
+											<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
+											<%}%>
+											</td>
 											<td>
 											<div class="row">
 											<div class="col-md-12" id="chart_<%=summary.product%>_totalcryptos_usd"><input type="hidden" id="hidden_<%=summary.product%>_totalcryptos_usd" value="<%=summary.chart%>" /></div>
@@ -178,6 +200,8 @@
 											<th>Volume</th>
 											<th>High</th>
 											<th>Low</th>
+											<th>Change % (1h)</th>
+											<th>Change % (24h)</th>
 											<th>Chart 1d</th>
 										</tr>
 										</thead>
@@ -195,10 +219,30 @@
 											<%=summary.product.replace('_','').toUpperCase()%>
 											</a>
 											</td>
-											<td id="<%=summary.product%>_price_totalcryptos_pairs"><%=parseFloat(summary.price).toFixed(8)%></td>
+											<td id="<%=summary.product%>_price_totalcryptos_pairs">
+											<%if(summary.change_perc_1h>0){%>
+											<span style="color:green;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
+											<%}else{%>
+											<span style="color:red;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
+											<%}%>
+											</td>
 											<td id="<%=summary.product%>_vol_totalcryptos_pairs"><%=Math.round(parseFloat(summary.volume))%></td>
 											<td id="<%=summary.product%>_high_totalcryptos_pairs"><%=parseFloat(summary.high).toFixed(8)%></td>
 											<td id="<%=summary.product%>_low_totalcryptos_pairs"><%=parseFloat(summary.low).toFixed(8)%></td>
+											<td id="<%=summary.product%>_change_perc_1h_totalcryptos_pairs">
+											<%if(summary.change_perc_1h>0){%>
+											<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
+											<%}else{%>
+											<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
+											<%}%>
+											</td>
+											<td id="<%=summary.product%>_change_perc_24h_totalcryptos_pairs">
+											<%if(summary.change_perc_24h>0){%>
+											<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
+											<%}else{%>
+											<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
+											<%}%>	
+											</td>
 											<td>
 											<div class="row">
 											<div class="col-md-12" id="chart_<%=summary.product%>_totalcryptos_pairs"><input type="hidden" id="hidden_<%=summary.product%>_totalcryptos_pairs" value="<%=summary.chart%>" /></div>
@@ -1244,6 +1288,7 @@
 			</div>
 		</div>
 	</div>
+	<%- partial('./partials/frontEndFooter.ejs') %>
 </div>
 <script>
 $(document).ready(function(){
@@ -1786,20 +1831,58 @@ $(document).ready(function(){
 		});
 		
 		totalcryptospriceusd.forEach(function(ticker){
-			$("#"+ticker.product+"_price_totalcryptos_usd").html(parseFloat(ticker.price).toFixed(8));
-			$("#"+ticker.product+"_vol_totalcryptos_usd").html(Math.round(parseFloat(ticker.vol)));
+		
+			if(ticker.change_perc_1h>0){
+				$("#"+ticker.product+"_price_totalcryptos_usd").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.price).toFixed(8)+'</span>');
+			}else{
+				$("#"+ticker.product+"_price_totalcryptos_usd").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.price).toFixed(8)+'</span>');
+			}
+		
+			$("#"+ticker.product+"_vol_totalcryptos_usd").html(Math.round(parseFloat(ticker.volume)));
 			$("#"+ticker.product+"_high_totalcryptos_usd").html(parseFloat(ticker.high).toFixed(8));
 			$("#"+ticker.product+"_low_totalcryptos_usd").html(parseFloat(ticker.low).toFixed(8));
+			
+			if(ticker.change_perc_1h>0){
+				$("#"+ticker.product+"_change_perc_1h_totalcryptos_usd").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.change_perc_1h).toFixed(2)+'</span>');
+			}else{
+				$("#"+ticker.product+"_change_perc_1h_totalcryptos_usd").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.change_perc_1h).toFixed(2)+'</span>');
+			}
+			
+			if(ticker.change_perc_24h>0){
+				$("#"+ticker.product+"_change_perc_24h_totalcryptos_usd").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.change_perc_24h).toFixed(2)+'</span>');
+			}else{
+				$("#"+ticker.product+"_change_perc_24h_totalcryptos_usd").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.change_perc_24h).toFixed(2)+'</span>');
+			}
+			
 			if(ticker.chart){
 				$("#chart_"+ticker.product+"_totalcryptos_usd").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
 			}
 		});
 		
 		totalcryptospricepairs.forEach(function(ticker){
-			$("#"+ticker.product+"_price_totalcryptos_pairs").html(parseFloat(ticker.price).toFixed(8));
-			$("#"+ticker.product+"_vol_totalcryptos_pairs").html(Math.round(parseFloat(ticker.vol)));
+		
+			if(ticker.change_perc_1h>0){
+				$("#"+ticker.product+"_price_totalcryptos_pairs").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.price).toFixed(8)+'</span>');
+			}else{
+				$("#"+ticker.product+"_price_totalcryptos_pairs").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.price).toFixed(8)+'</span>');
+			}
+		
+			$("#"+ticker.product+"_vol_totalcryptos_pairs").html(Math.round(parseFloat(ticker.volume)));
 			$("#"+ticker.product+"_high_totalcryptos_pairs").html(parseFloat(ticker.high).toFixed(8));
 			$("#"+ticker.product+"_low_totalcryptos_pairs").html(parseFloat(ticker.low).toFixed(8));
+			
+			if(ticker.change_perc_1h>0){
+				$("#"+ticker.product+"_change_perc_1h_totalcryptos_pairs").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.change_perc_1h).toFixed(2)+'</span>');
+			}else{
+				$("#"+ticker.product+"_change_perc_1h_totalcryptos_pairs").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.change_perc_1h).toFixed(2)+'</span>');
+			}
+			
+			if(ticker.change_perc_24h>0){
+				$("#"+ticker.product+"_change_perc_24h_totalcryptos_pairs").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.change_perc_24h).toFixed(2)+'</span>');
+			}else{
+				$("#"+ticker.product+"_change_perc_24h_totalcryptos_pairs").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.change_perc_24h).toFixed(2)+'</span>');
+			}
+			
 			if(ticker.chart){
 				$("#chart_"+ticker.product+"_totalcryptos_pairs").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
 			}

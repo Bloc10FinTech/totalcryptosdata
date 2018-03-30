@@ -344,7 +344,7 @@ module.exports = {
 		var _ = require('lodash');
 		
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
-		var date_after = moment().subtract(1, 'hours').toDate();
+		var date_after = moment().subtract(24, 'hours').toDate();
 		
 		//PROCESS TO INSERT GDAX PRODUCTS TICKERS
 		ExchangeList.findOne({name:'gdax'},function(err,data){
@@ -1185,7 +1185,7 @@ module.exports = {
 		var math = require('mathjs');
 	
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
-		var date_after = moment().subtract(1, 'hours').toDate();
+		var date_after = moment().subtract(24, 'hours').toDate();
 
 		//PROCESS TO INSERT BITTEX PRODUCTS/MARKETS TICKERS
 		ExchangeList.findOne({name:'bittrex'},function(err,data){
@@ -1700,7 +1700,7 @@ module.exports = {
 					}
 				});
 				temp.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-				temp=_.slice(temp,0,99);
+				temp=_.slice(temp,0,100);
 				_.forEach(temp,function(ticker){
 					tc100+=parseFloat(ticker.price);
 				});
@@ -1721,7 +1721,7 @@ module.exports = {
 							if(!_.isEmpty(coinMarketTickers)){
 								coinMarketTickers=coinMarketTickers.tickers;
 								coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
-								coinMarketTickers=_.slice(coinMarketTickers,0,99);
+								coinMarketTickers=_.slice(coinMarketTickers,0,100);
 							
 								_.forEach(coinMarketTickers,function(ticker){
 									total_usd_market_cap=total_usd_market_cap+parseFloat(ticker.market_cap_usd);
@@ -1795,7 +1795,7 @@ module.exports = {
 								quote_currency=_.toLower(ticker.MarketCurrency);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.Bid,volume:ticker.Volume,high:ticker.High,low:ticker.Low});
 							break;
-							case 'coinmarket':
+							case 'coinmarketcap':
 								product=_.toLower(ticker.symbol+'USD');
 								base_currency=_.toLower(ticker.symbol);
 								quote_currency=_.toLower('USD');	
@@ -1954,7 +1954,7 @@ module.exports = {
 						}
 					});
 					
-					//PROCESS TO PREPARE CHART DATA
+					//PROCESS TO PREPARE CHART DATA/CHANGE 1 HOUR AND CHANGE 24 HOURS
 					_.forEach(insert_array, function(data){
 						var chart_data=[];
 						_.forEach(charts,function(chart){
@@ -1967,6 +1967,8 @@ module.exports = {
 						
 						chart_data.push(data.price);
 						data.chart=chart_data;
+						data.change_perc_1h=(chart_data[chart_data.length-1]-chart_data[chart_data.length-2])*100/chart_data[chart_data.length-2];
+						data.change_perc_24h=(chart_data[chart_data.length-1]-chart_data[0])*100/chart_data[0];
 					});
 					TotalCryptoPrices.create({prices:insert_array,date_created:curDateTime},function(err,data){
 						if(err){

@@ -1,7 +1,7 @@
 <div id="wrapper">
-	<%- partial('./partials/frontEndTopMenu.ejs') %>
+	<%- partial('./partials/TopMenu.ejs') %>
 	<div class="animated fadeInRight">
-	
+		<div class="row api">
 		<div class="col-lg-10 col-lg-offset-1" style="margin-top:50px;">
 			<h3><strong>Introduction</strong></h3>
 			<p>The Total Cryptos APIs are designed to allow quick access to all of the features of the Total Cryptos platform. The end goal is to allow people to potentially recreate the entire platform on their own. We provides a simple and powerful REST API to allow you to programatically perform nearly all actions you can from our web interface.</p>
@@ -91,7 +91,8 @@
 			 <b>Request URL</b>: http://totalcryptos.com/api/productsPrices/{product}<br/>
 			 <b>Response</b>: {"errCode":1,"message":"request processed successfully.","data":{...}}</p>
 		</div>
-		
+		</div>
 	</div>
+	<%- partial('./partials/frontEndFooter.ejs') %>
 </div>
 

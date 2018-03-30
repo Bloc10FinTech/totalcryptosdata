@@ -1,8 +1,9 @@
 <div id="wrapper">
-	<%- partial('./partials/frontEndTopMenu.ejs') %>
-	<div class="animated fadeInRight">
-		<div class="col-lg-10 col-lg-offset-1" style="margin-top:20px;">
-			<div style="margin-top:20px;">
+	<%- partial('./partials/TopMenu.ejs') %>
+	<div class="animated fadeInRight container-fluid">
+		<div class="row tc-history">
+		<div class="col-lg-10 col-lg-offset-1" >
+			
 				<div class="alert alert-success"><strong>TC History 1 DAY</strong></div>
 				<div class="table-responsive">
 					<table class="table table-striped table-bordered table-hover">
@@ -67,6 +68,7 @@
 			</div>
 		</div>	
 	</div>
+	<%- partial('./partials/frontEndFooter.ejs') %>
 </div>
 <script>
 $(document).ready(function(){
