@@ -175,6 +175,7 @@ module.exports = {
 						if(!_.isEmpty(productPrices)){ 
 							productPrices=_.head(productPrices);
 							productPrices=productPrices.prices;
+							productPrices=_.filter(productPrices,{quote_currency:'usd'});
 							productPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							productPrices=_.slice(productPrices,0,10);
 							callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
@@ -231,6 +232,23 @@ module.exports = {
 		}).
 		catch(err => {
 			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+		});
+	},
+	
+	userRegistration:function(callBack,request){
+		var moment = require('moment');
+		var _ = require('lodash');
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		var name=request.param('name');
+		var email=request.param('email');
+		var password = Math.random().toString(36).slice(-8);
+		Auth.create({name:name,email:email,password:password,date_created:curDateTime},function(err, data){
+			console.log(data);
+			if(err){ console.log(err);
+				callBack({errCode:500,message:'Server error. Please try again.'});
+			}
+			
+			//callBack({errCode:1,message:'User registered successfully.'});
 		});
 	},
 	

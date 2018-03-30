@@ -151,7 +151,7 @@
 												<%totalcryptospriceusd.forEach(function(summary,index){%>
 												<tr id="<%=summary.product%>_totalcryptos_usd">
 													<td><%=index+1%></td>
-													<td>
+													<td><img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
 													<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
 													<%=summary.base_currency.toUpperCase()%>
 													</a>
@@ -212,7 +212,7 @@
 												<%totalcryptospricepairs.forEach(function(summary,index){%>
 												<tr id="<%=summary.product%>_totalcryptos_pairs">
 													<td><%=index+1%></td>
-													<td>
+													<td><img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
 													<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
 													<%=summary.base_currency.toUpperCase()%>
 													</a>
