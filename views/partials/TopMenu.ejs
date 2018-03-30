@@ -1,0 +1,48 @@
+<nav class="navbar navbar-inverse container-fluid navbar-fixed-top">
+
+	<div class="row Header">
+		<div class="col-lg-2 col-md-2 col-sm-2">
+			<h3>
+				<strong>
+					<a href="/">
+						<img class="img-responsive" src="/images/Logo2.png" height="70px" alt="TotalCryptosLogo">
+					</a>
+				</strong>
+			</h3>
+		</div>
+		<div class="col-lg-8 col-md-8 col-sm-8">
+			<div class="row h-50 menu">
+				<ul class="nav navbar-nav navbar-right">
+			      <li><a href="/">HOME</a></li>
+			      <li><a href="/api/documentation">API</a></li>
+			      <li><a href="#">CONTAC US</a></li>
+			      <li><a href="#">ABOUT US</a></li>			      
+			    </ul>
+			</div>
+			<!--
+			<div class="row col-md-12 h-50">
+					 Saved for future use in ADS 
+			</div>
+			-->
+		</div>
+		<div class="col-lg-2 col-md-2 col-sm-2">
+			<a href="http://www.bloc10.com/">
+				<img class="img-responsive" src="/images/LogoBloc.png" height="70px" alt="Bloc10.com">
+			</a>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-4">
+			<h3><a class="aBanner" href="/tc-history">Price of TC 100: <strong><span class="tc100">$<%=cryptoData.tc100%></span></strong></a></h3>
+		</div>
+		<div class="col-md-4">
+			<h3><a class="aBanner" href="/tc-history">Total Market Cap in USD: <strong><span class="FormatNum total_usd_market_cap">$<%=cryptoData.total_usd_market_cap%></span></strong></a></h3>
+		</div>
+		<div class="col-md-4">
+			<h3>
+				<a class="aBanner" href="/tc-history">TCw100: <strong><span class="tcw100">$<%=cryptoData.tcw100%></span></strong></a>
+			</h3>
+		</div>
+	</div>
+</nav>

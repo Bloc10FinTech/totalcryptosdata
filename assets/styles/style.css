@@ -327,7 +327,7 @@ body.mini-navbar .navbar-default .nav > li > .nav-second-level li a {
 .navbar-fixed-top {
   background: #fff;
   transition-duration: 0.4s;
-  border-bottom: 1px solid #e7eaec !important;
+  border-bottom: 1px solid #293846 !important;
   z-index: 2030;
 }
 .navbar-fixed-top,
@@ -3723,7 +3723,7 @@ body.body-small .footer.fixed {
 /* PANELS */
 .page-heading {
   border-top: 0;
-  padding: 2.5% 10px 20px 10px;
+  padding: 6.6% 10px 20px 10px;
 }
 .panel-heading h1,
 .panel-heading h2 {

@@ -1,21 +1,70 @@
+/*
+Header
+*/
+.navbar{
+	border-radius: 0;
+	text-align:center;
+}
+.navbar-fixed-top,
+.navbar-static-top {
+  background: #293846 !important;
+}
+.Header{
+	display: flex;
+	background: url(/images/Barra.jpg);
+	background-position-y: 50%;
+	
+}
+.menu ul.nav{
+	padding-left: 0;
+	padding-right: 0;
+	color: #414141;
+	font-size: medium;
+}
+.menu ul.nav li a{
+	color: #414141;
+}
+.menu ul.nav li a:hover{
+	color: black;
+}
+	
+.h-50{
+	height: 50%;
+}
+.aBanner{
+	color: white;
+}
+.aBanner:hover{
+	color: white;
+}
+.col-md-4 h3{
+	margin-top: auto;
+	margin-bottom: auto;
+	font-size: 18px; 
+} 
+.tc100, .total_usd_market_cap, .tcw100{
+	color: green;
+}
+/*
+End Header
+*/
+/*
+Menu
+*/
 .nav li{
 	display:inline-block;
     transform: skew(25deg);
-
 }
-
 .nav li a{
 	display:block;
     transform: skew(-25deg);
 }
-
 .nav .open ,
 .nav .open:hover,
 .nav .open:focus {
   background: #293846;
   transform: skew(25deg);
 }
-
 .nav .open > a.dropdown-toggle,
 .nav .open > a.dropdown-toggle:hover,
 .nav .open > a.dropdown-toggle:focus {
@@ -24,29 +73,47 @@
     color: white;
   	transform: skew(-25deg);
 }
-
 ul.dropdown-menu li a{
   transform:skew(-50deg);
 }
-
 .dropdown-menu>li>a:focus,
 .dropdown-menu>li>a:hover {
 
     background: none;
 }
+/*Edited from Bootstrap */
+.nav-tabs>li>a:hover {
+   /* border-color: #eee #eee #ddd */ /*this*/
+}
+.nav-tabs>li.active>a,
+.nav-tabs>li.active>a:focus,
+.nav-tabs>li.active>a:hover {
+    color: #555;
+    cursor: default;
+    background-color: #fff;
+   /* border: 1px solid #ddd;*/ /*this*/
+    border-bottom-color: transparent
+}
+.nav>li>a:focus,
+.nav>li>a:hover {
+    text-decoration: none;
+   /* background-color: #eee */ /*this*/
+}
+/* End of Edited from Bootstrap */
 .inner-menu{
 	z-index: 99;
 }
-
+/*
+End of Menu
+*/
 .Vol24Hex{
-	margin-top: 4%;
+	margin-top: 7%;
 }
-
-.nav-bar-float{
-	margin-top: 20px;
+.tc-history{
+	margin: 10% 0 0 0;
 }
-.navbar-brand {
-	padding: 0 !important;
+.api{
+	margin: 7% 0 0 0;
 }
 .total_crypto_price_div{
 	padding: 10px 0px;
@@ -73,10 +140,22 @@ ul.dropdown-menu li a{
 .center {
 	text-align:center;
 }
+
+
+/* This is not necesary all this code can be acomplished with "navbar-fixed-top"*/
+/*
+
+.nav-bar-float{
+	margin-top: 20px;
+}
 .navbar-inverse{
 	min-height:55px;
 	background-color:#DCDCDC !important;
 }
+.navbar-brand {
+	padding: 0 !important;
+}
+
 .fixed-header {
 	position: fixed;top:0;
 	 left:0;width: 100%;
@@ -102,7 +181,9 @@ nav.navbar.navbar-inverse.shrink {
 	-webkit-transition: all 0.3s;
 	-moz-transition: all 0.3s;
 	transition: all 0.3s;
-	 }
+}
+*/
+
 .fadeInRight {
 	margin-top: 30px;
 }
