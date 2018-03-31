@@ -72,6 +72,18 @@ module.exports = {
 	  FrontendService.documentation(function(data){
 		 return response.view('documentation',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
 	  });
-  }	
+  },	
+
+  about:function(request,response){
+  	 FrontendService.documentation(function(data){
+		 return response.view('about',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
+	  });
+  },
+  TC_index:function(request,response){
+  	 FrontendService.documentation(function(data){
+		 return response.view('TCindex',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
+	  });
+  }
+
 };
 

@@ -138,6 +138,10 @@ table.dataTable thead .sorting_desc_disabled {
     background-color: #2F374A;
 }
 
+#DataTables_Table_0{
+	width: 99% !important;
+}
+
 /*End of Table css*/
 
 /*Left Banner*/
@@ -167,16 +171,19 @@ table.dataTable thead .sorting_desc_disabled {
     color: whitesmoke;
     padding-bottom: 1%;
 }
+.arrows-banner{
+	float: right;
+}
 /*End of Left Banner*/
 
 .Vol24Hex{
-	margin-top: 7%;
+	margin-top: 8%;
 }
 .tc-history{
 	margin: 10% 0 0 0;
 }
 .api{
-	margin: 7% 0 0 0;
+	margin: 8% 0 0 0;
 }
 .total_crypto_price_div{
 	padding: 10px 0px;
@@ -203,7 +210,15 @@ table.dataTable thead .sorting_desc_disabled {
 .center {
 	text-align:center;
 }
+/*Static Pages*/
+.ridge{
+	border-bottom-style: ridge;
+}
+/*End Static Pages*/
 
+.text-size-lg{
+ 	font-size: 1.85em;
+}
 
 /* This is not necesary all this code can be acomplished with "navbar-fixed-top"*/
 /*
@@ -269,6 +284,12 @@ nav.navbar.navbar-inverse.shrink {
 	#myNavbar ul li a{
 		color: black;
 	}
+	.Vol24Hex {
+    margin-top: 25%;
+	}
+	.text-size-lg{
+ 	font-size: 1em;
+}
 }
 @media all and (max-width: 390px) {
 	.fadeInRight {
