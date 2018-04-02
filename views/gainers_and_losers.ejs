@@ -1,0 +1,227 @@
+<div id="wrapper">
+	
+	<div class="animated fadeInRight">
+	
+		<div class="col-lg-10 col-lg-offset-1 Vol24Hex">
+			<div class="alert alert-success"><strong>Biggest Gainers!</strong></div>
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a data-toggle="tab" href="#1h_gainer_div">1 h</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#24h_gainer_div">24 h</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#7d_gainer_div">7 d</a>
+				</li>
+			</ul>
+			
+			<div class="tab-content" style="margin-top:20px;">
+				<div class="tab-pane active" id="1h_gainer_div">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Symbol</th>
+							<th>Price</th>
+							<th>% 1h</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%data['gainer_1_h'].forEach(function(gainer,index){%>
+						<tr>
+							<td><%=index+1%></td>
+							<td><%=gainer.name%></td>
+							<td><%=gainer.symbol%></td>
+							<td><%=parseFloat(gainer.price_usd).toFixed(5)%></td>
+							<td><span style="color:green;font-weight:bold;"><%=gainer.percent_change_1h%>%</span></td>
+						</tr>
+						<%});%>
+						</tbody>
+						</table>
+					</div>	
+				</div>
+				<div class="tab-pane" id="24h_gainer_div">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Symbol</th>
+							<th>Price</th>
+							<th>% 24h</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%data['gainer_24_h'].forEach(function(gainer,index){%>
+						<tr>
+							<td><%=index+1%></td>
+							<td><%=gainer.name%></td>
+							<td><%=gainer.symbol%></td>
+							<td><%=parseFloat(gainer.price_usd).toFixed(5)%></td>
+							<td><span style="color:green;font-weight:bold;"><%=gainer.percent_change_24h%>%</span></td>
+						</tr>
+						<%});%>
+						</tbody>
+						</table>
+					</div>	
+				</div>
+				<div class="tab-pane" id="7d_gainer_div">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Symbol</th>
+							<th>Price</th>
+							<th>% 7d</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%data['gainer_7_d'].forEach(function(gainer,index){%>
+						<tr>
+							<td><%=index+1%></td>
+							<td><%=gainer.name%></td>
+							<td><%=gainer.symbol%></td>
+							<td><%=parseFloat(gainer.price_usd).toFixed(5)%></td>
+							<td><span style="color:green;font-weight:bold;"><%=gainer.percent_change_7d%>%</span></td>
+						</tr>
+						<%});%>
+						</tbody>
+						</table>
+					</div>	
+				</div>
+			</div>
+			
+			<div class="alert alert-danger"><strong>Biggest Losers!</strong></div>
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a data-toggle="tab" href="#1h_loser_div">1 h</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#24h_loser_div">24 h</a>
+				</li>
+				<li>
+					<a data-toggle="tab" href="#7d_loser_div">7 d</a>
+				</li>
+			</ul>
+			
+			<div class="tab-content" style="margin-top:20px;">
+				<div class="tab-pane active" id="1h_loser_div">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Symbol</th>
+							<th>Price</th>
+							<th>% 1h</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%data['loser_1_h'].forEach(function(loser,index){%>
+						<tr>
+							<td><%=index+1%></td>
+							<td><%=loser.name%></td>
+							<td><%=loser.symbol%></td>
+							<td><%=parseFloat(loser.price_usd).toFixed(5)%></td>
+							<td><span style="color:red;font-weight:bold;"><%=loser.percent_change_1h%>%</span></td>
+						</tr>
+						<%});%>
+						</tbody>
+						</table>
+					</div>	
+				</div>
+				<div class="tab-pane" id="24h_loser_div">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover">
+						<thead>
+						<tr>
+							<th>Name</th>
+							<th>Name</th>
+							<th>Symbol</th>
+							<th>Price</th>
+							<th>% 24h</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%data['loser_24_h'].forEach(function(loser,index){%>
+						<tr>
+							<td><%=index+1%></td>
+							<td><%=loser.name%></td>
+							<td><%=loser.symbol%></td>
+							<td><%=parseFloat(loser.price_usd).toFixed(5)%></td>
+							<td><span style="color:red;font-weight:bold;"><%=loser.percent_change_24h%>%</span></td>
+						</tr>
+						<%});%>
+						</tbody>
+						</table>
+					</div>	
+				</div>
+				<div class="tab-pane" id="7d_loser_div">
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-hover">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Name</th>
+							<th>Symbol</th>
+							<th>Price</th>
+							<th>% 7d</th>
+						</tr>
+						</thead>
+						<tbody>
+						<%data['loser_7_d'].forEach(function(loser,index){%>
+						<tr>
+							<td><%=index+1%></td>
+							<td><%=loser.name%></td>
+							<td><%=loser.symbol%></td>
+							<td><%=parseFloat(loser.price_usd).toFixed(5)%></td>
+							<td><span style="color:red;font-weight:bold;"><%=loser.percent_change_7d%>%</span></td>
+						</tr>
+						<%});%>
+						</tbody>
+						</table>
+					</div>	
+				</div>
+			</div>
+			
+		</div>	
+	</div>
+	
+</div>
+<script>
+$(document).ready(function(){
+	$('.table').DataTable({
+		pageLength: 10,
+		lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+		responsive: true,
+		dom: '<"html5buttons"B>lTfgitp',
+		aoColumnDefs: [{
+			'bSortable': false,
+			'aTargets': [0] 
+		}],
+		"ordering": false,
+		buttons: [
+			//{extend: 'copy'},
+			{extend: 'csv'},
+			{extend: 'excel', title: 'ExampleFile'},
+			{extend: 'pdf', title: 'ExampleFile'},
+
+			//{extend: 'print',
+			 //customize: function (win){
+				//$(win.document.body).addClass('white-bg');
+				//$(win.document.body).css('font-size', '10px');
+				//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+			//}
+			//}
+		]
+	});
+});
+</script>
+

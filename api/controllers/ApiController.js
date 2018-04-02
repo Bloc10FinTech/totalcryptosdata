@@ -37,8 +37,8 @@ module.exports = {
 		return response.send(data);
 	},request);
   },
-  topGainersLoosers:function(request, response) {
-	  MobileApisService.topGainersLoosers(function(data){
+  topGainersLosers:function(request, response) {
+	  MobileApisService.topGainersLosers(function(data){
 		return response.send(data);
 	},request);
   },

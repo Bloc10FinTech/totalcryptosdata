@@ -195,10 +195,10 @@ module.exports = {
 		});
 	},
 	
-	topGainersLoosers:function(callBack,request){
+	topGainersLosers:function(callBack,request){
 		var _=require('lodash');
 		
-		MobileApisService.checkUpdateApiCalls(request.ip,'topGainersLoosers').
+		MobileApisService.checkUpdateApiCalls(request.ip,'topGainersLosers').
 		then(response => {
 			if(response){
 				return new Promise(function(resolve,reject){
@@ -207,16 +207,13 @@ module.exports = {
 							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
 						}
 						if(!_.isEmpty(coin_market_exchange)){
-							var gainer_loosers=[];
-							gainer_loosers['gainer_24_h']=[];
-							gainer_loosers['looser_24_h']=[];
 							var tickers=ExchangeTickers.findOne();
 							tickers.where({exchange_id:coin_market_exchange.id});
 							tickers.sort('id DESC');
 							tickers.then(function(tickers){
 								var tickers=tickers.tickers;
 								tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
-								callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),loosers:_.slice(tickers.reverse(),0,5)}});
+								callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
 							}).
 							catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 						}

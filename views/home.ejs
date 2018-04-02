@@ -276,7 +276,7 @@
 										<a class="dropdown-toggle" data-toggle="dropdown" href="#">Trending
 										<span class="caret"></span></a>
 										<ul class="dropdown-menu">
-										  <li><a href="gainers-and-loosers">Gainers and Loosers</a></li>
+										  <li><a href="gainers-and-losers">Gainers and Losers</a></li>
 										</ul>
 									  </li>
 									  <li>
@@ -1323,23 +1323,20 @@
 										</div>
 									</div>
 									</div>
-									<% 
-									var a=contgain;
-									for(var i=0; i<a; i++){ %>
-									
+									<% gainers_losers.gainer_24_h.forEach(function(gainer,index){%>
 									<div class="row spacer-banner">
-										<div class="col-xs-2 col-md-2"><%=i+1%></div>
-										<div class="col-xs-4 col-md-4"><%=data['gainer_24_h'][i].symbol%></div>
-										<div class="col-xs-3 col-md-3"><span style="color:green;font-weight:bolder;"><%=data['gainer_24_h'][i].percent_change_24h%>%</span></div>
+										<div class="col-xs-2 col-md-2"><%=index+1%></div>
+										<div class="col-xs-4 col-md-4"><%=gainer.symbol%></div>
+										<div class="col-xs-3 col-md-3"><span style="color:green;font-weight:bolder;"><%=gainer.percent_change_24h%>%</span></div>
 									</div>
 									
-									<%}%>
+									<%});%>
 								</div>						
 									
 							</div>
 							<div class="row">
 								<div class="col-m-12 Cintillo">
-									<b>Big Loosers</b>
+									<b>Big Losers</b>
 								</div>					
 							</div>
 							<div class="row">
@@ -1358,23 +1355,17 @@
 										</div>
 									</div>
 									</div>
-									<% 
-									var a=contlooser;
-									for(var i=0; i<a; i++){ %>
-									
+									<% gainers_losers.loser_24_h.forEach(function(loser,index){%> 
 									<div class="row spacer-banner">
-										<div class="col-xs-2 col-md-2"><%=i+1%></div>
-										<div class="col-xs-4 col-md-4"><%=data['looser_24_h'][i].symbol%></div>
-										<div class="col-xs-3 col-md-3"><span style="color:red;font-weight:bolder;"><%=data['looser_24_h'][i].percent_change_24h%>%</span></div>
+										<div class="col-xs-2 col-md-2"><%=index+1%></div>
+										<div class="col-xs-4 col-md-4"><%=loser.symbol%></div>
+										<div class="col-xs-3 col-md-3"><span style="color:red;font-weight:bolder;"><%=loser.percent_change_24h%>%</span></div>
 									</div>
-									
-									<%}%>
+									<%});%>
 								</div>	
 								</div>	
 							</div>
 						</div>
-
-
 				</div>
 			</div>
 			
