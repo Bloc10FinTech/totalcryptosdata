@@ -756,5 +756,30 @@ module.exports = {
 				}
 			});
 		});
+	},
+	
+	totalCryptoPricesHistorySymbol:function(symbol){
+		var _ = require('lodash');
+		var moment = require('moment');
+		return new Promise(function(resolve,reject){
+			TotalCryptoPricesHistory.find().sort({id:-1}).exec(function(err,totalCryptoPricesHistory){ 
+				if(!_.isEmpty(totalCryptoPricesHistory)){ 
+					var return_array=[];
+					_.forEach(totalCryptoPricesHistory,function(history){
+						var filter=_.filter(history.prices,{base_currency:symbol});
+						if(!_.isEmpty(filter)){
+							_.forEach(filter,function(filter_data){
+								filter_data.data_date=moment(history.data_date).format('YYYY-MM-DD');
+								return_array.push(filter_data);
+							});
+						}
+					});
+					return resolve(return_array);
+				}
+				else{
+					return resolve([]);
+				}
+			});
+		});
 	}
 };

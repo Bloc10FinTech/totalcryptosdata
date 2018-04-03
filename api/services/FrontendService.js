@@ -380,10 +380,10 @@ module.exports = {
 	volume_24_hour_currency_symbol(symbol,callBack){
 		var _ = require('lodash');
 		symbol=_.toLower(symbol);
-		
 		return Promise.all([
 			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices()
+			ExchangeDataService.topTotalCryptoPrices(),
+			ExchangeDataService.totalCryptoPricesHistorySymbol(symbol)
 		]).
 		then(response => {
 			ExchangeList.find({},function(err, currencies){
@@ -740,9 +740,9 @@ module.exports = {
 							currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({symbol:return_array,cryptoData:response[0],topproducts:response[1].data});
+						callBack({symbol:return_array,cryptoData:response[0],topproducts:response[1].data,cryptoHistory:response[2]});
 					}).
-					catch(err => { callBack({symbol:[],cryptoData:response[0],topproducts:response[1].data});});
+					catch(err => { callBack({symbol:[],cryptoData:response[0],topproducts:response[1].data,cryptoHistory:response[2],cryptoHistory:response[2]});});
 				}
 			});
 		}).

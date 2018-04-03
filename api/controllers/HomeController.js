@@ -19,7 +19,7 @@ module.exports = {
   },
   volume_24_hour_currency_symbol:function(request,response){
 	  FrontendService.volume_24_hour_currency_symbol(request.param('symbol'),function(data){
-		 return response.view('volume_24_hour_currency_symbol',{data: data.symbol, cryptoData: data.cryptoData,topproducts:data.topproducts, title: 'Total Cryptos'}); 
+		 return response.view('volume_24_hour_currency_symbol',{markets: data.symbol, cryptoData: data.cryptoData,topproducts:data.topproducts, history:data.cryptoHistory, currency: request.param('symbol'), title: 'Total Cryptos'}); 
 	  });
   },
   volume_24_hour_market:function(request,response){

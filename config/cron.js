@@ -1,5 +1,5 @@
 module.exports.cron = {
-  //CREATE LIST OF EXCHANGES
+  //CREATE LIST OF EXCHANGES/TOTAL CRYPTO HISTORY
   myFirstJob: {
     //schedule: '*/30 * * * * *',
 	schedule: '00 01 00 * * *',
