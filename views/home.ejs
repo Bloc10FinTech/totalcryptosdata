@@ -1396,7 +1396,15 @@
 						//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
 					//}
 					//}
-				]
+				],
+				drawCallback: function(){ 
+					$(this, this.api().table().container()).on('search.dt', function(){
+						draw_chart();
+					});
+					$('.paginate_button', this.api().table().container()).on('click', function(){
+						draw_chart();
+					});       
+				}
 			});
 			
 			$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
@@ -1418,189 +1426,7 @@
 				}
 			});
 			
-			$("#bittrex_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#coinmarket_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#bitfinex_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#hitbtc_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#gate_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#kuna_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#okex_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#binance_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#huobi_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#gemini_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#kraken_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#bitflyer_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#bithumb_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#bitstamp_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#bitz_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#lbank_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#coinone_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#wex_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#exmo_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#liqui_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#korbit_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#totalcryptospriceusd_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
-			
-			$("#totalcryptospricepairs_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				$("#chart_"+this.id).html('');
-				if(val){
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
-				}
-			});
+			draw_chart();
 			
 			var socket = io.connect('<%= socketURL %>');
 			socket.on('exchangeData', function (response) {
@@ -1989,6 +1815,191 @@
 				$(".show_hide").css({display:"none"});
 			}
 		}
+		
+		function draw_chart(){
+			$("#bittrex_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
 			
+			$("#coinmarket_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#bitfinex_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#hitbtc_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#gate_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#kuna_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#okex_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#binance_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#huobi_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#gemini_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#kraken_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#bitflyer_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#bithumb_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#bitstamp_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#bitz_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#lbank_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#coinone_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#wex_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#exmo_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#liqui_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#korbit_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#totalcryptospriceusd_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+			
+			$("#totalcryptospricepairs_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#1ab394',fillColor: "transparent"});
+				}
+			});
+		}
 		</script>
 
