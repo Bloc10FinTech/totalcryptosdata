@@ -1,157 +1,157 @@
 		
-
-<div class="animated fadeInRight">
-	
-	<div class="row wrapper border-bottom white-bg page-heading">
-		<div class="col-lg-12 marquee_div">
-			<ul class="list-aggregate" id="top_exchange">
-				<%gdax.forEach(function(product){%>
-				<li class="marquee_list_item <%=product.id%>">
-					<div class="row">
-						<div class="col-md-6">
-							<h4>
-								<a href="volume-24-hour-market/<%=product.display_name.replace('/','')%>">
-									<%=product.display_name%>
-								</a>
-								<b>&nbsp;<% if(parseFloat(product.ticker.variation)>0){ %>
-									<span style="color:green;"><%=parseFloat(product.ticker.variation).toFixed(2)%>%</span>
-									<%}else if(product.ticker.variation!=undefined){ %>
-									<span style="color:red;"><%=parseFloat(product.ticker.variation).toFixed(2)%>%</span>
-									<%}%>
-								</b>	
-							</h4>
-							<h4>
-								<%=parseFloat(product.ticker.price).toFixed(2)%>&nbsp;<%=product.quote_currency%>
-							</h4>
-							<h4>Volume:&nbsp;<%=parseFloat(product.ticker.volume).toFixed(2)%> <%=product.base_currency%></h4>
-						</div>
-						<div class="col-md-4">
-							<br/>
-							<div class="chart_<%=product.id%>"><input type="hidden" class="hidden_<%=product.id%>" value="<%=product.ticker.chart%>"/></div>
-						</div>
-						<div class="col-md-2">
-						</div>
-					</div>	
-				</li>
-				<%});%>
-			</ul>
-		</div>
-		
-	</div>
-	<div class="row">
-		
-		
-		<div class="col-md-9 col-md-push-2">
 			
-			<ul class="nav nav-tabs">
-				<li class="active">
-					<a data-toggle="tab" href="#totalcryptos">Total Cryptos</a>
-				</li>
-				<li>
-					<a data-toggle="tab" href="#coin_div">COIN</a>
-				</li>
-				<li>
-					<a data-toggle="tab" href="#bittrex_div">BITTREX</a>
-				</li>
-				<li>
-					<a data-toggle="tab" href="#bitfinex_div">BITFINEX</a>
-				</li>
-				<li>
-					<a data-toggle="tab" href="#hitbtc">HIT BTC</a>
-				</li>
-				<li>
-					<a data-toggle="tab" href="#gate">GATE</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#kuna">KUNA</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#okex">OKEX</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#binance">BINANCE</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#huobi">HUOBI</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#gemini">GEMINI</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#kraken">KRAKEN</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#bitflyer">BITFLYER</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#bithumb">BITHUMB</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#bitstamp">BITSTAMP</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#bitz">BITZ</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#lbank">LBANK</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#coinone">COIN-ONE</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#wex">WEX</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#exmo">EXMO</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#liqui">LIQUI</a>
-				</li>
-				<li class="show_hide" style="display:none;">
-					<a data-toggle="tab" href="#korbit">KORBIT</a>
-				</li>
-				<li id="more" style="display:block;">
-					<a href="javascript:void();" style="font-weight:bold;" onclick="show_hide_tabs('more')"><span class="glyphicon glyphicon-plus"></span></a>
-				</li>
-				<li id="less" style="display:none;">
-					<a href="javascript:void();" style="font-weight:bold;" onclick="show_hide_tabs('less')"><span class="glyphicon glyphicon-minus"></span></a>
-				</li>
-			</ul>
-			<div class="tab-content">
+			<div class="animated fadeInRight">
 				
-				<div class="tab-pane active" id="totalcryptos">
-					<div class="col-lg-12" style="margin-top:20px;">
+				<div class="row wrapper border-bottom white-bg page-heading">
+					<div class="col-lg-12 marquee_div">
+						<ul class="list-aggregate" id="top_exchange">
+							<%gdax.forEach(function(product){%>
+							<li class="marquee_list_item <%=product.id%>">
+							 <div class="row">
+								<div class="col-md-6">
+									<h4>
+										<a href="volume-24-hour-market/<%=product.display_name.replace('/','')%>">
+										<%=product.display_name%>
+										</a>
+										<b>&nbsp;<% if(parseFloat(product.ticker.variation)>0){ %>
+										<span style="color:green;"><%=parseFloat(product.ticker.variation).toFixed(2)%>%</span>
+										<%}else if(product.ticker.variation!=undefined){ %>
+										<span style="color:red;"><%=parseFloat(product.ticker.variation).toFixed(2)%>%</span>
+										<%}%>
+										</b>	
+									</h4>
+									<h4>
+									<%=parseFloat(product.ticker.price).toFixed(2)%>&nbsp;<%=product.quote_currency%>
+									</h4>
+									<h4>Volume:&nbsp;<%=parseFloat(product.ticker.volume).toFixed(2)%> <%=product.base_currency%></h4>
+								</div>
+								<div class="col-md-4">
+									<br/>
+									<div class="chart_<%=product.id%>"><input type="hidden" class="hidden_<%=product.id%>" value="<%=product.ticker.chart%>"/></div>
+								</div>
+								<div class="col-md-2">
+								</div>
+							 </div>	
+						   </li>
+							<%});%>
+						 </ul>
+					</div>
+				
+				</div>
+				<div class="row">
+						
+						
+					<div class="col-md-9 col-md-push-2">
+				
 						<ul class="nav nav-tabs">
 							<li class="active">
-								<a data-toggle="tab" href="#totalcryptospriceusd" class="Button-shape">USD BASED</a>
+								<a data-toggle="tab" href="#totalcryptos">Total Cryptos</a>
 							</li>
 							<li>
-								<a data-toggle="tab" href="#totalcryptospricepairs" class="Button-shape">CRYPTO BASED</a>
+								<a data-toggle="tab" href="#coin_div">COIN</a>
 							</li>
-						</ul>	
-						
-						<div class="tab-content" style="margin-top:20px;">
-							<div class="tab-pane active" id="totalcryptospriceusd">
-								<div class="table-responsive">
-									<table class="table table-striped table-bordered table-hover customtable" >
-										<thead>
-											<tr>
-												<th>#</th>
-												<th>COIN</th>
-												<th>Price USD</th>
-												<th>Volume</th>
-												<th>High</th>
-												<th>Low</th>
-												<th>Change % (1h)</th>
-												<th>Change % (24h)</th>
-												<th>Chart 1d</th>
-											</tr>
-										</thead>
-										<tbody id="totalcryptospriceusd_summary">
-											<%totalcryptospriceusd.forEach(function(summary,index){%>
-											<tr id="<%=summary.product%>_totalcryptos_usd">
-												<td><%=index+1%></td>
-												<td><img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
+							<li>
+								<a data-toggle="tab" href="#bittrex_div">BITTREX</a>
+							</li>
+							<li>
+								<a data-toggle="tab" href="#bitfinex_div">BITFINEX</a>
+							</li>
+							<li>
+								<a data-toggle="tab" href="#hitbtc">HIT BTC</a>
+							</li>
+							<li>
+								<a data-toggle="tab" href="#gate">GATE</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#kuna">KUNA</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#okex">OKEX</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#binance">BINANCE</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#huobi">HUOBI</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#gemini">GEMINI</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#kraken">KRAKEN</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#bitflyer">BITFLYER</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#bithumb">BITHUMB</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#bitstamp">BITSTAMP</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#bitz">BITZ</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#lbank">LBANK</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#coinone">COIN-ONE</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#wex">WEX</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#exmo">EXMO</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#liqui">LIQUI</a>
+							</li>
+							<li class="show_hide" style="display:none;">
+								<a data-toggle="tab" href="#korbit">KORBIT</a>
+							</li>
+							<li id="more" style="display:block;">
+								<a href="javascript:void();" style="font-weight:bold;" onclick="show_hide_tabs('more')"><span class="glyphicon glyphicon-plus"></span></a>
+							</li>
+							<li id="less" style="display:none;">
+								<a href="javascript:void();" style="font-weight:bold;" onclick="show_hide_tabs('less')"><span class="glyphicon glyphicon-minus"></span></a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							
+							<div class="tab-pane active" id="totalcryptos">
+								<div class="col-lg-12" style="margin-top:20px;">
+									<ul class="nav nav-tabs">
+										<li class="active">
+											<a data-toggle="tab" href="#totalcryptospriceusd" class="Button-shape">USD BASED</a>
+										</li>
+										<li>
+											<a data-toggle="tab" href="#totalcryptospricepairs" class="Button-shape">CRYPTO BASED</a>
+										</li>
+									</ul>	
+									
+									<div class="tab-content" style="margin-top:20px;">
+										<div class="tab-pane active" id="totalcryptospriceusd">
+											<div class="table-responsive">
+												<table class="table table-striped table-bordered table-hover" >
+												<thead>
+												<tr>
+													<th>#</th>
+													<th>COIN</th>
+													<th>Price USD</th>
+													<th>Volume</th>
+													<th>High</th>
+													<th>Low</th>
+													<th>Change % (1h)</th>
+													<th>Change % (24h)</th>
+													<th>Chart 1d</th>
+												</tr>
+												</thead>
+												<tbody id="totalcryptospriceusd_summary">
+												<%totalcryptospriceusd.forEach(function(summary,index){%>
+												<tr id="<%=summary.product%>_totalcryptos_usd">
+													<td><%=index+1%></td>
+													<td><img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
 													<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
 														<%=summary.base_currency.toUpperCase()%>
 													</a>
@@ -276,7 +276,7 @@
 									<a class="dropdown-toggle" data-toggle="dropdown" href="#">Trending
 										<span class="caret"></span></a>
 										<ul class="dropdown-menu">
-											<li><a href="gainers-and-loosers">Gainers and Losers</a></li>
+										  <li><a href="gainers-and-losers">Gainers and Losers</a></li>
 										</ul>
 									</li>
 									<li>
@@ -1325,22 +1325,20 @@
 									</tr>
 								</thead>
 								<tbody>
-								<% 
-								var a=contlooser;
-								for(var i=0; i<a; i++){ %>
+								<% gainers_losers.gainer_24_h.forEach(function(gainer,index){%>
 								
 								<tr>
-									<td><%=i+1%></td>
+									<td><%=index+1%></td>
 									<td>
-										<img src="<%='images/currencies/'+data['gainer_24_h'][i].symbol.toLowerCase()+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
-										<a href="volume-24-hour-currency/<%=data['gainer_24_h'][i].symbol.toUpperCase()%>">
-										<%=data['gainer_24_h'][i].symbol%>
+										<img src="<%='images/currencies/'+gainer.symbol.toLowerCase()+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
+										<a href="volume-24-hour-currency/<%=gainer.symbol.toUpperCase()%>">
+										<%=gainer.symbol%>
 										</a>
 									</td>
-									<td><span style="color:green;font-weight:bolder;"><%=data['gainer_24_h'][i].percent_change_24h%>%<img src="/images/arrowup.png" height="17px" class="arrows-banner"></span></td>
+									<td><span style="color:green;font-weight:bolder;"><%=gainer.percent_change_24h%>%<img src="/images/arrowup.png" height="17px" class="arrows-banner"></span></td>
 								</tr>
 								
-								<%}%>
+								<%});%>
 								</tbody>
 							</table>
 							</div>	
@@ -1371,22 +1369,20 @@
 									</tr>
 								</thead>
 								<tbody>
-								<% 
-								var a=contlooser;
-								for(var i=0; i<a; i++){ %>
+								<% gainers_losers.loser_24_h.forEach(function(loser,index){%>
 								
 								<tr>
-									<td><%=i+1%></td>
+									<td><%=index+1%></td>
 									<td>
-										<img src="<%='images/currencies/'+data['looser_24_h'][i].symbol.toLowerCase()+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
-										<a href="volume-24-hour-currency/<%=data['looser_24_h'][i].symbol.toUpperCase()%>">
-										<%=data['looser_24_h'][i].symbol%>
+										<img src="<%='images/currencies/'+loser.symbol.toLowerCase()+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
+										<a href="volume-24-hour-currency/<%=loser.symbol.toUpperCase()%>">
+										<%=loser.symbol%>
 										</a>
 									</td>
-									<td><span style="color:red;font-weight:bolder;"><%=data['looser_24_h'][i].percent_change_24h%>%<img src="/images/arrowdown.png" height="17px" class="arrows-banner"></span></td>
+									<td><span style="color:red;font-weight:bolder;"><%=loser.percent_change_24h%>%<img src="/images/arrowdown.png" height="17px" class="arrows-banner"></span></td>
 								</tr>
 								
-								<%}%>
+								<%});%>
 								</tbody>
 							</table>
 							</div>	
