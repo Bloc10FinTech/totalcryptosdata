@@ -3,9 +3,10 @@ module.exports = {
 		console.log('crone job for create exchange working');
 		var moment = require('moment');
 		var math = require('mathjs');
-		var dataDate=moment().subtract(24, 'hours').format('YYYY-MM-DD');
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		var date_after = moment().subtract(24, 'hours').toDate();
+		var dataDate=moment().subtract(24, 'hours').format('YYYY-MM-DD');
+		var delete_before = moment().subtract(24*15, 'hours').toDate();
 		
 		//PROCESS TO INSERT GDAX STATIC DATA
 		ExchangeList.count({name: 'gdax'},function(err,count){
@@ -383,6 +384,13 @@ module.exports = {
 					ApiService.exchangeErrors('totalcryptopriceshistory','query_insert',err,'history_insert',curDateTime);
 				}
 			});
+		});
+		
+		//DELETE EXCHANGES TICKERS
+		ExchangeTickers.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('tickers','delete',err,'tickers_delete',curDateTime);
+			}
 		});
 	},
 	
