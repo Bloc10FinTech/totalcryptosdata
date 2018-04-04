@@ -1291,38 +1291,7 @@
 				</div>
 
 				<div class="col-md-pull-9 col-md-2 left-banner">
-					<div class="row">
-						<div class="col-xs-12 col-md-12 Cintillo">
-							Cintillo
-						</div>					
-					</div>
-					<div class="row">
-						<div class="col-xs-12 col-md-12">
-							<table class="table CustomTable">
-								<thead>
-									<tr>
-										<td colspan="3">
-											<%=feedrss.title%>
-										</td>
-									</tr>
-								</thead>
-								<tbody>
-								<%feedrss.items.forEach(function(item,index){%>
-								<tr>
-									<td><%=index+1%></td>
-									<td>
-									    <%=item.content.replace(/&lt;/g,"<").replace(/&gt;/g,">")%>
-									</td>
-									<td>
-										
-									</td>
-								</tr>
-								
-								<%});%>
-								</tbody>
-							</table>
-						</div>	
-					</div>
+					
 					<div class="row">
 						<div class="col-xs-12 col-md-12 Cintillo">
 							<b>Big Gainers</b>
