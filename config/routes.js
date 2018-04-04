@@ -51,6 +51,8 @@ module.exports.routes = {
   '/api/userRegistration':'ApiController.userRegistration',
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},
+  '/about':'HomeController.about',
+  '/TCindex':'HomeController.TC_index',
   'post /doLogin':'AuthController.doLogin'
 
   /***************************************************************************

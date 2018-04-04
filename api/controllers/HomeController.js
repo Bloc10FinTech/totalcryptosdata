@@ -9,7 +9,7 @@ require('dotenv').config();
 module.exports = {
 	index: function (request, response) {
 		FrontendService.marketData(function(data){  
-		return response.view('home', {gdax: data.gdax, bittrex: data.bittrex, coinmarket: data.coinmarket,bitfinex:data.bitfinex,hitbtc:data.hitbtc,gate:data.gate,kuna:data.kuna, okex: data.okex, binance:data.binance,huobi:data.huobi, gemini:data.gemini, kraken:data.kraken, bitflyer:data.bitflyer, bithumb:data.bithumb,bitstamp:data.bitstamp, bitz:data.bitz, lbank:data.lbank, coinone:data.coinone,wex:data.wex,exmo:data.exmo,liqui:data.liqui,korbit:data.korbit,totalcryptospriceusd:data.totalcryptospriceusd,totalcryptospricepairs:data.totalcryptospricepairs,cryptoData: data.cryptoData, topproducts:data.topproducts,gainers_losers:data.gainers_losers, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
+		return response.view('home', {gdax: data.gdax, bittrex: data.bittrex, coinmarket: data.coinmarket,bitfinex:data.bitfinex,hitbtc:data.hitbtc,gate:data.gate,kuna:data.kuna, okex: data.okex, binance:data.binance,huobi:data.huobi, gemini:data.gemini, kraken:data.kraken, bitflyer:data.bitflyer, bithumb:data.bithumb,bitstamp:data.bitstamp, bitz:data.bitz, lbank:data.lbank, coinone:data.coinone,wex:data.wex,exmo:data.exmo,liqui:data.liqui,korbit:data.korbit,totalcryptospriceusd:data.totalcryptospriceusd,totalcryptospricepairs:data.totalcryptospricepairs,cryptoData: data.cryptoData, topproducts:data.topproducts,gainers_losers:data.gainers_losers, feedrss:data.rss, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
 	});
   },
   volume_24_hour_currency:function(request, response) {
@@ -52,6 +52,18 @@ module.exports = {
 	  FrontendService.documentation(function(data){
 		 return response.view('documentation',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
 	  });
-  }	
+  },	
+
+  about:function(request,response){
+  	 FrontendService.documentation(function(data){
+		 return response.view('about',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
+	  });
+  },
+  TC_index:function(request,response){
+  	 FrontendService.documentation(function(data){
+		 return response.view('TCindex',{cryptoData: data.cryptoData, topproducts:data.topproducts, title: 'Total Cryptos'}); 
+	  });
+  }
+
 };
 
