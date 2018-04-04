@@ -30,18 +30,19 @@ module.exports = {
 			ExchangeDataService.totalCryptoPricesPairs(),
 			ExchangeDataService.totalCryptosPrice(),
 			ExchangeDataService.topTotalCryptoPrices(),
-			FrontendService.gainers_and_losers(5)
-		]
+			FrontendService.gainers_and_losers(5),
+			FrontendService.RSS()
+					]
 		).then(response => { 
 			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers});
+				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
 			}else{
-				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers});
+				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
 			}
 		}).
 		catch(err => { 
 			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[],gainers_losers:[]});
+				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
 			}else{
 				//NO NEED TO SEND SOCKET DATA IN THIS CASE
 			}
@@ -1921,5 +1922,22 @@ module.exports = {
 		catch(err => {
 			callBack({cryptoData:{},topproducts:[]});
 		});
+	},
+
+	RSS:function(callBack){
+		let Parser = require('rss-parser');
+		let parser = new Parser();
+
+		return (async () => {
+		 	
+		 	try{
+		  		let feed = await parser.parseURL('http://bloc10.com/feed');
+		  		return feed;	
+		  	}catch(error){
+		  		return {title:"The RSSfeed Cannot be load", items:[{title:"The feed cannot be load",content:"The RSS feed cannot be load"}]};
+		  	}
+
+		})();
 	}
+	
 };
