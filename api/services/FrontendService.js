@@ -29,18 +29,20 @@ module.exports = {
 			ExchangeDataService.totalCryptoPricesUsd(),
 			ExchangeDataService.totalCryptoPricesPairs(),
 			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices()
-		]
+			ExchangeDataService.topTotalCryptoPrices(),
+			FrontendService.gainers_and_losers(5),
+			FrontendService.RSS()
+					]
 		).then(response => { 
 			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data});
+				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
 			}else{
-				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data});
+				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
 			}
 		}).
 		catch(err => { 
 			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[]});
+				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
 			}else{
 				//NO NEED TO SEND SOCKET DATA IN THIS CASE
 			}
@@ -1793,95 +1795,119 @@ module.exports = {
 		catch(err => { callBack({history1_day:[],history7_day:[],cryptoData:{},topproducts:[]});});
 	},
 	
-	gainers_and_loosers:function(callBack){
+	gainers_and_losers:function(count=0){
 		var _=require('lodash');
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices()
-		]).
-		then(response => {
-			ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
-				var gainer_loosers=[];
-				gainer_loosers['gainer_1_h']=[];
-				gainer_loosers['looser_1_h']=[];
-				gainer_loosers['gainer_24_h']=[];
-				gainer_loosers['looser_24_h']=[];
-				gainer_loosers['gainer_7_d']=[];
-				gainer_loosers['looser_7_d']=[];
-				
-				if(!_.isEmpty(coin_market_exchange)){
-					var tickers=ExchangeTickers.findOne();
-					tickers.where({exchange_id:coin_market_exchange.id});
-					tickers.sort('id DESC');
-					tickers.then(function(tickers){
-						var tickers=tickers.tickers;
-						//PROCESS TO GET LAST 1 HOUR GAINERS AND LOOSERS
-						tickers.sort(function(a,b){ if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
-						var temp=[];
-						_.forEach(tickers,function(ticker){
-							if(parseFloat(ticker.percent_change_1h)>0){
-								temp.push(ticker);
+		return new Promise(function(resolve,reject){
+			return Promise.all([
+				ExchangeDataService.totalCryptosPrice(),
+				ExchangeDataService.topTotalCryptoPrices()
+			]).
+			then(response => {
+				ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
+					var gainers_losers=[];
+					gainers_losers['gainer_1_h']=[];
+					gainers_losers['loser_1_h']=[];
+					gainers_losers['gainer_24_h']=[];
+					gainers_losers['loser_24_h']=[];
+					gainers_losers['gainer_7_d']=[];
+					gainers_losers['loser_7_d']=[];
+					
+					if(!_.isEmpty(coin_market_exchange)){
+						var tickers=ExchangeTickers.findOne();
+						tickers.where({exchange_id:coin_market_exchange.id});
+						tickers.sort('id DESC');
+						tickers.then(function(tickers){
+							var tickers=tickers.tickers;
+							//PROCESS TO GET LAST 1 HOUR GAINERS AND LOOSERS
+							tickers.sort(function(a,b){ if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
+							var temp=[];
+							_.forEach(tickers,function(ticker){
+								if(parseFloat(ticker.percent_change_1h)>0){
+									temp.push(ticker);
+								}
+							});
+							
+							if(count>0){
+								temp=_.slice(temp,0,count);
 							}
-						});
-						gainer_loosers['gainer_1_h']=temp;
-						tickers.reverse();
-						temp=[];
-						_.forEach(tickers,function(ticker){
-							if(parseFloat(ticker.percent_change_1h)<0){
-								temp.push(ticker);
+							gainers_losers['gainer_1_h']=temp;
+							tickers.reverse();
+							temp=[];
+							_.forEach(tickers,function(ticker){
+								if(parseFloat(ticker.percent_change_1h)<0){
+									temp.push(ticker);
+								}
+							});
+							if(count>0){
+								temp=_.slice(temp,0,count);
 							}
-						});
-						gainer_loosers['looser_1_h']=temp;
-						
-						//PROCESS TO GET LAST 24 HOURS GAINERS AND LOOSERS
-						tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
-						
-						temp=[];
-						_.forEach(tickers,function(ticker){
-							if(parseFloat(ticker.percent_change_24h)>0){
-								temp.push(ticker);
+							gainers_losers['loser_1_h']=temp;
+							
+							//PROCESS TO GET LAST 24 HOURS GAINERS AND LOOSERS
+							tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
+							
+							temp=[];
+							_.forEach(tickers,function(ticker){
+								if(parseFloat(ticker.percent_change_24h)>0){
+									temp.push(ticker);
+								}
+							});
+							
+							if(count>0){ 
+								temp=_.slice(temp,0,count);
 							}
-						});
-						gainer_loosers['gainer_24_h']=temp;
-						tickers.reverse();
-						
-						temp=[];
-						_.forEach(tickers,function(ticker){
-							if(parseFloat(ticker.percent_change_24h)<0){
-								temp.push(ticker);
+							gainers_losers['gainer_24_h']=temp;
+							
+							tickers.reverse();
+							
+							temp=[];
+							_.forEach(tickers,function(ticker){
+								if(parseFloat(ticker.percent_change_24h)<0){
+									temp.push(ticker);
+								}
+							});
+							if(count>0){ 
+								temp=_.slice(temp,0,count);
 							}
-						});
-						gainer_loosers['looser_24_h']=temp;
-						
-						//PROCESS TO GET LAST 7 DAYS GAINERS AND LOOSERS
-						tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
-						
-						temp=[];
-						_.forEach(tickers,function(ticker){
-							if(parseFloat(ticker.percent_change_7d)>0){
-								temp.push(ticker);
+							gainers_losers['loser_24_h']=temp;
+							
+							//PROCESS TO GET LAST 7 DAYS GAINERS AND LOOSERS
+							tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
+							
+							temp=[];
+							_.forEach(tickers,function(ticker){
+								if(parseFloat(ticker.percent_change_7d)>0){
+									temp.push(ticker);
+								}
+							});
+							if(count>0){ 
+								temp=_.slice(temp,0,count);
 							}
-						});
-						gainer_loosers['gainer_7_d']=temp;
-						tickers.reverse();
-						
-						temp=[];
-						_.forEach(tickers,function(ticker){
-							if(parseFloat(ticker.percent_change_7d)<0){
-								temp.push(ticker);
+							gainers_losers['gainer_7_d']=temp;
+							
+							tickers.reverse();
+							
+							temp=[];
+							_.forEach(tickers,function(ticker){
+								if(parseFloat(ticker.percent_change_7d)<0){
+									temp.push(ticker);
+								}
+							});
+							if(count>0){ 
+								temp=_.slice(temp,0,count);
 							}
+							gainers_losers['loser_7_d']=temp;
+							
+							return resolve({gainers_losers:gainers_losers,cryptoData:response[0],topproducts:response[1].data});
 						});
-						gainer_loosers['looser_7_d']=temp;
-						
-						callBack({gainer_loosers:gainer_loosers,cryptoData:response[0],topproducts:response[1].data});
-					});
-				}
-				else{
-					callBack({gainer_loosers:gainer_loosers,cryptoData:response[0],topproducts:response[1].data});
-				}
-			});
-		}).
-		catch(err => {callBack({gainer_loosers:[],cryptoData:{},topproducts:[]});});	
+					}
+					else{
+						return resolve({gainers_losers:gainers_losers,cryptoData:response[0],topproducts:response[1].data});
+					}
+				});
+			}).
+		catch(err => { return resolve({gainers_losers:[],cryptoData:{},topproducts:[]});});	
+		});	
 	},
 	
 	documentation:function(callBack){
@@ -1896,5 +1922,22 @@ module.exports = {
 		catch(err => {
 			callBack({cryptoData:{},topproducts:[]});
 		});
+	},
+
+	RSS:function(callBack){
+		let Parser = require('rss-parser');
+		let parser = new Parser();
+
+		return (async () => {
+		 	
+		 	try{
+		  		let feed = await parser.parseURL('http://bloc10.com/feed');
+		  		return feed;	
+		  	}catch(error){
+		  		return {title:"The RSSfeed Cannot be load", items:[{title:"The feed cannot be load",content:"The RSS feed cannot be load"}]};
+		  	}
+
+		})();
 	}
+	
 };

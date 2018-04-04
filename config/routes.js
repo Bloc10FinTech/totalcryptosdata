@@ -39,7 +39,7 @@ module.exports.routes = {
   '/volume-24-hour-exchange':'HomeController.volume_24_hour_exhange',
   '/exchange/:exchangeName':'HomeController.exchange',
   '/tc-history':'HomeController.tc_history',
-  '/gainers-and-loosers':'HomeController.gainers_and_loosers',
+  '/gainers-and-losers':'HomeController.gainers_and_losers',
   '/api/documentation':'HomeController.documentation',
   '/api/tcPrices':'ApiController.tcPrices',
   '/api/symbolsUSDPrices':'ApiController.symbolsUSDPrices',
@@ -47,10 +47,12 @@ module.exports.routes = {
   '/api/productsPrices':'ApiController.productsPrices',
   '/api/productsPrices/:product':'ApiController.productPrice',
   '/api/topProductsPrices':'ApiController.topProductsPrices',
-  '/api/topGainersLoosers':'ApiController.topGainersLoosers',
+  '/api/topGainersLosers':'ApiController.topGainersLosers',
   '/api/userRegistration':'ApiController.userRegistration',
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},
+  '/about':'HomeController.about',
+  '/TCindex':'HomeController.TC_index',
   'post /doLogin':'AuthController.doLogin'
 
   /***************************************************************************
