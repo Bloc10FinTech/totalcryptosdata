@@ -125,7 +125,7 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject) {
 			var options = {
-			  url: 'https://api.coinmarketcap.com/v1/ticker/',
+			  url: 'https://api.coinmarketcap.com/v1/ticker/?limit=0',
 			  headers: {
 				'User-Agent': 'request'
 			  }

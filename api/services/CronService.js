@@ -2,7 +2,11 @@ module.exports = {
 	createExchange:function(){
 		console.log('crone job for create exchange working');
 		var moment = require('moment');
+		var math = require('mathjs');
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		var date_after = moment().subtract(24, 'hours').toDate();
+		var dataDate=moment().subtract(24, 'hours').format('YYYY-MM-DD');
+		var delete_before = moment().subtract(24*15, 'hours').toDate();
 		
 		//PROCESS TO INSERT GDAX STATIC DATA
 		ExchangeList.count({name: 'gdax'},function(err,count){
@@ -106,7 +110,6 @@ module.exports = {
 				});
 			}
 		});
-		
 		
 		//PROCESS TO INSERT OKEX STATIC DATA
 		ExchangeList.count({name:'okex'},function(err,count){
@@ -334,6 +337,59 @@ module.exports = {
 				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:currencies,products:products,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'exchange_insert',curDateTime);}
 				});
+			}
+		});
+		
+		//PROCESS TO CREATE TOTAL CRYPTO PRICES 24 HOUR HISTORY
+		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, data){
+			if(err){ 
+				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'history_select',curDateTime);
+			}
+			var insert_data=[];
+			_.forEach(data,function(prices){
+				_.forEach(prices.prices,function(price){
+					var updated=false;
+					_.forEach(insert_data,function(record){
+						if(record.product==price.product){
+							updated=true;
+							record.price=parseFloat(price.price);
+							record.change_perc_1h=parseFloat(price.change_perc_1h);
+							record.change_perc_24h=parseFloat(price.change_perc_24h);
+							record.chart=price.chart;
+							record.volume.push(parseFloat(price.volume));
+							record.low.push(parseFloat(price.low));
+							record.high.push(parseFloat(price.high));
+						}
+					});
+					if(!updated){
+						var low=[];
+						var high=[];
+						var volume=[];
+						low.push(parseFloat(price.low));
+						high.push(parseFloat(price.high));
+						volume.push(parseFloat(price.volume));
+						insert_data.push({base_currency:price.base_currency,quote_currency:price.quote_currency,product:price.product,price:parseFloat(price.price),change_perc_1h:parseFloat(price.change_perc_1h),change_perc_24h:parseFloat(price.change_perc_24h),low:low,high:high,volume:volume,chart:price.chart});
+					}
+				});
+			});
+			
+			//PROCESS TO PREPARE LOW/HIGH AND VOLUME
+			_.forEach(insert_data,function(record){
+				record.volume=math.format(_.reduce(record.volume,function(sum,n){return sum+n;},0)/record.volume.length, {lowerExp: -100, upperExp: 100});
+				record.high=math.format(Math.max.apply(Math,record.high), {lowerExp: -100, upperExp: 100});
+				record.low=math.format(Math.min.apply(Math,record.low), {lowerExp: -100, upperExp: 100});
+			});
+			TotalCryptoPricesHistory.create({prices:insert_data,data_date:dataDate,date_created:curDateTime},function(err,data){
+				if(err){ 
+					ApiService.exchangeErrors('totalcryptopriceshistory','query_insert',err,'history_insert',curDateTime);
+				}
+			});
+		});
+		
+		//DELETE EXCHANGES TICKERS
+		ExchangeTickers.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('tickers','delete',err,'tickers_delete',curDateTime);
 			}
 		});
 	},
