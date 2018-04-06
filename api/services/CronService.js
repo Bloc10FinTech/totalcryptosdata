@@ -21,7 +21,7 @@ module.exports = {
 						if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'exchange_insert',curDateTime);}
 					});
 				}).
-				catch(err => { console.log(err); ApiService.exchangeErrors('gdax','api',err,'exchange_api_select',curDateTime);});
+				catch(err => { ApiService.exchangeErrors('gdax','api',err,'exchange_api_select',curDateTime);});
 			}
 		});
 		
@@ -1776,6 +1776,7 @@ module.exports = {
 							}
 							if(!_.isEmpty(coinMarketTickers)){
 								coinMarketTickers=coinMarketTickers.tickers;
+								coinMarketTickers=_.reject(coinMarketTickers,{market_cap_usd:null});
 								coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 								coinMarketTickers=_.slice(coinMarketTickers,0,100);
 							
@@ -1785,11 +1786,10 @@ module.exports = {
 								
 								_.forEach(coinMarketTickers,function(ticker){
 									ticker.weight=parseFloat(ticker.market_cap_usd)/total_usd_market_cap;
-									ticker.price_usd_weight=parseFloat(ticker.price_usd)*parseFloat(ticker.weight);
+									ticker.price_usd_weight=parseFloat(ticker.price_usd)*parseFloat(ticker.weight); 
 									tcw100=tcw100+parseFloat(ticker.price_usd_weight);
 								});
 								tcw100=tcw100/coinMarketTickers.length;
-								
 								TotalCryptoPrice.create({tc100: tc100, total_usd_market_cap: total_usd_market_cap, tcw100: tcw100,date_created: curDateTime},function(err,data){ if(err){
 									ApiService.exchangeErrors('totalcryptoprice','query_insert',err,'tickers_insert',curDateTime);
 								}});
