@@ -1408,8 +1408,8 @@ textarea {
 }
 
 a {
-    color: #337ab7;
-    text-decoration: none
+    color: #ffffff;
+    text-decoration: none;
 }
 
 a:focus,
@@ -4800,7 +4800,7 @@ textarea.input-group-sm>.input-group-btn>.btn {
 .nav>li>a {
     position: relative;
     display: block;
-    padding: 10px 15px
+    padding: 10px 15px;
 }
 
 .nav>li>a:focus,
