@@ -19,11 +19,13 @@ Header
 	padding-left: 0;
 	padding-right: 0;
 	color: #414141;
-	font-size: medium;
+	font-size: 1.2em;
 }
 .menu ul.nav li a{
 	color: #414141;
+	padding: 12px 15px;
 }
+
 .menu ul.nav li a:hover{
 	color: black;
 }
@@ -175,7 +177,7 @@ table.dataTable thead .sorting_desc_disabled {
 /*End of Left Banner*/
 
 .Vol24Hex{
-	margin-top: 8%;
+	margin-top: 10%;
 }
 .tc-history{
 	margin: 10% 0 0 0;
@@ -192,15 +194,17 @@ table.dataTable thead .sorting_desc_disabled {
 	margin-top: 10px;
 }
 .list-aggregate li {
- border-bottom-color: #e5e5e5; 
+ border-bottom-color: #fefefe; 
+ min-height: 100px;
+ color: #020202;
 }
 .list-aggregate li a { 
-	color: #fff; 
+	color:#2f374a; 
 	font-weight:bold;
 	 }
 .marquee_div {
 	height:100px;
-	background-color:black;
+	background-color: #e0e8ef94;
 }
 .marquee_list_item { 
 	width:340px; float: left;
