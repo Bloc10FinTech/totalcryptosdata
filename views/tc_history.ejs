@@ -170,7 +170,7 @@ $(document).ready(function(){
         }
     }
 	});
-
+	
 	c3.generate({
 		bindto: '#history_7day_chart_price',
 		data: {
@@ -189,7 +189,9 @@ $(document).ready(function(){
         x: {
             //type: 'timeseries',
             tick: {
-                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return year+'-'+month+'-'+day; }
+				fit: true,
+				count: 7,
+                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return month+'-'+day; }
             }
         }
     }
@@ -213,7 +215,9 @@ $(document).ready(function(){
         x: {
             //type: 'timeseries',
             tick: {
-                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return year+'-'+month+'-'+day; }
+				fit: true,
+				count: 7,
+                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return month+'-'+day; }
             }
         }
     }
@@ -237,7 +241,9 @@ $(document).ready(function(){
         x: {
             //type: 'timeseries',
             tick: {
-                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return year+'-'+month+'-'+day; }
+				fit: true,
+				count: 7,
+                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return month+'-'+day; }
             }
         }
     }
