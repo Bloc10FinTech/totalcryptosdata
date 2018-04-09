@@ -1,6 +1,9 @@
 a{
 	color: #293846;
 }
+body{
+	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
 /*
 Header
 */
@@ -22,7 +25,7 @@ Header
 	padding-left: 0;
 	padding-right: 0;
 	color: #414141;
-	font-size: 1.2em;
+	font-size: 1.15em;
 }
 .menu ul.nav li a{
 	color: #414141;
@@ -112,6 +115,9 @@ ul.dropdown-menu li a{
 End of Menu
 */
 /*Table Color*/
+.ColorMenuTable{
+	color: whitesmoke;
+}
 
 .table-striped>tbody>tr:nth-of-type(odd) {
     background-color: #9db1e2;
@@ -120,7 +126,7 @@ End of Menu
     background-color: #67819c; 
 }
 .table{
-	color: whitesmoke;
+	color: #08041d;
 }
 .table tr td a{
 	color: whitesmoke;
@@ -270,6 +276,20 @@ nav.navbar.navbar-inverse.shrink {
 .fadeInRight {
 	margin-top: 30px;
 }
+
+@media all and (min-width: 1520px){
+	.Vol24Hex{
+	margin-top: 8%;
+	}
+}
+
+@media all and (min-width: 1350px){
+	.Vol24Hex{
+	margin-top: 9%;
+	}
+}
+
+
 @media all and (max-width: 1161px) {
 	.fadeInRight {
 		margin-top: 50px !important;
