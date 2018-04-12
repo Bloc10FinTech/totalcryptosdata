@@ -120,16 +120,16 @@ End of Menu
 }
 
 .table-striped>tbody>tr:nth-of-type(odd) {
-    background-color: #9db1e2;
+    background-color: #ececec;
 }
 .table-striped>tbody>tr:nth-of-type(even) {
-    background-color: #67819c; 
+    background-color: #dadad9; 
 }
 .table{
 	color: #08041d;
 }
 .table tr td a{
-	color: whitesmoke;
+	color: #2f374a;
 	font-weight: bold;
 }
 .table-bordered > thead > tr > th,
@@ -147,6 +147,10 @@ table.dataTable thead .sorting_desc_disabled {
 
 .table-hover > tbody > tr:hover {
     background-color: #2F374A;
+    color: whitesmoke;
+}
+.table-hover > tbody > tr:hover > td > a {
+    color: whitesmoke;
 }
 
 #DataTables_Table_0{
