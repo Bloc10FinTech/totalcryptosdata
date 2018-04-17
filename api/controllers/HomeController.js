@@ -42,7 +42,7 @@ module.exports = {
 		 return response.view('exchange',{data: data, cryptoData: data.cryptoData, topproducts:data.topproducts,gdax: data.gdax, title: 'Total Cryptos'}); 
 	  });
   },
-  tc_history:function(request,response){
+  tc_history:function(request,response){ 
 	  FrontendService.tc_history(function(data){ 
 		  return response.view('tc_history',{history1_day: data.history1_day,history7_day: data.history7_day, cryptoData: data.cryptoData, topproducts:data.topproducts,gdax: data.gdax, title: 'Total Cryptos'});
 	  });
