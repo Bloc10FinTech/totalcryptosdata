@@ -2040,6 +2040,6 @@ module.exports = {
 	},
 	
 	socketUpdates:function(){
-		FrontendService.marketData(function(){},'socket');
+		FrontendService.socketData();
 	}
 };

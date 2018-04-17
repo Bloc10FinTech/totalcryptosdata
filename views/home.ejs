@@ -6,67 +6,67 @@
 				<a data-toggle="tab" href="#totalcryptos">Total Cryptos</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#coin_div">COIN</a>
+				<a data-toggle="tab" href="#coin" onclick="show_tab_data('coin');">COIN</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#bittrex_div">BITTREX</a>
+				<a data-toggle="tab" href="#bittrex" onclick="show_tab_data('bittrex');">BITTREX</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#bitfinex_div">BITFINEX</a>
+				<a data-toggle="tab" href="#bitfinex" onclick="show_tab_data('bitfinex');">BITFINEX</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#hitbtc">HIT BTC</a>
+				<a data-toggle="tab" href="#hitbtc" onclick="show_tab_data('hitbtc');">HIT BTC</a>
 			</li>
 			<li>
-				<a data-toggle="tab" href="#gate">GATE</a>
+				<a data-toggle="tab" href="#gate" onclick="show_tab_data('gate');">GATE</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#kuna">KUNA</a>
+				<a data-toggle="tab" href="#kuna" onclick="show_tab_data('kuna');">KUNA</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#okex">OKEX</a>
+				<a data-toggle="tab" href="#okex" onclick="show_tab_data('okex');">OKEX</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#binance">BINANCE</a>
+				<a data-toggle="tab" href="#binance" onclick="show_tab_data('binance');">BINANCE</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#huobi">HUOBI</a>
+				<a data-toggle="tab" href="#huobi" onclick="show_tab_data('huobi');">HUOBI</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#gemini">GEMINI</a>
+				<a data-toggle="tab" href="#gemini" onclick="show_tab_data('gemini');">GEMINI</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#kraken">KRAKEN</a>
+				<a data-toggle="tab" href="#kraken" onclick="show_tab_data('kraken');">KRAKEN</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#bitflyer">BITFLYER</a>
+				<a data-toggle="tab" href="#bitflyer" onclick="show_tab_data('bitflyer');">BITFLYER</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#bithumb">BITHUMB</a>
+				<a data-toggle="tab" href="#bithumb" onclick="show_tab_data('bithumb');">BITHUMB</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#bitstamp">BITSTAMP</a>
+				<a data-toggle="tab" href="#bitstamp" onclick="show_tab_data('bitstamp');">BITSTAMP</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#bitz">BITZ</a>
+				<a data-toggle="tab" href="#bitz" onclick="show_tab_data('bitz');">BITZ</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#lbank">LBANK</a>
+				<a data-toggle="tab" href="#lbank" onclick="show_tab_data('lbank');">LBANK</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#coinone">COIN-ONE</a>
+				<a data-toggle="tab" href="#coinone" onclick="show_tab_data('coinone');">COIN-ONE</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#wex">WEX</a>
+				<a data-toggle="tab" href="#wex" onclick="show_tab_data('wex');">WEX</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#exmo">EXMO</a>
+				<a data-toggle="tab" href="#exmo" onclick="show_tab_data('exmo');">EXMO</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#liqui">LIQUI</a>
+				<a data-toggle="tab" href="#liqui" onclick="show_tab_data('liqui');">LIQUI</a>
 			</li>
 			<li class="show_hide" style="display:none;">
-				<a data-toggle="tab" href="#korbit">KORBIT</a>
+				<a data-toggle="tab" href="#korbit" onclick="show_tab_data('korbit');">KORBIT</a>
 			</li>
 			<li id="more" style="display:block;">
 				<a href="javascript:void();" style="font-weight:bold;" onclick="show_hide_tabs('more')"><span class="glyphicon glyphicon-plus"></span></a>
@@ -77,7 +77,6 @@
 		</ul>
 
 		<div class="tab-content">
-			
 			<div class="tab-pane active" id="totalcryptos">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<ul class="nav nav-tabs">
@@ -92,7 +91,7 @@
 					<div class="tab-content" style="margin-top:20px;">
 						<div class="tab-pane active" id="totalcryptospriceusd">
 							<div class="table-responsive">
-								<table class="table table-striped table-bordered table-hover customtable" >
+								<table class="table table-striped table-bordered table-hover customtable totalcryptos" >
 									<thead>
 										<tr class="ColorMenuTable">
 											<th>#</th>
@@ -152,7 +151,7 @@
 						</div>
 						<div class="tab-pane" id="totalcryptospricepairs">
 							<div class="table-responsive">
-								<table class="table table-striped table-bordered table-hover customtable" >
+								<table class="table table-striped table-bordered table-hover customtable totalcryptos" >
 									<thead>
 										<tr class="ColorMenuTable">
 											<th>#</th>
@@ -220,7 +219,7 @@
 				</div>
 			</div>
 
-			<div class="tab-pane" id="coin_div">
+			<div class="tab-pane" id="coin">
 				<div class="col-md-12 inner-menu" style="margin-top:20px;">
 					<ul class="nav nav-tabs">
 						<li class="dropdown">
@@ -252,7 +251,7 @@
 				</div>
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable coin" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -266,58 +265,17 @@
 									<th>Chart 1d</th>
 								</tr>
 							</thead>
-							<tbody id="coinmarket_summary">
-								<%coinmarket.forEach(function(ticker,index){%>
-								<tr id="<%=ticker.name%>_coinmarket">
-									<td><%=index+1%></td>
-									<td><a href="volume-24-hour-currency/<%=ticker.symbol%>"><%=ticker.symbol%></a></td>
-									<td id="<%=ticker.name%>_price_coinmarket">
-										<%if(ticker.percent_change_1h>0){%>
-										<span style="color:green;font-weight:bold;"><%=parseFloat(ticker.price_usd).toFixed(8)%></span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;"><%=parseFloat(ticker.price_usd).toFixed(8)%></span>
-										<%}%>
-									</td>
-
-									<td id="<%=ticker.name%>_cap_coinmarket">
-										<%=Math.round(parseFloat(ticker.market_cap_usd))%>
-									</td>
-									<td id="<%=ticker.name%>_available_coinmarket">
-										<%=Math.round(parseFloat(ticker.available_supply))%>
-									</td>
-
-									<td id="<%=ticker.name%>_change_1h_coinmarket">
-										<%if(ticker.percent_change_1h>0){%>
-										<span style="color:green;font-weight:bold;"><%=parseFloat(ticker.percent_change_1h).toFixed(2)%></span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;"><%=parseFloat(ticker.percent_change_1h).toFixed(2)%></span>
-										<%}%>
-									</td>
-									<td id="<%=ticker.name%>_change_24h_coinmarket">
-										<%if(ticker.percent_change_24h>0){%>
-										<span style="color:green;font-weight:bold;"><%=parseFloat(ticker.percent_change_24h).toFixed(2)%></span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;"><%=parseFloat(ticker.percent_change_24h).toFixed(2)%></span>
-										<%}%>
-									</td>
-									<td id="<%=ticker.name%>_24h_volume_coinmarket"><%=Math.round(parseFloat(ticker['24h_volume_usd']))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=ticker.name%>_coinmarket"><input type="hidden" id="hidden_<%=ticker.name%>_coinmarket" value="<%=ticker.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
+							<tbody id="coin_market_summary">
 							</tbody>
 						</table>
 					</div>
 				</div>
 			</div>
 
-			<div class="tab-pane" id="bittrex_div">
+			<div class="tab-pane" id="bittrex">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable bittrex" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -332,47 +290,16 @@
 								</tr>
 							</thead>
 							<tbody id="bittrex_market_summary">
-								<%bittrex.forEach(function(summary,index){%>
-								<tr id="<%=summary.MarketName%>_bittrex">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.BaseCurrency%>">
-											<%=summary.BaseCurrency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.MarketName.replace('-','')%>">
-											<%=summary.MarketName.replace('-','')%>
-										</a>
-									</td>
-									<td id="<%=summary.MarketName%>_bid_bittrex">
-										<%if(summary.Bid>summary.Last){%>
-										<span style="color:green;font-weight:bold;"><%=parseFloat(summary.Bid).toFixed(8)%></span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;"><%=parseFloat(summary.Bid).toFixed(8)%></span>
-										<%}%>
-									</td>
-									<td id="<%=summary.MarketName%>_high_bittrex"><%=parseFloat(summary.High).toFixed(8)%></td>
-									<td id="<%=summary.MarketName%>_low_bittrex"><%=parseFloat(summary.Low).toFixed(8)%></td>
-									<td id="<%=summary.MarketName%>_volume_bittrex"><%=Math.round(parseFloat(summary.Volume))%></td>
-									<td id="<%=summary.MarketName%>_base_volume_bittrex"><%=Math.round(parseFloat(summary.BaseVolume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.MarketName%>_bittrex"><input type="hidden" id="hidden_<%=summary.MarketName%>_bittrex" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
 				</div>
 			</div>
 
-			<div class="tab-pane" id="bitfinex_div">
+			<div class="tab-pane" id="bitfinex">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable bitfinex" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -386,37 +313,6 @@
 								</tr>
 							</thead>
 							<tbody id="bitfinex_market_summary">
-								<%bitfinex.forEach(function(summary,index){%>
-
-								<tr id="<%=summary.product_id%>_bitfinex">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.product_id.substr(0,3).toUpperCase()%>">
-											<%=summary.product_id.substr(0,3).toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product_id.toUpperCase()%>">
-											<%=summary.product_id.toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product_id%>_price_bitfinex">
-										<%if(summary.bid>summary.last_price){%>
-										<span style="color:green;font-weight:bold;"><%=parseFloat(summary.bid).toFixed(8)%></span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;"><%=parseFloat(summary.bid).toFixed(8)%></span>
-										<%}%>
-									</td>
-									<td id="<%=summary.product_id%>_high_bitfinex"><%=parseFloat(summary.high).toFixed(8)%></td>
-									<td id="<%=summary.product_id%>_low_bitfinex"><%=parseFloat(summary.low).toFixed(8)%></td>
-									<td id="<%=summary.product_id%>_volume_bitfinex"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product_id%>_bitfinex"><input type="hidden" id="hidden_<%=summary.product_id%>_bitfinex" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -426,7 +322,7 @@
 			<div class="tab-pane" id="hitbtc">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable hitbtc" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -441,37 +337,6 @@
 								</tr>
 							</thead>
 							<tbody id="hitbtc_market_summary">
-								<%hitbtc.forEach(function(summary,index){%>
-								<tr id="<%=summary.symbol%>_hitbtc">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.baseCurrency%>">
-											<%=summary.baseCurrency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.symbol%>">
-											<%=summary.symbol%>
-										</a>
-									</td>
-									<td id="<%=summary.symbol%>_bid_hitbtc">
-										<%if(summary.bid>summary.last){%>
-										<span style="color:green;font-weight:bold;"><%=parseFloat(summary.bid).toFixed(10)%></span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;"><%=parseFloat(summary.bid).toFixed(10)%></span>
-										<%}%>
-									</td>
-									<td id="<%=summary.symbol%>_high_hitbtc"><%=parseFloat(summary.high).toFixed(10)%></td>
-									<td id="<%=summary.symbol%>_low_hitbtc"><%=parseFloat(summary.low).toFixed(10)%></td>
-									<td id="<%=summary.symbol%>_volume_hitbtc"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td id="<%=summary.symbol%>_volume_quote_hitbtc"><%=Math.round(parseFloat(summary.volumeQuote))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.symbol%>_hitbtc"><input type="hidden" id="hidden_<%=summary.symbol%>_hitbtc" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -481,7 +346,7 @@
 			<div class="tab-pane" id="gate">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable " >
+						<table class="table table-striped table-bordered table-hover customtable gate" >
 							<thead>
 								<tr  class="ColorMenuTable">
 									<th>#</th>
@@ -499,44 +364,6 @@
 								</tr>
 							</thead>
 							<tbody id="gate_market_summary">
-								<%gate.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_gate">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.product.split('_',1).join().toUpperCase()%>">
-											<%=summary.product.split('_',1).join().toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_last_gate"><%=parseFloat(summary.last).toFixed(8)%></td>
-									<td id="<%=summary.product%>_highest_gate"><%=parseFloat(summary.highestBid).toFixed(8)%></td>
-									<td id="<%=summary.product%>_lowest_gate"><%=parseFloat(summary.lowestAsk).toFixed(8)%></td>
-									<td id="<%=summary.product%>_volume_gate"><%=Math.round(parseFloat(summary.baseVolume))%></td>
-									<td id="<%=summary.product%>_volume_quote_gate"><%=Math.round(parseFloat(summary.quoteVolume))%></td>
-									<td id="<%=summary.product%>_high_24h_gate"><%=parseFloat(summary.high24hr).toFixed(8)%></td>
-									<td id="<%=summary.product%>_low_24h_gate"><%=parseFloat(summary.low24hr).toFixed(8)%></td>
-									<td id="<%=summary.product%>_percentage_change_gate">
-										<%if(parseFloat(summary.percentChange)>0){%>
-										<span style="color:green;font-weight:bold;">
-											<%=parseFloat(summary.percentChange).toFixed(2)%>
-										</span>
-										<%}else{%>
-										<span style="color:red;font-weight:bold;">
-											<%=parseFloat(summary.percentChange).toFixed(2)%>
-										</span>
-										<%}%>
-									</td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_gate"><input type="hidden" id="hidden_<%=summary.product%>_gate" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -546,7 +373,7 @@
 			<div class="tab-pane" id="kuna">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable " >
+						<table class="table table-striped table-bordered table-hover customtable kuna" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -559,25 +386,6 @@
 								</tr>
 							</thead>
 							<tbody id="kuna_market_summary">
-								<%kuna.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_kuna">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.toUpperCase()%>">
-											<%=summary.product.toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_kuna"><%=parseFloat(summary.price).toFixed(10)%></td>
-									<td id="<%=summary.product%>_high_kuna"><%=parseFloat(summary.high).toFixed(10)%></td>
-									<td id="<%=summary.product%>_low_kuna"><%=parseFloat(summary.low).toFixed(10)%></td>
-									<td id="<%=summary.product%>_vol_kuna"><%=Math.round(parseFloat(summary.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_kuna"><input type="hidden" id="hidden_<%=summary.product%>_kuna" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -587,7 +395,7 @@
 			<div class="tab-pane" id="okex">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable okex" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -601,30 +409,6 @@
 								</tr>
 							</thead>
 							<tbody id="okex_market_summary">
-								<%okex.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_okex">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.product.split('_',1).join().toUpperCase()%>">
-											<%=summary.product.split('_',1).join().toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_okex"><%=parseFloat(summary.ticker.last).toFixed(8)%></td>
-									<td id="<%=summary.product%>_high_okex"><%=parseFloat(summary.ticker.high).toFixed(8)%></td>
-									<td id="<%=summary.product%>_low_okex"><%=parseFloat(summary.ticker.low).toFixed(8)%></td>
-									<td id="<%=summary.product%>_vol_okex"><%=Math.round(parseFloat(summary.ticker.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_okex"><input type="hidden" id="hidden_<%=summary.product%>_okex" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -634,7 +418,7 @@
 			<div class="tab-pane" id="binance">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable binance" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -648,30 +432,6 @@
 								</tr>
 							</thead>
 							<tbody id="binance_market_summary">
-								<%binance.forEach(function(summary,index){%>
-								<tr id="<%=summary.symbol%>_binance">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.baseAsset%>">
-											<%=summary.baseAsset%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.symbol%>">
-											<%=summary.symbol%>
-										</a>
-									</td>
-									<td id="<%=summary.symbol%>_price_binance"><%=parseFloat(summary.lastPrice).toFixed(8)%></td>
-									<td id="<%=summary.symbol%>_high_binance"><%=parseFloat(summary.highPrice).toFixed(8)%></td>
-									<td id="<%=summary.symbol%>_low_binance"><%=parseFloat(summary.lowPrice).toFixed(8)%></td>
-									<td id="<%=summary.symbol%>_vol_binance"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.symbol%>_binance"><input type="hidden" id="hidden_<%=summary.symbol%>_binance" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -681,7 +441,7 @@
 			<div class="tab-pane" id="huobi">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable huobi" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -695,30 +455,6 @@
 								</tr>
 							</thead>
 							<tbody id="huobi_market_summary">
-								<%huobi.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_huobi">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.toUpperCase()%>">
-											<%=summary.product.toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_huobi"><%=parseFloat(summary.tick.bid[0]).toFixed(10)%></td>
-									<td id="<%=summary.product%>_high_huobi"><%=parseFloat(summary.tick.high).toFixed(10)%></td>
-									<td id="<%=summary.product%>_low_huobi"><%=parseFloat(summary.tick.low).toFixed(10)%></td>
-									<td id="<%=summary.product%>_vol_huobi"><%=Math.round(parseFloat(summary.tick.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_huobi"><input type="hidden" id="hidden_<%=summary.product%>_huobi" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -728,7 +464,7 @@
 			<div class="tab-pane" id="gemini">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable gemini" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -740,28 +476,6 @@
 								</tr>
 							</thead>
 							<tbody id="gemini_market_summary">
-								<%gemini.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_gemini">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.currency%>">
-											<%=summary.currency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.toUpperCase()%>">
-											<%=summary.product.toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_gemini"><%=parseFloat(summary.bid).toFixed(5)%></td>
-									<td id="<%=summary.product%>_vol_gemini"><%=Math.round(parseFloat(summary.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_gemini"><input type="hidden" id="hidden_<%=summary.product%>_gemini" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -771,7 +485,7 @@
 			<div class="tab-pane" id="kraken">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable kraken" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -785,30 +499,6 @@
 								</tr>
 							</thead>
 							<tbody id="kraken_market_summary">
-								<%kraken.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_kraken">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency%>">
-											<%=summary.base_currency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product%>">
-											<%=summary.product%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_kraken"><%=parseFloat(summary.price).toFixed(8)%></td>
-									<td id="<%=summary.product%>_high_kraken"><%=parseFloat(summary.high).toFixed(8)%></td>
-									<td id="<%=summary.product%>_low_kraken"><%=parseFloat(summary.low).toFixed(8)%></td>
-									<td id="<%=summary.product%>_vol_kraken"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_kraken"><input type="hidden" id="hidden_<%=summary.product%>_kraken" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -818,7 +508,7 @@
 			<div class="tab-pane" id="bitflyer">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable bitflyer" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -830,28 +520,6 @@
 								</tr>
 							</thead>
 							<tbody id="bitflyer_market_summary">
-								<%bitflyer.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_bitflyer">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency%>">
-											<%=summary.base_currency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','')%>">
-											<%=summary.product.replace('_','')%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_bitflyer"><%=parseFloat(summary.best_bid).toFixed(5)%></td>
-									<td id="<%=summary.product%>_vol_bitflyer"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_bitflyer"><input type="hidden" id="hidden_<%=summary.product%>_bitflyer" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -861,7 +529,7 @@
 			<div class="tab-pane" id="bithumb">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable bithumb" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -873,28 +541,6 @@
 								</tr>
 							</thead>
 							<tbody id="bithumb_market_summary">
-								<%bithumb.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_bithumb">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency%>">
-											<%=summary.base_currency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product%>">
-											<%=summary.product%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_bithumb"><%=parseFloat(summary.sell_price).toFixed(2)%></td>
-									<td id="<%=summary.product%>_vol_bithumb"><%=Math.round(parseFloat(summary.volume_1day))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_bithumb"><input type="hidden" id="hidden_<%=summary.product%>_bithumb" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -904,7 +550,7 @@
 			<div class="tab-pane" id="bitstamp">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable bitstamp" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -916,28 +562,6 @@
 								</tr>
 							</thead>
 							<tbody id="bitstamp_market_summary">
-								<%bitstamp.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_bitstamp">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency%>">
-											<%=summary.base_currency%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.toUpperCase()%>">
-											<%=summary.product.toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_bitstamp"><%=parseFloat(summary.bid).toFixed(8)%></td>
-									<td id="<%=summary.product%>_vol_bitstamp"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_bitstamp"><input type="hidden" id="hidden_<%=summary.product%>_bitstamp" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -947,7 +571,7 @@
 			<div class="tab-pane" id="bitz">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable bitz" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -959,28 +583,6 @@
 								</tr>
 							</thead>
 							<tbody id="bitz_market_summary">
-								<%bitz.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_bitz">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_bitz"><%=parseFloat(summary.sell).toFixed(8)%></td>
-									<td id="<%=summary.product%>_vol_bitz"><%=Math.round(parseFloat(summary.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_bitz"><input type="hidden" id="hidden_<%=summary.product%>_bitz" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -990,7 +592,7 @@
 			<div class="tab-pane" id="lbank">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable lbank" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -1002,28 +604,6 @@
 								</tr>
 							</thead>
 							<tbody id="lbank_market_summary">
-								<%lbank.forEach(function(summary,index){%>
-								<tr id="<%=summary.symbol%>_lbank">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.symbol.replace('_','').toUpperCase()%>">
-											<%=summary.symbol.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.symbol%>_price_lbank"><%=parseFloat(summary.ticker.latest).toFixed(8)%></td>
-									<td id="<%=summary.symbol%>_vol_lbank"><%=Math.round(parseFloat(summary.ticker.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.symbol%>_lbank"><input type="hidden" id="hidden_<%=summary.symbol%>_lbank" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -1033,7 +613,7 @@
 			<div class="tab-pane" id="coinone">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable coinone" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -1045,28 +625,6 @@
 								</tr>
 							</thead>
 							<tbody id="coinone_market_summary">
-								<%coinone.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_coinone">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.toUpperCase()%>">
-											<%=summary.product.toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_coinone"><%=parseFloat(summary.last).toFixed(2)%></td>
-									<td id="<%=summary.product%>_vol_coinone"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_coinone"><input type="hidden" id="hidden_<%=summary.product%>_coinone" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -1076,7 +634,7 @@
 			<div class="tab-pane" id="wex">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable wex" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -1088,28 +646,6 @@
 								</tr>
 							</thead>
 							<tbody id="wex_market_summary">
-								<%wex.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_wex">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_wex"><%=parseFloat(summary.last).toFixed(5)%></td>
-									<td id="<%=summary.product%>_vol_wex"><%=Math.round(parseFloat(summary.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_wex"><input type="hidden" id="hidden_<%=summary.product%>_wex" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -1119,7 +655,7 @@
 			<div class="tab-pane" id="exmo">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable exmo" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -1131,28 +667,6 @@
 								</tr>
 							</thead>
 							<tbody id="exmo_market_summary">
-								<%exmo.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_exmo">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_exmo"><%=parseFloat(summary.last_trade).toFixed(8)%></td>
-									<td id="<%=summary.product%>_vol_exmo"><%=Math.round(parseFloat(summary.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_exmo"><input type="hidden" id="hidden_<%=summary.product%>_exmo" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -1162,7 +676,7 @@
 			<div class="tab-pane" id="liqui">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable liqui" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -1174,28 +688,6 @@
 								</tr>
 							</thead>
 							<tbody id="liqui_market_summary">
-								<%liqui.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_liqui">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_liqui"><%=parseFloat(summary.last).toFixed(8)%></td>
-									<td id="<%=summary.product%>_vol_liqui"><%=Math.round(parseFloat(summary.vol))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_liqui"><input type="hidden" id="hidden_<%=summary.product%>_liqui" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -1205,7 +697,7 @@
 			<div class="tab-pane" id="korbit">
 				<div class="col-lg-12" style="margin-top:20px;">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover customtable" >
+						<table class="table table-striped table-bordered table-hover customtable korbit" >
 							<thead>
 								<tr class="ColorMenuTable">
 									<th>#</th>
@@ -1217,28 +709,6 @@
 								</tr>
 							</thead>
 							<tbody id="korbit_market_summary">
-								<%korbit.forEach(function(summary,index){%>
-								<tr id="<%=summary.product%>_korbit">
-									<td><%=index+1%></td>
-									<td>
-										<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-											<%=summary.base_currency.toUpperCase()%>
-										</a>
-									</td>
-									<td>
-										<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-											<%=summary.product.replace('_','').toUpperCase()%>
-										</a>
-									</td>
-									<td id="<%=summary.product%>_price_korbit"><%=parseFloat(summary.last).toFixed(2)%></td>
-									<td id="<%=summary.product%>_vol_korbit"><%=Math.round(parseFloat(summary.volume))%></td>
-									<td>
-										<div class="row">
-											<div class="col-md-12" id="chart_<%=summary.product%>_korbit"><input type="hidden" id="hidden_<%=summary.product%>_korbit" value="<%=summary.chart%>" /></div>
-										</div>
-									</td>
-								</tr>
-								<%});%>
 							</tbody>
 						</table>
 					</div>	
@@ -1354,46 +824,7 @@
 <script>
 
 	$(document).ready(function(){
-
-		$('.customtable').DataTable({
-			pageLength: 50,
-			lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
-			responsive: true,
-			dom: '<"html5buttons"B>lTfgitp',
-			"columnDefs": [
-			{ 'width': '100px', 'targets': -1 },
-			{ 'bSortable': false,'aTargets': [0,-1] }
-			],
-			order: [],
-			buttons: [
-				//{extend: 'copy'},
-				{extend: 'csv'},
-				{extend: 'excel', title: 'TotalCryptos.com'},
-				{extend: 'pdf', title: 'TotalCryptos.com'},
-
-				//{extend: 'print',
-				 //customize: function (win){
-					//$(win.document.body).addClass('white-bg');
-					//$(win.document.body).css('font-size', '10px');
-					//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-				//}
-				//}
-				],
-				drawCallback: function(){ 
-					$(this, this.api().table().container()).on('search.dt', function(){
-						draw_chart();
-					});
-					$('.paginate_button', this.api().table().container()).on('click', function(){
-						draw_chart();
-					});       
-				}
-			});
-
-		$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
-			$('.table').removeAttr('style');
-			$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-		});
-
+		initialize_table('totalcryptos');
 		draw_chart();
 
 		var socket = io.connect('<%= socketURL %>');
@@ -1465,244 +896,286 @@
 				$(".chart_"+product.id).sparkline(product.ticker.chart, {type: 'line',width: '100%',height: '50',lineColor: '#ff6439',fillColor: "transparent"});
 			});
 
-			bittrex.forEach(function(summary){
-				if(summary.Bid>summary.Last){
-					$("#"+summary.MarketName+"_bid_bittrex").html('<span style="color:green;font-weight:bold;">'+parseFloat(summary.Bid).toFixed(8)+'</span>');
-				}
-				else if(summary.Bid<summary.Last){
-					$("#"+summary.MarketName+"_bid_bittrex").html('<span style="color:red;font-weight:bold;">'+parseFloat(summary.Bid).toFixed(8)+'</span>');
-				}
+			if($("#bittrex_market_summary").children("tr").length>0){
+				bittrex.forEach(function(summary){
+					if(summary.Bid>summary.Last){
+						$("#"+summary.MarketName+"_bid_bittrex").html('<span style="color:green;font-weight:bold;">'+parseFloat(summary.Bid).toFixed(8)+'</span>');
+					}
+					else if(summary.Bid<summary.Last){
+						$("#"+summary.MarketName+"_bid_bittrex").html('<span style="color:red;font-weight:bold;">'+parseFloat(summary.Bid).toFixed(8)+'</span>');
+					}
 
-				$("#"+summary.MarketName+"_high_bittrex").html(parseFloat(summary.High).toFixed(8));
-				$("#"+summary.MarketName+"_low_bittrex").html(parseFloat(summary.Low).toFixed(8));
-				$("#"+summary.MarketName+"_volume_bittrex").html(Math.round(parseFloat(summary.Volume)));
-				$("#"+summary.MarketName+"_base_volume_bittrex").html(Math.round(parseFloat(summary.BaseVolume)));
+					$("#"+summary.MarketName+"_high_bittrex").html(parseFloat(summary.High).toFixed(8));
+					$("#"+summary.MarketName+"_low_bittrex").html(parseFloat(summary.Low).toFixed(8));
+					$("#"+summary.MarketName+"_volume_bittrex").html(Math.round(parseFloat(summary.Volume)));
+					$("#"+summary.MarketName+"_base_volume_bittrex").html(Math.round(parseFloat(summary.BaseVolume)));
 
-				if(summary.chart){
-					$("#chart_"+summary.MarketName+"_bittrex").sparkline(summary.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+					if(summary.chart){
+						$("#chart_"+summary.MarketName+"_bittrex").sparkline(summary.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}
 
-			coinmarket.forEach(function(ticker){
+			if($("#coin_market_summary").children("tr").length>0){
+				coinmarket.forEach(function(ticker){
 
-				if(ticker.percent_change_1h>0){
-					$("#"+ticker.name+"_price_coinmarket").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.price_usd).toFixed(8)+'</span>');
-				}
-				else{
-					$("#"+ticker.name+"_price_coinmarket").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.price_usd).toFixed(8)+'</span>');
-				}
+					if(ticker.percent_change_1h>0){
+						$("#"+ticker.name+"_price_coinmarket").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.price_usd).toFixed(8)+'</span>');
+					}
+					else{
+						$("#"+ticker.name+"_price_coinmarket").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.price_usd).toFixed(8)+'</span>');
+					}
 
-				$("#"+ticker.name+"_cap_coinmarket").html(Math.round(parseFloat(ticker.market_cap_usd)));
-				$("#"+ticker.name+"_available").html(Math.round(parseFloat(ticker.available_supply)));
+					$("#"+ticker.name+"_cap_coinmarket").html(Math.round(parseFloat(ticker.market_cap_usd)));
+					$("#"+ticker.name+"_available").html(Math.round(parseFloat(ticker.available_supply)));
 
-				if(ticker.percent_change_1h>0){
-					$("#"+ticker.name+"_change_1h_coinmarket").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>');
-				}
-				else{
-					$("#"+ticker.name+"_change_1h_coinmarket").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>');
-				}
+					if(ticker.percent_change_1h>0){
+						$("#"+ticker.name+"_change_1h_coinmarket").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>');
+					}
+					else{
+						$("#"+ticker.name+"_change_1h_coinmarket").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>');
+					}
 
-				if(ticker.percent_change_24h>0){
-					$("#"+ticker.name+"_change_24h_coinmarket").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>');
-				}
-				else{
-					$("#"+ticker.name+"_change_24h_coinmarket").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>');
-				}
+					if(ticker.percent_change_24h>0){
+						$("#"+ticker.name+"_change_24h_coinmarket").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>');
+					}
+					else{
+						$("#"+ticker.name+"_change_24h_coinmarket").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>');
+					}
 
-				$("#"+ticker.name+"_24h_volume_coinmarket").html(Math.round(parseFloat(ticker['24h_volume_usd'])));
+					$("#"+ticker.name+"_24h_volume_coinmarket").html(Math.round(parseFloat(ticker['24h_volume_usd'])));
 
-				if(ticker.chart){
-					$("#chart_"+ticker.name+"_coinmarket").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+					if(ticker.chart){
+						$("#chart_"+ticker.name+"_coinmarket").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			bitfinex.forEach(function(ticker){
-				if(ticker.bid>ticker.last_price){
-					$("#"+ticker.product_id+"_price_bitfinex").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(8)+'</span>');
-				}
-				else{
-					$("#"+ticker.product_id+"_price_bitfinex").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(8)+'</span>');
-				}
-				$("#"+ticker.product_id+"_high_bitfinex").html(parseFloat(ticker.high).toFixed(8));
-				$("#"+ticker.product_id+"_low_bitfinex").html(parseFloat(ticker.low).toFixed(8));
-				$("#"+ticker.product_id+"_volume_bitfinex").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product_id+"_bitfinex").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#bitfinex_market_summary").children("tr").length>0){	
+				bitfinex.forEach(function(ticker){
+					if(ticker.bid>ticker.last_price){
+						$("#"+ticker.product_id+"_price_bitfinex").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(8)+'</span>');
+					}
+					else{
+						$("#"+ticker.product_id+"_price_bitfinex").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(8)+'</span>');
+					}
+					$("#"+ticker.product_id+"_high_bitfinex").html(parseFloat(ticker.high).toFixed(8));
+					$("#"+ticker.product_id+"_low_bitfinex").html(parseFloat(ticker.low).toFixed(8));
+					$("#"+ticker.product_id+"_volume_bitfinex").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product_id+"_bitfinex").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}
 
-			hitbtc.forEach(function(ticker){
-				if(ticker.bid>ticker.last){
-					$("#"+ticker.symbol+"_bid_hitbtc").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(10)+'</span>');
-				}
-				else{
-					$("#"+ticker.symbol+"_bid_hitbtc").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(10)+'</span>');
-				}
-				$("#"+ticker.symbol+"_high_hitbtc").html(parseFloat(ticker.high).toFixed(10));
-				$("#"+ticker.symbol+"_low_hitbtc").html(parseFloat(ticker.low).toFixed(10));
-				$("#"+ticker.symbol+"_volume_hitbtc").html(Math.round(parseFloat(ticker.volume)));
-				$("#"+ticker.symbol+"_volume_quote_hitbtc").html(Math.round(parseFloat(ticker.volumeQuote)));
-				if(ticker.chart){
-					$("#chart_"+ticker.symbol+"_hitbtc").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#hitbtc_market_summary").children("tr").length>0){
+				hitbtc.forEach(function(ticker){
+					if(ticker.bid>ticker.last){
+						$("#"+ticker.symbol+"_bid_hitbtc").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(10)+'</span>');
+					}
+					else{
+						$("#"+ticker.symbol+"_bid_hitbtc").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.bid).toFixed(10)+'</span>');
+					}
+					$("#"+ticker.symbol+"_high_hitbtc").html(parseFloat(ticker.high).toFixed(10));
+					$("#"+ticker.symbol+"_low_hitbtc").html(parseFloat(ticker.low).toFixed(10));
+					$("#"+ticker.symbol+"_volume_hitbtc").html(Math.round(parseFloat(ticker.volume)));
+					$("#"+ticker.symbol+"_volume_quote_hitbtc").html(Math.round(parseFloat(ticker.volumeQuote)));
+					if(ticker.chart){
+						$("#chart_"+ticker.symbol+"_hitbtc").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}
 
-			gate.forEach(function(ticker){
-				$("#"+ticker.product+"_last_gate").html(parseFloat(ticker.last).toFixed(8));
-				$("#"+ticker.product+"_highest_gate").html(parseFloat(ticker.highestBid).toFixed(8));
-				$("#"+ticker.product+"_lowest_gate").html(parseFloat(ticker.lowestAsk).toFixed(8));
-				$("#"+ticker.product+"_volume_gate").html(Math.round(parseFloat(ticker.baseVolume)));
-				$("#"+ticker.product+"_volume_quote_gate").html(Math.round(parseFloat(ticker.quoteVolume)));
-				$("#"+ticker.product+"_high_24h_gate").html(parseFloat(ticker.high24hr).toFixed(8));
-				$("#"+ticker.product+"_low_24h_gate").html(parseFloat(ticker.low24hr).toFixed(8));
-				if(parseFloat(ticker.percentChange)>0){
-					$("#"+ticker.product+"_percentage_change_gate").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percentChange).toFixed(2)+'%</span>');
-				}
-				else{
-					$("#"+ticker.product+"_percentage_change_gate").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percentChange).toFixed(2)+'%</span>');
-				}
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_gate").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#gate_market_summary").children("tr").length>0){
+				gate.forEach(function(ticker){
+					$("#"+ticker.product+"_last_gate").html(parseFloat(ticker.last).toFixed(8));
+					$("#"+ticker.product+"_highest_gate").html(parseFloat(ticker.highestBid).toFixed(8));
+					$("#"+ticker.product+"_lowest_gate").html(parseFloat(ticker.lowestAsk).toFixed(8));
+					$("#"+ticker.product+"_volume_gate").html(Math.round(parseFloat(ticker.baseVolume)));
+					$("#"+ticker.product+"_volume_quote_gate").html(Math.round(parseFloat(ticker.quoteVolume)));
+					$("#"+ticker.product+"_high_24h_gate").html(parseFloat(ticker.high24hr).toFixed(8));
+					$("#"+ticker.product+"_low_24h_gate").html(parseFloat(ticker.low24hr).toFixed(8));
+					if(parseFloat(ticker.percentChange)>0){
+						$("#"+ticker.product+"_percentage_change_gate").html('<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percentChange).toFixed(2)+'%</span>');
+					}
+					else{
+						$("#"+ticker.product+"_percentage_change_gate").html('<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percentChange).toFixed(2)+'%</span>');
+					}
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_gate").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}
 
-			kuna.forEach(function(ticker){
-				$("#"+ticker.product+"_price_kuna").html(parseFloat(ticker.price).toFixed(10));
-				$("#"+ticker.product+"_high_kuna").html(parseFloat(ticker.high).toFixed(10));
-				$("#"+ticker.product+"_low_kuna").html(parseFloat(ticker.low).toFixed(10));
-				$("#"+ticker.product+"_vol_kuna").html(Math.round(parseFloat(ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_kuna").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#kuna_market_summary").children("tr").length>0){
+				kuna.forEach(function(ticker){
+					$("#"+ticker.product+"_price_kuna").html(parseFloat(ticker.price).toFixed(10));
+					$("#"+ticker.product+"_high_kuna").html(parseFloat(ticker.high).toFixed(10));
+					$("#"+ticker.product+"_low_kuna").html(parseFloat(ticker.low).toFixed(10));
+					$("#"+ticker.product+"_vol_kuna").html(Math.round(parseFloat(ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_kuna").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			okex.forEach(function(ticker){
-				$("#"+ticker.product+"_price_okex").html(parseFloat(ticker.ticker.last).toFixed(8));
-				$("#"+ticker.product+"_high_okex").html(parseFloat(ticker.ticker.high).toFixed(8));
-				$("#"+ticker.product+"_low_okex").html(parseFloat(ticker.ticker.low).toFixed(8));
-				$("#"+ticker.product+"_vol_okex").html(Math.round(parseFloat(ticker.ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_okex").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#okex_market_summary").children("tr").length>0){
+				okex.forEach(function(ticker){
+					$("#"+ticker.product+"_price_okex").html(parseFloat(ticker.ticker.last).toFixed(8));
+					$("#"+ticker.product+"_high_okex").html(parseFloat(ticker.ticker.high).toFixed(8));
+					$("#"+ticker.product+"_low_okex").html(parseFloat(ticker.ticker.low).toFixed(8));
+					$("#"+ticker.product+"_vol_okex").html(Math.round(parseFloat(ticker.ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_okex").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			binance.forEach(function(ticker){
-				$("#"+ticker.symbol+"_price_binance").html(parseFloat(ticker.lastPrice).toFixed(8));
-				$("#"+ticker.symbol+"_high_binance").html(parseFloat(ticker.highPrice).toFixed(8));
-				$("#"+ticker.symbol+"_low_binance").html(parseFloat(ticker.lowPrice).toFixed(8));
-				$("#"+ticker.symbol+"_vol_binance").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.symbol+"_binance").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#binance_market_summary").children("tr").length>0){
+				binance.forEach(function(ticker){
+					$("#"+ticker.symbol+"_price_binance").html(parseFloat(ticker.lastPrice).toFixed(8));
+					$("#"+ticker.symbol+"_high_binance").html(parseFloat(ticker.highPrice).toFixed(8));
+					$("#"+ticker.symbol+"_low_binance").html(parseFloat(ticker.lowPrice).toFixed(8));
+					$("#"+ticker.symbol+"_vol_binance").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.symbol+"_binance").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			huobi.forEach(function(ticker){
-				$("#"+ticker.product+"_price_huobi").html(parseFloat(ticker.tick.bid[0]).toFixed(10));
-				$("#"+ticker.product+"_high_huobi").html(parseFloat(ticker.tick.high).toFixed(10));
-				$("#"+ticker.product+"_low_huobi").html(parseFloat(ticker.tick.low).toFixed(10));
-				$("#"+ticker.product+"_vol_huobi").html(Math.round(parseFloat(ticker.tick.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_huobi").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#huobi_market_summary").children("tr").length>0){
+				huobi.forEach(function(ticker){
+					$("#"+ticker.product+"_price_huobi").html(parseFloat(ticker.tick.bid[0]).toFixed(10));
+					$("#"+ticker.product+"_high_huobi").html(parseFloat(ticker.tick.high).toFixed(10));
+					$("#"+ticker.product+"_low_huobi").html(parseFloat(ticker.tick.low).toFixed(10));
+					$("#"+ticker.product+"_vol_huobi").html(Math.round(parseFloat(ticker.tick.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_huobi").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			gemini.forEach(function(ticker){
-				$("#"+ticker.product+"_price_gemini").html(parseFloat(ticker.bid).toFixed(5));
-				$("#"+ticker.product+"_vol_gemini").html(Math.round(parseFloat(ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_gemini").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#gemini_market_summary").children("tr").length>0){
+				gemini.forEach(function(ticker){
+					$("#"+ticker.product+"_price_gemini").html(parseFloat(ticker.bid).toFixed(5));
+					$("#"+ticker.product+"_vol_gemini").html(Math.round(parseFloat(ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_gemini").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}
+			
+			if($("#kraken_market_summary").children("tr").length>0){
+				kraken.forEach(function(ticker){
+					$("#"+ticker.product+"_price_kraken").html(parseFloat(ticker.price).toFixed(8));
+					$("#"+ticker.product+"_high_kraken").html(parseFloat(ticker.high).toFixed(8));
+					$("#"+ticker.product+"_low_kraken").html(parseFloat(ticker.low).toFixed(8));
+					$("#"+ticker.product+"_vol_kraken").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_kraken").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			kraken.forEach(function(ticker){
-				$("#"+ticker.product+"_price_kraken").html(parseFloat(ticker.price).toFixed(8));
-				$("#"+ticker.product+"_high_kraken").html(parseFloat(ticker.high).toFixed(8));
-				$("#"+ticker.product+"_low_kraken").html(parseFloat(ticker.low).toFixed(8));
-				$("#"+ticker.product+"_vol_kraken").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_kraken").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#bitflyer_market_summary").children("tr").length>0){
+				bitflyer.forEach(function(ticker){
+					$("#"+ticker.product+"_price_bitflyer").html(parseFloat(ticker.best_bid).toFixed(5));
+					$("#"+ticker.product+"_vol_bitflyer").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_bitflyer").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			bitflyer.forEach(function(ticker){
-				$("#"+ticker.product+"_price_bitflyer").html(parseFloat(ticker.best_bid).toFixed(5));
-				$("#"+ticker.product+"_vol_bitflyer").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_bitflyer").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#bithumb_market_summary").children("tr").length>0){
+				bithumb.forEach(function(ticker){
+					$("#"+ticker.product+"_price_bithumb").html(parseFloat(ticker.sell_price).toFixed(2));
+					$("#"+ticker.product+"_vol_bithumb").html(Math.round(parseFloat(ticker.volume_1day)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_bithumb").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			bithumb.forEach(function(ticker){
-				$("#"+ticker.product+"_price_bithumb").html(parseFloat(ticker.sell_price).toFixed(2));
-				$("#"+ticker.product+"_vol_bithumb").html(Math.round(parseFloat(ticker.volume_1day)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_bithumb").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#bitstamp_market_summary").children("tr").length>0){
+				bitstamp.forEach(function(ticker){
+					$("#"+ticker.product+"_price_bitstamp").html(parseFloat(ticker.bid).toFixed(8));
+					$("#"+ticker.product+"_vol_bitstamp").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_bitstamp").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			bitstamp.forEach(function(ticker){
-				$("#"+ticker.product+"_price_bitstamp").html(parseFloat(ticker.bid).toFixed(8));
-				$("#"+ticker.product+"_vol_bitstamp").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_bitstamp").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#bitz_market_summary").children("tr").length>0){
+				bitz.forEach(function(ticker){
+					$("#"+ticker.product+"_price_bitz").html(parseFloat(ticker.sell).toFixed(8));
+					$("#"+ticker.product+"_vol_bitz").html(Math.round(parseFloat(ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_bitz").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			bitz.forEach(function(ticker){
-				$("#"+ticker.product+"_price_bitz").html(parseFloat(ticker.sell).toFixed(8));
-				$("#"+ticker.product+"_vol_bitz").html(Math.round(parseFloat(ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_bitz").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#lbank_market_summary").children("tr").length>0){
+				lbank.forEach(function(ticker){
+					$("#"+ticker.symbol+"_price_lbank").html(parseFloat(ticker.ticker.latest).toFixed(8));
+					$("#"+ticker.symbol+"_vol_lbank").html(Math.round(parseFloat(ticker.ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.symbol+"_lbank").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			lbank.forEach(function(ticker){
-				$("#"+ticker.symbol+"_price_lbank").html(parseFloat(ticker.ticker.latest).toFixed(8));
-				$("#"+ticker.symbol+"_vol_lbank").html(Math.round(parseFloat(ticker.ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.symbol+"_lbank").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#coinone_market_summary").children("tr").length>0){
+				coinone.forEach(function(ticker){
+					$("#"+ticker.product+"_price_coinone").html(parseFloat(ticker.last).toFixed(2));
+					$("#"+ticker.product+"_vol_coinone").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_coinone").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			coinone.forEach(function(ticker){
-				$("#"+ticker.product+"_price_coinone").html(parseFloat(ticker.last).toFixed(2));
-				$("#"+ticker.product+"_vol_coinone").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_coinone").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#wex_market_summary").children("tr").length>0){
+				wex.forEach(function(ticker){
+					$("#"+ticker.product+"_price_wex").html(parseFloat(ticker.last).toFixed(5));
+					$("#"+ticker.product+"_vol_wex").html(Math.round(parseFloat(ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_wex").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			wex.forEach(function(ticker){
-				$("#"+ticker.product+"_price_wex").html(parseFloat(ticker.last).toFixed(5));
-				$("#"+ticker.product+"_vol_wex").html(Math.round(parseFloat(ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_wex").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#exmo_market_summary").children("tr").length>0){
+				exmo.forEach(function(ticker){
+					$("#"+ticker.product+"_price_exmo").html(parseFloat(ticker.last_trade).toFixed(8));
+					$("#"+ticker.product+"_vol_exmo").html(Math.round(parseFloat(ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_exmo").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			exmo.forEach(function(ticker){
-				$("#"+ticker.product+"_price_exmo").html(parseFloat(ticker.last_trade).toFixed(8));
-				$("#"+ticker.product+"_vol_exmo").html(Math.round(parseFloat(ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_exmo").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#liqui_market_summary").children("tr").length>0){
+				liqui.forEach(function(ticker){
+					$("#"+ticker.product+"_price_liqui").html(parseFloat(ticker.last).toFixed(8));
+					$("#"+ticker.product+"_vol_liqui").html(Math.round(parseFloat(ticker.vol)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_liqui").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
-			liqui.forEach(function(ticker){
-				$("#"+ticker.product+"_price_liqui").html(parseFloat(ticker.last).toFixed(8));
-				$("#"+ticker.product+"_vol_liqui").html(Math.round(parseFloat(ticker.vol)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_liqui").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
-
-			korbit.forEach(function(ticker){
-				$("#"+ticker.product+"_price_korbit").html(parseFloat(ticker.last).toFixed(2));
-				$("#"+ticker.product+"_vol_korbit").html(Math.round(parseFloat(ticker.volume)));
-				if(ticker.chart){
-					$("#chart_"+ticker.product+"_korbit").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#korbit_market_summary").children("tr").length>0){
+				korbit.forEach(function(ticker){
+					$("#"+ticker.product+"_price_korbit").html(parseFloat(ticker.last).toFixed(2));
+					$("#"+ticker.product+"_vol_korbit").html(Math.round(parseFloat(ticker.volume)));
+					if(ticker.chart){
+						$("#chart_"+ticker.product+"_korbit").sparkline(ticker.chart, {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}	
 
 			totalcryptospriceusd.forEach(function(ticker){
 
@@ -1771,17 +1244,45 @@
 		});
 	});
 
-	function show_hide_tabs(more_less){
-		if(more_less=='more'){
-			$("#more").css({display:"none"});
-			$("#less").css({display:"block"});
-			$(".show_hide").css({display:"block"});
-		}
-		else{
-			$("#more").css({display:"block"});
-			$("#less").css({display:"none"});
-			$(".show_hide").css({display:"none"});
-		}
+	function initialize_table(className){
+		$('.'+className).DataTable({
+			pageLength: 50,
+			lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+			responsive: true,
+			dom: '<"html5buttons"B>lTfgitp',
+			"columnDefs": [
+			{ 'width': '100px', 'targets': -1 },
+			{ 'bSortable': false,'aTargets': [0,-1] }
+			],
+			order: [],
+			buttons: [
+				//{extend: 'copy'},
+				{extend: 'csv'},
+				{extend: 'excel', title: 'TotalCryptos.com'},
+				{extend: 'pdf', title: 'TotalCryptos.com'},
+
+				//{extend: 'print',
+				 //customize: function (win){
+					//$(win.document.body).addClass('white-bg');
+					//$(win.document.body).css('font-size', '10px');
+					//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+				//}
+				//}
+				],
+				drawCallback: function(){ 
+					$(this, this.api().table().container()).on('search.dt', function(){
+						draw_chart();
+					});
+					$('.paginate_button', this.api().table().container()).on('click', function(){
+						draw_chart();
+					});       
+				}
+			});
+
+		$('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+			$('.table').removeAttr('style');
+			$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+		});
 	}
 	
 	function draw_chart(){
@@ -1793,7 +1294,7 @@
 			}
 		});
 		
-		$("#coinmarket_summary").children('tr').each(function(){
+		$("#coin_market_summary").children('tr').each(function(){
 			var val=$("#hidden_"+this.id).val();
 			if(val){
 				$("#chart_"+this.id).html('');
@@ -1968,6 +1469,612 @@
 				$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
 			}
 		});
+	}
+	
+	function show_hide_tabs(more_less){
+		if(more_less=='more'){
+			$("#more").css({display:"none"});
+			$("#less").css({display:"block"});
+			$(".show_hide").css({display:"block"});
+		}
+		else{
+			$("#more").css({display:"block"});
+			$("#less").css({display:"none"});
+			$(".show_hide").css({display:"none"});
+		}
+	}
+	
+	function show_tab_data(tab){
+		if($('#'+tab+'_market_summary').children('tr').length==0){ 
+			$.ajax({
+				type:'GET',
+				url:'<%= socketURL %>/'+tab,
+				success:function(data){
+					var str='';
+					switch(tab){
+						case 'coin':
+							data.forEach(function(ticker,index){
+							str+='<tr id="'+ticker.name+'_coinmarket">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td><a href="volume-24-hour-currency/'+ticker.symbol+'">'+ticker.symbol+'</a></td>';
+							str+='<td id="'+ticker.name+'_price_coinmarket">';
+							if(ticker.percent_change_1h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(ticker.price_usd).toFixed(8)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(ticker.price_usd).toFixed(8)+'</span>';
+							}
+							str+='</td>';
+							
+							str+='<td id="'+ticker.name+'_cap_coinmarket">';
+							str+=Math.round(parseFloat(ticker.market_cap_usd));
+							str+='</td>';
+							str+='<td id="'+ticker.name+'_available_coinmarket">';
+							str+=Math.round(parseFloat(ticker.available_supply));
+							str+='</td>';
+
+							str+='<td id="'+ticker.name+'_change_1h_coinmarket">';
+						
+							if(ticker.percent_change_1h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+ticker.name+'_change_24h_coinmarket">';
+							if(ticker.percent_change_24h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+ticker.name+'_24h_volume_coinmarket">'+Math.round(parseFloat(ticker['24h_volume_usd']))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+ticker.name+'_coinmarket"><input type="hidden" id="hidden_'+ticker.name+'_coinmarket" value="'+ticker.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});	
+						break;
+						case 'bittrex':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.MarketName+'_bittrex">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.BaseCurrency+'">';
+							str+=summary.BaseCurrency;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>'
+							str+='<a href="volume-24-hour-market/'+summary.MarketName.replace('-','')+'">';
+							str+=summary.MarketName.replace('-','');
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.MarketName+'_bid_bittrex">';
+							if(summary.Bid>summary.Last){
+							str+='<span style="color:green;font-weight:bold;">';
+							str+=parseFloat(summary.Bid).toFixed(8);
+							str+='</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">';
+							str+=parseFloat(summary.Bid).toFixed(8);
+							str+='</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+summary.MarketName+'_high_bittrex">'+parseFloat(summary.High).toFixed(8)+'</td>';
+							str+='<td id="'+summary.MarketName+'_low_bittrex">'+parseFloat(summary.Low).toFixed(8)+'</td>';
+							str+='<td id="'+summary.MarketName+'_volume_bittrex">'+Math.round(parseFloat(summary.Volume))+'</td>';
+							str+='<td id="'+summary.MarketName+'_base_volume_bittrex">'+Math.round(parseFloat(summary.BaseVolume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.MarketName+'_bittrex"><input type="hidden" id="hidden_'+summary.MarketName+'_bittrex" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						
+						case 'bitfinex':
+							data.forEach(function(summary,index){
+								str+='<tr id="'+summary.product_id+'_bitfinex">';
+								str+='<td>'+(index+1)+'</td>';
+								str+='<td>';
+								str+='<a href="volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
+								str+=summary.product_id.substr(0,3).toUpperCase();
+								str+='</a>';
+								str+='</td>';
+								str+='<td>';
+								str+='<a href="volume-24-hour-market/'+summary.product_id.toUpperCase()+'">';
+								str+=summary.product_id.toUpperCase();
+								str+='</a>';
+								str+='</td>';
+								str+='<td id="'+summary.product_id+'_price_bitfinex">';
+								if(summary.bid>summary.last_price){
+								str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.bid).toFixed(8)+'</span>';
+								}else{
+								str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.bid).toFixed(8)+'</span>';
+								}
+								str+='</td>';
+								str+='<td id="'+summary.product_id+'_high_bitfinex">'+parseFloat(summary.high).toFixed(8)+'</td>';
+								str+='<td id="'+summary.product_id+'_low_bitfinex">'+parseFloat(summary.low).toFixed(8)+'</td>';
+								str+='<td id="'+summary.product_id+'_volume_bitfinex">'+Math.round(parseFloat(summary.volume))+'</td>';
+								str+='<td>';
+								str+='<div class="row">';
+								str+='<div class="col-md-12" id="chart_'+summary.product_id+'_bitfinex"><input type="hidden" id="hidden_'+summary.product_id+'_bitfinex" value="'+summary.chart+'" /></div>';
+								str+='</div>';
+								str+='</td>';
+								str+='</tr>';
+							});
+						break;
+						case 'hitbtc':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.symbol+'_hitbtc">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.baseCurrency+'">';
+							str+=summary.baseCurrency;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.symbol+'">';
+							str+=summary.symbol;
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.symbol+'_bid_hitbtc">';
+							if(summary.bid>summary.last){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.bid).toFixed(10)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.bid).toFixed(10)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+summary.symbol+'_high_hitbtc">'+parseFloat(summary.high).toFixed(10)+'</td>';
+							str+='<td id="'+summary.symbol+'_low_hitbtc">'+parseFloat(summary.low).toFixed(10)+'</td>';
+							str+='<td id="'+summary.symbol+'_volume_hitbtc">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td id="'+summary.symbol+'_volume_quote_hitbtc">'+Math.round(parseFloat(summary.volumeQuote))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.symbol+'_hitbtc"><input type="hidden" id="hidden_'+summary.symbol+'_hitbtc" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'gate':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_gate">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
+							str+=summary.product.split('_',1).join().toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_last_gate">'+parseFloat(summary.last).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_highest_gate">'+parseFloat(summary.highestBid).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_lowest_gate">'+parseFloat(summary.lowestAsk).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_volume_gate">'+Math.round(parseFloat(summary.baseVolume))+'</td>';
+							str+='<td id="'+summary.product+'_volume_quote_gate">'+Math.round(parseFloat(summary.quoteVolume))+'</td>';
+							str+='<td id="'+summary.product+'_high_24h_gate">'+parseFloat(summary.high24hr).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_low_24h_gate">'+parseFloat(summary.low24hr).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_percentage_change_gate">';
+							if(parseFloat(summary.percentChange)>0){
+							str+='<span style="color:green;font-weight:bold;">';
+							str+=parseFloat(summary.percentChange).toFixed(2);
+							str+='</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">';
+							str+=parseFloat(summary.percentChange).toFixed(2);
+							str+='</span>';
+							}
+							str+='</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_gate"><input type="hidden" id="hidden_'+summary.product+'_gate" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'kuna':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_kuna">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+							str+=summary.product.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_kuna">'+parseFloat(summary.price).toFixed(10)+'</td>';
+							str+='<td id="'+summary.product+'_high_kuna">'+parseFloat(summary.high).toFixed(10)+'</td>';
+							str+='<td id="'+summary.product+'_low_kuna">'+parseFloat(summary.low).toFixed(10)+'</td>';
+							str+='<td id="'+summary.product+'_vol_kuna">'+Math.round(parseFloat(summary.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_kuna"><input type="hidden" id="hidden_'+summary.product+'_kuna" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'okex':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_okex">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
+							str+=summary.product.split('_',1).join().toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_okex">'+parseFloat(summary.ticker.last).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_high_okex">'+parseFloat(summary.ticker.high).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_low_okex">'+parseFloat(summary.ticker.low).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_vol_okex">'+Math.round(parseFloat(summary.ticker.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_okex"><input type="hidden" id="hidden_'+summary.product+'_okex" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'binance':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.symbol+'_binance">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.baseAsset+'">';
+							str+=summary.baseAsset;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.symbol+'">';
+							str+=summary.symbol;
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.symbol+'_price_binance">'+parseFloat(summary.lastPrice).toFixed(8)+'</td>';
+							str+='<td id="'+summary.symbol+'_high_binance">'+parseFloat(summary.highPrice).toFixed(8)+'</td>';
+							str+='<td id="'+summary.symbol+'_low_binance">'+parseFloat(summary.lowPrice).toFixed(8)+'</td>';
+							str+='<td id="'+summary.symbol+'_vol_binance">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.symbol+'_binance"><input type="hidden" id="hidden_'+summary.symbol+'_binance" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'huobi':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_huobi">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+							str+=summary.product.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_huobi">'+parseFloat(summary.tick.bid[0]).toFixed(10)+'</td>';
+							str+='<td id="'+summary.product+'_high_huobi">'+parseFloat(summary.tick.high).toFixed(10)+'</td>';
+							str+='<td id="'+summary.product+'_low_huobi">'+parseFloat(summary.tick.low).toFixed(10)+'</td>';
+							str+='<td id="'+summary.product+'_vol_huobi">'+Math.round(parseFloat(summary.tick.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_huobi"><input type="hidden" id="hidden_'+summary.product+'_huobi" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'gemini':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_gemini">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.currency+'">';
+							str+=summary.currency;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+							str+=summary.product.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_gemini">'+parseFloat(summary.bid).toFixed(5)+'</td>';
+							str+='<td id="'+summary.product+'_vol_gemini">'+Math.round(parseFloat(summary.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_gemini"><input type="hidden" id="hidden_'+summary.product+'_gemini" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'kraken':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_kraken">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency+'">';
+							str+=summary.base_currency;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product+'">';
+							str+=summary.product;
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_kraken">'+parseFloat(summary.price).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_high_kraken">'+parseFloat(summary.high).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_low_kraken">'+parseFloat(summary.low).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_vol_kraken">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_kraken"><input type="hidden" id="hidden_'+summary.product+'_kraken" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'bitflyer':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_bitflyer">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency+'">';
+							str+=summary.base_currency;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','')+'">';
+							str+=summary.product.replace('_','');
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_bitflyer">'+parseFloat(summary.best_bid).toFixed(5)+'</td>';
+							str+='<td id="'+summary.product+'_vol_bitflyer">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_bitflyer"><input type="hidden" id="hidden_'+summary.product+'_bitflyer" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'bithumb':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_bithumb">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency+'">';
+							str+=summary.base_currency
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product+'">';
+							str+=summary.product;
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_bithumb">'+parseFloat(summary.sell_price).toFixed(2)+'</td>';
+							str+='<td id="'+summary.product+'_vol_bithumb">'+Math.round(parseFloat(summary.volume_1day))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_bithumb"><input type="hidden" id="hidden_'+summary.product+'_bithumb" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'bitstamp':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_bitstamp">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency+'">';
+							str+=summary.base_currency;
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+							str+=summary.product.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_bitstamp">'+parseFloat(summary.bid).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_vol_bitstamp">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_bitstamp"><input type="hidden" id="hidden_'+summary.product+'_bitstamp" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'bitz':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_bitz">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_bitz">'+parseFloat(summary.sell).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_vol_bitz">'+Math.round(parseFloat(summary.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_bitz"><input type="hidden" id="hidden_'+summary.product+'_bitz" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'lbank':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.symbol+'_lbank">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.symbol.replace('_','').toUpperCase()+'">';
+							str+=summary.symbol.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.symbol+'_price_lbank">'+parseFloat(summary.ticker.latest).toFixed(8)+'</td>';
+							str+='<td id="'+summary.symbol+'_vol_lbank">'+Math.round(parseFloat(summary.ticker.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.symbol+'_lbank"><input type="hidden" id="hidden_'+summary.symbol+'_lbank" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'coinone':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_coinone">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+							str+=summary.product.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_coinone">'+parseFloat(summary.last).toFixed(2)+'</td>';
+							str+='<td id="'+summary.product+'_vol_coinone">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_coinone"><input type="hidden" id="hidden_'+summary.product+'_coinone" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'wex':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_wex">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_wex">'+parseFloat(summary.last).toFixed(5)+'</td>';
+							str+='<td id="'+summary.product+'_vol_wex">'+Math.round(parseFloat(summary.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_wex"><input type="hidden" id="hidden_'+summary.product+'_wex" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'exmo':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_exmo">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_exmo">'+parseFloat(summary.last_trade).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_vol_exmo">'+Math.round(parseFloat(summary.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_exmo"><input type="hidden" id="hidden_'+summary.product+'_exmo" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'liqui':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_liqui">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_liqui">'+parseFloat(summary.last).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_vol_liqui">'+Math.round(parseFloat(summary.vol))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_liqui"><input type="hidden" id="hidden_'+summary.product+'_liqui" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'korbit':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_korbit">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_korbit">'+parseFloat(summary.last).toFixed(2)+'</td>';
+							str+='<td id="'+summary.product+'_vol_korbit">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_korbit"><input type="hidden" id="hidden_'+summary.product+'_korbit" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+					}
+					$("#"+tab+'_market_summary').html(str);
+					initialize_table(tab);
+					draw_chart();
+				}
+			});
+		}	
 	}
 	
 </script>

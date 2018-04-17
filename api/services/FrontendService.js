@@ -1,5 +1,26 @@
 module.exports = {
-	marketData:function(callBack,isSocket=null){
+	marketData:function(callBack){
+		var _ = require('lodash');
+		var Promise = require("bluebird");
+		
+		return Promise.all([
+			ExchangeDataService.gdaxMarketData(),
+			ExchangeDataService.totalCryptoPricesUsd(),
+			ExchangeDataService.totalCryptoPricesPairs(),
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices(),
+			FrontendService.gainers_and_losers(10),
+			FrontendService.RSS()
+					]
+		).then(response => { 
+			callBack({gdax:response[0].data,totalcryptospriceusd:response[1].data,totalcryptospricepairs:response[2].data,cryptoData:response[3],topproducts:response[4].data,gainers_losers:response[5].gainers_losers,rss:response[6]});
+		}).
+		catch(err => { 
+			callBack({gdax:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
+		});
+	},
+	
+	socketData:function(){
 		var _ = require('lodash');
 		var Promise = require("bluebird");
 		
@@ -34,19 +55,124 @@ module.exports = {
 			FrontendService.RSS()
 					]
 		).then(response => { 
-			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
-			}else{
-				sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
-			}
+			sails.sockets.blast('exchangeData',{gdax:response[0].data, bittrex:response[1].data, coinmarket:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,totalcryptospriceusd:response[22].data,totalcryptospricepairs:response[23].data,cryptoData:response[24],topproducts:response[25].data,gainers_losers:response[26].gainers_losers,rss:response[27]});
 		}).
 		catch(err => { 
-			if(_.isEmpty(isSocket)){ 
-				callBack({gdax:[], bittrex:[], coinmarket:[],bitfinex:[],hitbtc:[],gate:[],kuna:[],okex:[],binance:[],huobi:[],gemini:[],kraken:[],bitflyer:[],bithumb:[],bitstamp:[],bitz:[],lbank:[],coinone:[],wex:[],exmo:[],liqui:[],korbit:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
-			}else{
-				//NO NEED TO SEND SOCKET DATA IN THIS CASE
-			}
+			//NO NEED TO SEND SOCKET DATA IN THIS CASE
 		});
+	},
+	
+	tabData:function(tab,callBack){
+		switch(tab){
+			case 'coin':
+				return Promise.all([
+					ExchangeDataService.coinmarketcapMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'bittrex':
+				return Promise.all([
+					ExchangeDataService.bittrexMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'bitfinex':
+				return Promise.all([
+					ExchangeDataService.bitfinexMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'hitbtc':
+				return Promise.all([
+					ExchangeDataService.hitbtcMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'gate':
+				return Promise.all([
+					ExchangeDataService.gateMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'kuna':
+				return Promise.all([
+					ExchangeDataService.kunaMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'okex':
+				return Promise.all([
+					ExchangeDataService.okexMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'binance':
+				return Promise.all([
+					ExchangeDataService.binanceMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'huobi':
+				return Promise.all([
+					ExchangeDataService.huobiMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'gemini':
+				return Promise.all([
+					ExchangeDataService.geminiMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'kraken':
+				return Promise.all([
+					ExchangeDataService.krakenMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'bitflyer':
+				return Promise.all([
+					ExchangeDataService.bitflyerMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'bithumb':
+				return Promise.all([
+					ExchangeDataService.bithumbMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'bitstamp':
+				return Promise.all([
+					ExchangeDataService.bitstampMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'bitz':
+				return Promise.all([
+					ExchangeDataService.bitzMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'lbank':
+				return Promise.all([
+					ExchangeDataService.lbankMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'coinone':
+				return Promise.all([
+					ExchangeDataService.coinoneMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'wex':
+				return Promise.all([
+					ExchangeDataService.wexMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'exmo':
+				return Promise.all([
+					ExchangeDataService.exmoMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'liqui':
+				return Promise.all([
+					ExchangeDataService.liquiMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			case 'korbit':
+				return Promise.all([
+					ExchangeDataService.korbitMarketData()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
+			break;
+			default:
+				callBack([]);
+			break;
+		}
 	},
 
 	volume_24_hour_currency:function(callBack){
