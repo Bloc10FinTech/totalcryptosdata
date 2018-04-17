@@ -1486,6 +1486,10 @@
 	
 	function show_tab_data(tab){
 		if($('#'+tab+'_market_summary').children('tr').length==0){ 
+			//PROCESS TO SHOW LOADER
+			var cols=$('#'+tab+'_market_summary').parent().children('thead').children('tr').children('th').length;
+			$('#'+tab+'_market_summary').append('<tr><td colspan="'+cols+'" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+			
 			$.ajax({
 				type:'GET',
 				url:'<%= socketURL %>/'+tab,
