@@ -1859,8 +1859,8 @@ module.exports = {
 							break;
 							case 'bitfinex':
 								product=_.toLower(ticker.product_id);
-								base_currency=_.toLower(ticker.product_id.substr(0,3));
-								quote_currency=_.toLower(_.replace(product,base_currency));	
+								base_currency=_.toLower(product.substr(0,3));
+								quote_currency=_.replace(product,base_currency,'');	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
 							break;
 							case 'hitbtc':
