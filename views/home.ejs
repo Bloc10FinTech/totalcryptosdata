@@ -91,7 +91,7 @@
 					<div class="tab-content" style="margin-top:20px;">
 						<div class="tab-pane active" id="totalcryptospriceusd">
 							<div class="table-responsive">
-								<table class="table table-striped table-bordered table-hover customtable totalcryptos" >
+								<table class="table table-striped table-bordered table-hover customtable totalcryptospriceusd" >
 									<thead>
 										<tr class="ColorMenuTable">
 											<th>#</th>
@@ -105,53 +105,14 @@
 											<th>Chart 1d</th>
 										</tr>
 									</thead>
-									<tbody id="totalcryptospriceusd_summary">
-										<%totalcryptospriceusd.forEach(function(summary,index){%>
-										<tr id="<%=summary.product%>_totalcryptos_usd">
-											<td><%=index+1%></td>
-											<td><img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
-												<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-													<%=summary.base_currency.toUpperCase()%>
-												</a>
-											</td>
-											<td id="<%=summary.product%>_price_totalcryptos_usd">
-												<%if(summary.change_perc_1h>0){%>
-												<span style="color:green;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
-												<%}else{%>
-												<span style="color:red;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
-												<%}%>
-											</td>
-											<td id="<%=summary.product%>_vol_totalcryptos_usd"><%=Math.round(parseFloat(summary.volume))%></td>
-											<td id="<%=summary.product%>_high_totalcryptos_usd"><%=parseFloat(summary.high).toFixed(8)%></td>
-											<td id="<%=summary.product%>_low_totalcryptos_usd"><%=parseFloat(summary.low).toFixed(8)%></td>
-											<td id="<%=summary.product%>_change_perc_1h_totalcryptos_usd">
-												<%if(summary.change_perc_1h>0){%>
-												<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
-												<%}else{%>
-												<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
-												<%}%>
-											</td>
-											<td id="<%=summary.product%>_change_perc_24h_totalcryptos_usd">
-												<%if(summary.change_perc_24h>0){%>
-												<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
-												<%}else{%>
-												<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
-												<%}%>
-											</td>
-											<td>
-												<div class="row">
-													<div class="col-md-12" id="chart_<%=summary.product%>_totalcryptos_usd"><input type="hidden" id="hidden_<%=summary.product%>_totalcryptos_usd" value="<%=summary.chart%>" /></div>
-												</div>
-											</td>
-										</tr>
-										<%});%>
+									<tbody id="totalcryptospriceusd_market_summary">
 									</tbody>
 								</table>
 							</div>	
 						</div>
 						<div class="tab-pane" id="totalcryptospricepairs">
 							<div class="table-responsive">
-								<table class="table table-striped table-bordered table-hover customtable totalcryptos" >
+								<table class="table table-striped table-bordered table-hover customtable totalcryptospricepairs" >
 									<thead>
 										<tr class="ColorMenuTable">
 											<th>#</th>
@@ -166,51 +127,7 @@
 											<th>Chart 1d</th>
 										</tr>
 									</thead>
-									<tbody id="totalcryptospricepairs_summary">
-										<%totalcryptospricepairs.forEach(function(summary,index){%>
-										<tr id="<%=summary.product%>_totalcryptos_pairs">
-											<td><%=index+1%></td>
-											<td><img src="<%='images/currencies/'+summary.base_currency+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
-												<a href="volume-24-hour-currency/<%=summary.base_currency.toUpperCase()%>">
-													<%=summary.base_currency.toUpperCase()%>
-												</a>
-											</td>
-											<td>
-												<a href="volume-24-hour-market/<%=summary.product.replace('_','').toUpperCase()%>">
-													<%=summary.product.replace('_','').toUpperCase()%>
-												</a>
-											</td>
-											<td id="<%=summary.product%>_price_totalcryptos_pairs">
-												<%if(summary.change_perc_1h>0){%>
-												<span style="color:green;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
-												<%}else{%>
-												<span style="color:red;font-weight:bold;"><%=parseFloat(summary.price).toFixed(8)%></span>
-												<%}%>
-											</td>
-											<td id="<%=summary.product%>_vol_totalcryptos_pairs"><%=Math.round(parseFloat(summary.volume))%></td>
-											<td id="<%=summary.product%>_high_totalcryptos_pairs"><%=parseFloat(summary.high).toFixed(8)%></td>
-											<td id="<%=summary.product%>_low_totalcryptos_pairs"><%=parseFloat(summary.low).toFixed(8)%></td>
-											<td id="<%=summary.product%>_change_perc_1h_totalcryptos_pairs">
-												<%if(summary.change_perc_1h>0){%>
-												<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
-												<%}else{%>
-												<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_1h).toFixed(2)%></span>
-												<%}%>
-											</td>
-											<td id="<%=summary.product%>_change_perc_24h_totalcryptos_pairs">
-												<%if(summary.change_perc_24h>0){%>
-												<span style="color:green;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
-												<%}else{%>
-												<span style="color:red;font-weight:bold;"><%=parseFloat(summary.change_perc_24h).toFixed(2)%></span>
-												<%}%>	
-											</td>
-											<td>
-												<div class="row">
-													<div class="col-md-12" id="chart_<%=summary.product%>_totalcryptos_pairs"><input type="hidden" id="hidden_<%=summary.product%>_totalcryptos_pairs" value="<%=summary.chart%>" /></div>
-												</div>
-											</td>
-										</tr>
-										<%});%>
+									<tbody id="totalcryptospricepairs_market_summary">
 									</tbody>
 								</table>
 							</div>	
@@ -824,8 +741,11 @@
 <script>
 
 	$(document).ready(function(){
-		initialize_table('totalcryptos');
-		draw_chart();
+	
+		show_tab_data('totalcryptospriceusd');
+		show_tab_data('totalcryptospricepairs');
+	
+		//draw_chart();
 
 		var socket = io.connect('<%= socketURL %>');
 		socket.on('exchangeData', function (response) {
@@ -1454,7 +1374,7 @@
 			}
 		});
 		
-		$("#totalcryptospriceusd_summary").children('tr').each(function(){
+		$("#totalcryptospriceusd_market_summary").children('tr').each(function(){
 			var val=$("#hidden_"+this.id).val();
 			if(val){
 				$("#chart_"+this.id).html('');
@@ -1462,7 +1382,7 @@
 			}
 		});
 
-		$("#totalcryptospricepairs_summary").children('tr').each(function(){
+		$("#totalcryptospricepairs_market_summary").children('tr').each(function(){
 			var val=$("#hidden_"+this.id).val();
 			if(val){
 				$("#chart_"+this.id).html('');
@@ -1496,6 +1416,94 @@
 				success:function(data){
 					var str='';
 					switch(tab){
+						case 'totalcryptospriceusd':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_totalcryptos_usd">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<img src="images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_totalcryptos_usd">';
+							if(summary.change_perc_1h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.price).toFixed(8)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.price).toFixed(8)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+summary.product+'_vol_totalcryptos_usd">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td id="'+summary.product+'_high_totalcryptos_usd">'+parseFloat(summary.high).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_low_totalcryptos_usd">'+parseFloat(summary.low).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_usd">';
+							if(summary.change_perc_1h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_usd">';
+							if(summary.change_perc_24h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+							}
+							str+='</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_usd"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_usd" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
+						case 'totalcryptospricepairs':
+							data.forEach(function(summary,index){
+							str+='<tr id="'+summary.product+'_totalcryptos_pairs">';
+							str+='<td>'+(index+1)+'</td>';
+							str+='<td>';
+							str+='<img src="<images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+							str+='<a href="volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+							str+=summary.base_currency.toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td>';
+							str+='<a href="volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+							str+=summary.product.replace('_','').toUpperCase();
+							str+='</a>';
+							str+='</td>';
+							str+='<td id="'+summary.product+'_price_totalcryptos_pairs">';
+							if(summary.change_perc_1h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.price).toFixed(8)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.price).toFixed(8)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+summary.product+'_vol_totalcryptos_pairs">'+Math.round(parseFloat(summary.volume))+'</td>';
+							str+='<td id="'+summary.product+'_high_totalcryptos_pairs">'+parseFloat(summary.high).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_low_totalcryptos_pairs">'+parseFloat(summary.low).toFixed(8)+'</td>';
+							str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_pairs">';
+							if(summary.change_perc_1h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+							}
+							str+='</td>';
+							str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_pairs">';
+							if(summary.change_perc_24h>0){
+							str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+							}else{
+							str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+							}	
+							str+='</td>';
+							str+='<td>';
+							str+='<div class="row">';
+							str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_pairs"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_pairs" value="'+summary.chart+'" /></div>';
+							str+='</div>';
+							str+='</td>';
+							str+='</tr>';
+							});
+						break;
 						case 'coin':
 							data.forEach(function(ticker,index){
 							str+='<tr id="'+ticker.name+'_coinmarket">';

@@ -2032,7 +2032,7 @@ module.exports = {
 						}
 					});
 				}
-			}).
+			}).	
 			catch(err => {  
 				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);
 			});
@@ -2041,5 +2041,89 @@ module.exports = {
 	
 	socketUpdates:function(){
 		FrontendService.socketData();
-	}
+	},
+	
+	dataPrediction:function(){
+		var _ = require('lodash');
+		var moment = require('moment');
+		const Json2csvParser = require('json2csv').Parser;
+		var fs = require('fs');
+		const fields = ['Timestamp','Open','High','Low','Volume_(BTC)','Volume_(Currency)','Weighted_Price'];
+	
+		var data_array=[];
+		TotalCryptoPricesHistory.find().sort({id:1}).exec(function(err,totalCryptoPricesHistory){ 
+			if(!_.isEmpty(totalCryptoPricesHistory)){ 
+				_.forEach(totalCryptoPricesHistory,function(history){
+					_.forEach(history.prices,function(price){
+						var exists=false;
+						_.forEach(data_array,function(data){
+							if(data.base_currency==price.base_currency && data.quote_currency==price.quote_currency){
+								exists=true;
+								data.history.push({high:price.high,low:price.low,volume:price.volume,timestamp:moment(history.date_created, "YYYY-MM-DD h:i:s").format('X')});
+							}
+						});
+						if(!exists){
+							var temp=[];
+							temp.push({high:price.high,low:price.low,volume:price.volume,timestamp:moment(history.date_created, "YYYY-MM-DD h:i:s").format('X')});
+							data_array.push({base_currency:price.base_currency,quote_currency:price.quote_currency,history:temp});
+						}
+					});
+				});
+				//PROCESS TO CREATE CSV FILE
+				console.log(data_array);
+				
+				/*const myCars = [
+				  {
+					"carModel": "BMW",
+					"price": 15000,
+					"items": [
+					  {
+						"name": "airbag",
+						"color": "white"
+					  }, {
+						"name": "dashboard",
+						"color": "black"
+					  }
+					]
+				  }, {
+					"carModel": "Porsche",
+					"price": 30000,
+					"items": [
+					  {
+						"name": "airbag",
+						"items": [
+						  {
+							"position": "left",
+							"color": "white"
+						  }, {
+							"position": "right",
+							"color": "gray"
+						  }
+						]
+					  }, {
+						"name": "dashboard",
+						"items": [
+						  {
+							"position": "left",
+							"color": "gray"
+						  }, {
+							"position": "right",
+							"color": "black"
+						  }
+						]
+					  }
+					]
+				  }
+				];
+		
+				const json2csvParser = new Json2csvParser({fields, unwind: ['items', 'items.items'], unwindBlank: true });
+				const csv = json2csvParser.parse(myCars);
+				fs.writeFile(process.cwd()+'/assets/excel/file.csv', csv, function(err) {
+					if (err) throw err;
+					console.log('file saved');
+				  }); 
+				console.log(csv);*/
+			}
+		});
+	},
 };

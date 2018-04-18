@@ -2,21 +2,18 @@ module.exports = {
 	marketData:function(callBack){
 		var _ = require('lodash');
 		var Promise = require("bluebird");
-		
 		return Promise.all([
 			ExchangeDataService.gdaxMarketData(),
-			ExchangeDataService.totalCryptoPricesUsd(),
-			ExchangeDataService.totalCryptoPricesPairs(),
 			ExchangeDataService.totalCryptosPrice(),
 			ExchangeDataService.topTotalCryptoPrices(),
 			FrontendService.gainers_and_losers(10),
 			FrontendService.RSS()
 					]
 		).then(response => { 
-			callBack({gdax:response[0].data,totalcryptospriceusd:response[1].data,totalcryptospricepairs:response[2].data,cryptoData:response[3],topproducts:response[4].data,gainers_losers:response[5].gainers_losers,rss:response[6]});
+			callBack({gdax:response[0].data,cryptoData:response[1],topproducts:response[2].data,gainers_losers:response[3].gainers_losers,rss:response[4]});
 		}).
 		catch(err => { 
-			callBack({gdax:[],totalcryptospriceusd:[],totalcryptospricepairs:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
+			callBack({gdax:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
 		});
 	},
 	
@@ -64,6 +61,16 @@ module.exports = {
 	
 	tabData:function(tab,callBack){
 		switch(tab){
+			case 'totalcryptospriceusd':
+				return Promise.all([
+					ExchangeDataService.totalCryptoPricesUsd()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
+			break;
+			case 'totalcryptospricepairs':
+				return Promise.all([
+					ExchangeDataService.totalCryptoPricesPairs()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
+			break;
 			case 'coin':
 				return Promise.all([
 					ExchangeDataService.coinmarketcapMarketData()

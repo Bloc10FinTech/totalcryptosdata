@@ -9,7 +9,7 @@ require('dotenv').config();
 module.exports = {
 	index: function (request, response) {
 		FrontendService.marketData(function(data){  
-		return response.view('home', {gdax: data.gdax,totalcryptospriceusd:data.totalcryptospriceusd,totalcryptospricepairs:data.totalcryptospricepairs,cryptoData: data.cryptoData, topproducts:data.topproducts,gainers_losers:data.gainers_losers, feedrss:data.rss, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
+		return response.view('home', {gdax: data.gdax,cryptoData: data.cryptoData, topproducts:data.topproducts,gainers_losers:data.gainers_losers, feedrss:data.rss, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
 	});
   },
   tabData:function(request, response){
