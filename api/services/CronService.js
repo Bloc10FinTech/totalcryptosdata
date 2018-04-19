@@ -2041,6 +2041,7 @@ module.exports = {
 	
 	socketUpdates:function(){
 		FrontendService.socketData();
+		CronService.dataPrediction();
 	},
 	
 	dataPrediction:function(){
@@ -2059,70 +2060,33 @@ module.exports = {
 						_.forEach(data_array,function(data){
 							if(data.base_currency==price.base_currency && data.quote_currency==price.quote_currency){
 								exists=true;
-								data.history.push({high:price.high,low:price.low,volume:price.volume,timestamp:moment(history.date_created, "YYYY-MM-DD h:i:s").format('X')});
+								data.history.push({'Timestamp':moment(history.date_created, "YYYY-MM-DD h:i:s").format('X'),'Open':0,'High':price.high,'Low':price.low,'Volume_(BTC)':0,'Volume_(Currency)':price.volume,'Weighted_Price':price.price});
 							}
 						});
 						if(!exists){
 							var temp=[];
-							temp.push({high:price.high,low:price.low,volume:price.volume,timestamp:moment(history.date_created, "YYYY-MM-DD h:i:s").format('X')});
+							temp.push({'Timestamp':moment(history.date_created, "YYYY-MM-DD h:i:s").format('X'),'Open':0,'High':price.high,'Low':price.low,'Volume_(BTC)':0,'Volume_(Currency)':price.volume,'Weighted_Price':price.price});
 							data_array.push({base_currency:price.base_currency,quote_currency:price.quote_currency,history:temp});
 						}
 					});
 				});
+	
 				//PROCESS TO CREATE CSV FILE
-				console.log(data_array);
-				
-				/*const myCars = [
-				  {
-					"carModel": "BMW",
-					"price": 15000,
-					"items": [
-					  {
-						"name": "airbag",
-						"color": "white"
-					  }, {
-						"name": "dashboard",
-						"color": "black"
-					  }
-					]
-				  }, {
-					"carModel": "Porsche",
-					"price": 30000,
-					"items": [
-					  {
-						"name": "airbag",
-						"items": [
-						  {
-							"position": "left",
-							"color": "white"
-						  }, {
-							"position": "right",
-							"color": "gray"
-						  }
-						]
-					  }, {
-						"name": "dashboard",
-						"items": [
-						  {
-							"position": "left",
-							"color": "gray"
-						  }, {
-							"position": "right",
-							"color": "black"
-						  }
-						]
-					  }
-					]
-				  }
-				];
-		
-				const json2csvParser = new Json2csvParser({fields, unwind: ['items', 'items.items'], unwindBlank: true });
-				const csv = json2csvParser.parse(myCars);
+				//console.log(data_array[0].history);
+				const json2csvParser = new Json2csvParser({fields, unwind: [], unwindBlank: true });
+				const csv = json2csvParser.parse(data_array[0].history);
 				fs.writeFile(process.cwd()+'/assets/excel/file.csv', csv, function(err) {
-					if (err) throw err;
-					console.log('file saved');
+					if (err) {
+						//throw err;
+					}
+					else{
+						var fileUrl=process.env.HOST+':'+process.env.PORT+'/assets/excel/file.csv';
+						console.log(fileUrl);
+						ApiService.dataPredictionAPI(fileUrl,'file.csv').then(response => {console.log(response);}).catch(err => {});
+						console.log('file saved');
+					}
 				  }); 
-				console.log(csv);*/
+				//console.log(csv);
 			}
 		});
 	},

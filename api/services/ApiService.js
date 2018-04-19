@@ -714,6 +714,25 @@ module.exports = {
 		});
 	},
 	
+	dataPredictionAPI:function(csvUrl,fileName){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://backend-dot-predict-stress.appspot.com'	,
+			  headers: {
+				'User-Agent': 'request'
+			  },
+			  method: "POST",
+			  json: true,
+			  body: {Train_Data:csvUrl,Weights: fileName }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
 	exchangeErrors:function(name,error_type,error,custom_message,date_time){ 
 		ExchangeErrors.create({name: name, error_type: error_type, error: error, custom_message: custom_message,date_created:date_time},function(err,data){
 			if(err){
