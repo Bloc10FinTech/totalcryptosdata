@@ -50,6 +50,7 @@ module.exports.routes = {
   '/api/productsPrices/:product':'ApiController.productPrice',
   '/api/topProductsPrices':'ApiController.topProductsPrices',
   '/api/tcHistory24H':'ApiController.tcHistory24H',
+  '/api/tcHistory7D':'ApiController.tcHistory7D',
   '/api/topGainersLosers':'ApiController.topGainersLosers',
   '/api/userRegistration':'ApiController.userRegistration',
   '/home': {view: 'homepage'},
