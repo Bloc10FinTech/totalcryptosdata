@@ -37,6 +37,11 @@ module.exports = {
 		return response.send(data);
 	},request);
   },
+  tcHistory24H:function(request, response) {
+	  MobileApisService.tcHistory24H(function(data){
+		return response.send(data);
+	},request);
+  },
   topGainersLosers:function(request, response) {
 	  MobileApisService.topGainersLosers(function(data){
 		return response.send(data);

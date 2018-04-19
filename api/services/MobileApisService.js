@@ -195,6 +195,48 @@ module.exports = {
 		});
 	},
 	
+	tcHistory24H:function(callBack,request){
+		var _=require('lodash');
+		var moment = require('moment');
+		var date_after = moment().subtract(24, 'hours').toDate();
+		MobileApisService.checkUpdateApiCalls(request.ip,'tcHistory24H').
+		then(response => {
+			if(response){
+				return new Promise(function(resolve,reject){
+					
+					var totalCryptosPrice=TotalCryptoPrice.find();
+					totalCryptosPrice.where({ "date_created" : { ">": date_after } });
+					totalCryptosPrice.sort('id ASC');
+					totalCryptosPrice.exec(function(err,history){
+						if(err){
+							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+						}
+						var tc100_array=[];
+						var tcw100_array=[];
+						var market_cap_array=[];
+						if(!_.isEmpty(history)){
+							_.forEach(history,function(data){
+								tc100_array.push({tc100:data.tc100,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
+								tcw100_array.push({tcw100:data.tcw100,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
+								market_cap_array.push({total_usd_market_cap:data.total_usd_market_cap,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
+							});
+							callBack({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}});
+						} 
+						else{
+							callBack({errCode:404,message:'Record not found.',data:[]});
+						}	
+					});
+				});
+			}
+			else{
+				callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+			}
+		}).
+		catch(err => {
+			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+		});
+	},
+	
 	topGainersLosers:function(callBack,request){
 		var _=require('lodash');
 		
