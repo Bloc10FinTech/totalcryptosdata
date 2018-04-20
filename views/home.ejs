@@ -1412,8 +1412,9 @@
 			
 			$.ajax({
 				type:'GET',
-				url:'<%= socketURL %>/tabData/'+tab,
-				success:function(data){
+				//url:'<%= socketURL %>/tabData/'+tab,
+				url:'/tabData/'+tab,
+				success:function(data){ 
 					var str='';
 					switch(tab){
 						case 'totalcryptospriceusd':
