@@ -33,6 +33,7 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {controller: 'home'},
+  '/gainersLoosers':'HomeController.gainersLoosers',
   '/tabData/:tab':'HomeController.tabData',
   '/volume-24-hour-currency':'HomeController.volume_24_hour_currency',
   '/volume-24-hour-currency/:symbol':'HomeController.volume_24_hour_currency_symbol',

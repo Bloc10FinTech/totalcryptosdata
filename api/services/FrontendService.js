@@ -6,14 +6,13 @@ module.exports = {
 			ExchangeDataService.gdaxMarketData(),
 			ExchangeDataService.totalCryptosPrice(),
 			ExchangeDataService.topTotalCryptoPrices(),
-			FrontendService.gainers_and_losers(10),
 			FrontendService.RSS()
 					]
 		).then(response => { 
-			callBack({gdax:response[0].data,cryptoData:response[1],topproducts:response[2].data,gainers_losers:response[3].gainers_losers,rss:response[4]});
+			callBack({gdax:response[0].data,cryptoData:response[1],topproducts:response[2].data,rss:response[3]});
 		}).
 		catch(err => { 
-			callBack({gdax:[],cryptoData:[],topproducts:[],gainers_losers:[],rss:[]});
+			callBack({gdax:[],cryptoData:[],topproducts:[],rss:[]});
 		});
 	},
 	
@@ -57,6 +56,12 @@ module.exports = {
 		catch(err => { 
 			//NO NEED TO SEND SOCKET DATA IN THIS CASE
 		});
+	},
+	
+	gainersLoosers:function(callBack){
+		return Promise.all([
+			FrontendService.gainers_and_losers(10),
+		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});
 	},
 	
 	tabData:function(tab,callBack){

@@ -660,21 +660,7 @@
 								</td>
 							</tr>
 						</thead>
-						<tbody>
-							<% gainers_losers.gainer_24_h.forEach(function(gainer,index){%>
-
-							<tr>
-								<td><%=index+1%></td>
-								<td>
-									<img src="<%='images/currencies/'+gainer.symbol.toLowerCase()+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
-									<a href="volume-24-hour-currency/<%=gainer.symbol.toUpperCase()%>">
-										<%=gainer.symbol%>
-									</a>
-								</td>
-								<td><span style="color:green;font-weight:bolder;"><%=gainer.percent_change_24h%>%<img src="/images/arrowup.png" height="17px" class="arrows-banner"></span></td>
-							</tr>
-
-							<%});%>
+						<tbody id="gainers_24_h">
 						</tbody>
 					</table>
 				</div>	
@@ -702,21 +688,7 @@
 								</td>
 							</tr>
 						</thead>
-						<tbody>
-							<% gainers_losers.loser_24_h.forEach(function(loser,index){%>
-
-							<tr>
-								<td><%=index+1%></td>
-								<td>
-									<img src="<%='images/currencies/'+loser.symbol.toLowerCase()+'.png'%>" width="16px" height="16px" onError="this.src='images/currency.png'" />
-									<a href="volume-24-hour-currency/<%=loser.symbol.toUpperCase()%>">
-										<%=loser.symbol%>
-									</a>
-								</td>
-								<td><span style="color:red;font-weight:bolder;"><%=loser.percent_change_24h%>%<img src="/images/arrowdown.png" height="17px" class="arrows-banner"></span></td>
-							</tr>
-
-							<%});%>
+						<tbody id="losers_24_h">
 						</tbody>
 					</table>
 				</div>	
@@ -736,17 +708,60 @@
 
 </div>
 
-
-
 <script>
 
 	$(document).ready(function(){
 	
+		//PROCESS TO FETCH GAINERS AND LOSERS
+		$("#gainers_24_h").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+		$("#losers_24_h").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+		
+		$.ajax({
+			type:'GET',
+			url:'/gainersLoosers',
+			success:function(data){
+			
+				$("#gainers_24_h").html('');
+				$("#losers_24_h").html('');
+			
+				data.gainers.forEach(function(gainer,index){
+					var str='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>';
+					str+='<img src="images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+					str+='<a href="volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
+					str+=gainer.symbol;
+					str+='</a>';
+					str+='</td>';
+					str+='<td><span style="color:green;font-weight:bolder;">';
+					str+=gainer.percent_change_24h;
+					str+='%<img src="/images/arrowup.png" height="17px" class="arrows-banner"></span></td>';
+					str+='</tr>';
+					$("#gainers_24_h").append(str);
+				});	
+
+				data.gainers.forEach(function(loser,index){
+					var str='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>';
+					str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+					str+='<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
+					str+=loser.symbol;
+					str+='</a>';
+					str+='</td>';
+					str+='<td><span style="color:red;font-weight:bolder;">';
+					str+=loser.percent_change_24h;
+					str+='%<img src="/images/arrowdown.png" height="17px" class="arrows-banner"></span></td>';
+					str+='</tr>';
+					$("#losers_24_h").append(str);
+				});
+			}
+		});	
+	
+		//PROCESS TO FETCH TOTAL CRYPTO DATA
 		show_tab_data('totalcryptospriceusd');
 		show_tab_data('totalcryptospricepairs');
 	
-		//draw_chart();
-
 		var socket = io.connect('<%= socketURL %>');
 		socket.on('exchangeData', function (response) {
 			var gdax=response.gdax;

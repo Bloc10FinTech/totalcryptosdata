@@ -9,8 +9,13 @@ require('dotenv').config();
 module.exports = {
 	index: function (request, response) {
 		FrontendService.marketData(function(data){  
-		return response.view('home', {gdax: data.gdax,cryptoData: data.cryptoData, topproducts:data.topproducts,gainers_losers:data.gainers_losers, feedrss:data.rss, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
+		return response.view('home', {gdax: data.gdax,cryptoData: data.cryptoData, topproducts:data.topproducts, feedrss:data.rss, title: 'Total Cryptos',socketURL:process.env.SOCKETURL});
 	});
+  },
+  gainersLoosers:function(request, response){
+	  FrontendService.gainersLoosers(function(data){
+		  response.send(data);
+	  });
   },
   tabData:function(request, response){
 	  FrontendService.tabData(request.param('tab'),function(data){
