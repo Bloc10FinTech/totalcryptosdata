@@ -28,7 +28,7 @@ module.exports.cron = {
 	//schedule: '00 */5 * * * *',
 	schedule: '00 59 * * * *',
     onTick: function () {
-      CronService.socketUpdates();
+      //CronService.socketUpdates();
     }
   }
 };
