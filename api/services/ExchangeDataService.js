@@ -746,9 +746,14 @@ module.exports = {
 		return new Promise(function(resolve,reject){
 			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,topTotalCryptoPrices){ 
 				if(!_.isEmpty(topTotalCryptoPrices)){ 
+				
 					topTotalCryptoPrices=_.head(topTotalCryptoPrices);
 					topTotalCryptoPrices=topTotalCryptoPrices.prices;
-					topTotalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					topTotalCryptoPrices=_.filter(topTotalCryptoPrices,{quote_currency:'usd'});
+					_.remove(topTotalCryptoPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
+					
+					topTotalCryptoPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 					topTotalCryptoPrices=_.slice(topTotalCryptoPrices,0,10);
 					return resolve({name:'top total cryptos prices',url:'http://totalcryptos.com',is_exchange:'yes',data:topTotalCryptoPrices});
 				}

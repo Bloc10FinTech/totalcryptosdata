@@ -176,7 +176,8 @@ module.exports = {
 							productPrices=_.head(productPrices);
 							productPrices=productPrices.prices;
 							productPrices=_.filter(productPrices,{quote_currency:'usd'});
-							productPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+							_.remove(productPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
+							productPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 							productPrices=_.slice(productPrices,0,10);
 							callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
 						}
