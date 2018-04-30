@@ -640,7 +640,8 @@ module.exports = {
 					totalCryptoPrices=_.head(totalCryptoPrices);
 					totalCryptoPrices=totalCryptoPrices.prices;
 					totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
-					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					_.remove(totalCryptoPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
+					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 					return resolve({name:'total cryptos usd price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
 				}
 				else{
