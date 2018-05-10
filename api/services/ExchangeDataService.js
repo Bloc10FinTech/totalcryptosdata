@@ -681,16 +681,14 @@ module.exports = {
 				var tcw100_array=[];
 				var market_cap_array=[];
 				var temp_array=[];
-				var date_time_array=[];
 				var history_array=[];
 				if(!_.isEmpty(history)){
 					_.forEach(history,function(data){
 						
 						if(period=='day'){
-							tc100_array.push(data.tc100);
-							tcw100_array.push(data.tcw100);
-							market_cap_array.push(data.total_usd_market_cap);
-							date_time_array.push(moment(data.date_created).format('HH'));
+							tc100_array.push({TC100:data.tc100,time:moment(data.date_created).format('HH a')});
+							tcw100_array.push({TCw100:data.tcw100,time:moment(data.date_created).format('HH a')});
+							market_cap_array.push({MARKETCAP:data.total_usd_market_cap,time:moment(data.date_created).format('HH a')});
 						}
 						else if(period=='week'){
 							var exists=false;
@@ -703,9 +701,8 @@ module.exports = {
 								}
 							});
 							if(!exists){
-								temp_array.push({date:moment(data.date_created).format('DD'),tc100:data.tc100,tcw100:data.tcw100,total_usd_market_cap:data.total_usd_market_cap});
+								temp_array.push({date:moment(data.date_created).format('DD'),tc100:data.tc100,tcw100:data.tcw100,total_usd_market_cap:data.total_usd_market_cap,time:moment(data.date_created).format('MMMM Do')});
 							}
-							date_time_array.push(moment(data.date_created).format('YYYYMMDD'));
 						}
 						
 						data.date_created=moment(data.date_created).format('MMMM Do YYYY, h:mm:ss a');
@@ -715,13 +712,13 @@ module.exports = {
 					
 					if(period=='week'){
 						_.forEach(temp_array,function(temp){
-							tc100_array.push(temp.tc100);
-							tcw100_array.push(temp.tcw100);
-							market_cap_array.push(temp.total_usd_market_cap);
+							tc100_array.push({TC100:temp.tc100,time:temp.time});
+							tcw100_array.push({TCw100:temp.tcw100,time:temp.time});
+							market_cap_array.push({MARKETCAP:temp.total_usd_market_cap,time:temp.time});
 						});
 					}
 				}  
-				return resolve({tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array,date_time_array:_.uniq(date_time_array),history_array:history_array});
+				return resolve({tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array,history_array:history_array});
 			});
 		});
 	},

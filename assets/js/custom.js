@@ -24,20 +24,4 @@ $( document ).ready(function() {
   }
   $(".FormatNum").html('$'+_number);
 /* Js to give format to Large Numbers */
-
-
-  $('#top_exchange').marquee({direction:'horizontal', delay:0, timing:20});
-        
-  $("#top_exchange").children('li').each(function(){
-    var cls=this.className.split(" ");
-    cls=cls[cls.length-1];
-    if($(".hidden_"+cls)){
-      var val=$(".hidden_"+cls).val();
-      if(val!=undefined){
-        $(".chart_"+cls).html('');
-        $(".chart_"+cls).sparkline(val.split(","), {type: 'line',width: '100%',height: '50',lineColor: '#ff6439',fillColor: "transparent"});
-      }
-    }
-  });
-
 });

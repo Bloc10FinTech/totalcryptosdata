@@ -1,21 +1,4 @@
 module.exports = {
-	marketData:function(callBack){
-		var _ = require('lodash');
-		var Promise = require("bluebird");
-		return Promise.all([
-			ExchangeDataService.gdaxMarketData(),
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			FrontendService.RSS()
-					]
-		).then(response => { 
-			callBack({gdax:response[0].data,cryptoData:response[1],topproducts:response[2].data,rss:response[3]});
-		}).
-		catch(err => { 
-			callBack({gdax:[],cryptoData:[],topproducts:[],rss:[]});
-		});
-	},
-	
 	socketData:function(){
 		var _ = require('lodash');
 		var Promise = require("bluebird");
@@ -58,10 +41,19 @@ module.exports = {
 		});
 	},
 	
-	gainersLoosers:function(callBack){
+	headerFooterData:function(callBack){
 		return Promise.all([
-			FrontendService.gainers_and_losers(10),
-		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});
+			ExchangeDataService.gdaxMarketData(),
+			ExchangeDataService.totalCryptosPrice(),
+			ExchangeDataService.topTotalCryptoPrices(),
+			FrontendService.RSS()
+					]
+		).then(response => { 
+			callBack({gdax:response[0].data,cryptoData:response[1],topproducts:response[2].data,rss:response[3]});
+		}).
+		catch(err => { 
+			callBack({gdax:[],cryptoData:[],topproducts:[],rss:[]});
+		});
 	},
 	
 	tabData:function(tab,callBack){
@@ -186,345 +178,340 @@ module.exports = {
 			break;
 		}
 	},
+	
+	gainersLoosers:function(callBack){
+		return Promise.all([
+			FrontendService.gainers_and_losers_data(10),
+		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});
+	},
 
-	volume_24_hour_currency:function(callBack){
+	volume_24_hour_currency_data:function(callBack){
 		var _ = require('lodash');
 		
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.gdaxMarketData()
-		]).
-		then(response => {
-			ExchangeList.find({},function(err, currencies){
-				if(!_.isEmpty(currencies)){
-					var exchange_array=[];
-					_.forEach(currencies,function(currency){
-						exchange_array.push({id:currency.id,name:currency.name,is_exchange:currency.is_exchange});
+		ExchangeList.find({},function(err, currencies){
+			if(!_.isEmpty(currencies)){
+				var exchange_array=[];
+				_.forEach(currencies,function(currency){
+					exchange_array.push({id:currency.id,name:currency.name,is_exchange:currency.is_exchange});
+				});
+				
+				return Promise.all(exchange_array.map((exchange)=>{
+					var exchange_data_array=[];
+					switch(exchange.name){
+						case 'gdax':
+							return ExchangeDataService.gdaxMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.display_name,'/','')),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bittrex':
+							return ExchangeDataService.bittrexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.BaseCurrency),pair:_.toUpper(_.replace(data.MarketName,'-','')),volume:data.Volume,price:data.Bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitfinex':
+							return ExchangeDataService.bitfinexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.product_id.substr(0,3)),pair:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+			
+						case 'hitbtc':
+							return ExchangeDataService.hitbtcMarketData().
+							then(exchange_data => { 
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.baseCurrency),pair:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+			
+						case 'gate':
+							return ExchangeDataService.gateMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.baseVolume,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+						
+						case 'coinmarketcap':
+							return ExchangeDataService.coinmarketcapMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.symbol),pair:_.toUpper(data.symbol+'USD'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'okex':
+							return ExchangeDataService.okexMarketData().
+							then(exchange_data => { 
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'binance':
+							return ExchangeDataService.binanceMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.baseAsset),pair:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'huobi':
+							return ExchangeDataService.huobiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+
+						case 'gemini':
+							return ExchangeDataService.geminiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.currency),pair:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+
+						case 'kraken':
+							return ExchangeDataService.krakenMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+
+						case 'bitflyer':
+							return ExchangeDataService.bitflyerMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;	
+						
+						case 'bithumb':
+							return ExchangeDataService.bithumbMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitstamp':
+							return ExchangeDataService.bitstampMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitz':
+							return ExchangeDataService.bitzMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'lbank':
+							return ExchangeDataService.lbankMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'coinone':
+							return ExchangeDataService.coinoneMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'wex':
+							return ExchangeDataService.wexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'exmo':
+							return ExchangeDataService.exmoMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'liqui':
+							return ExchangeDataService.liquiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'korbit':
+							return ExchangeDataService.korbitMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+			
+						default:
+							exchange.data=[];
+							return exchange;
+					}
+				})).
+				then(response_data =>{
+					var temp_array=[];
+					var return_array=[];
+					_.forEach(response_data,function(exchange_data){
+						if(!_.isEmpty(exchange_data.data)){
+							temp_array.push(exchange_data);
+						}
 					});
 					
-					return Promise.all(exchange_array.map((exchange)=>{
-						var exchange_data_array=[];
-						switch(exchange.name){
-							case 'gdax':
-								return ExchangeDataService.gdaxMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.display_name,'/','')),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
+					_.forEach(temp_array,function(exchange_data){
+						_.forEach(exchange_data.data,function(coins){
+							var exists=false;
+							_.forEach(return_array,function(currency_data){
+								if(currency_data.currency==coins.currency){
+									_.forEach(currency_data.data,function(source){
+										if(source.currency==_.replace(coins.pair,coins.currency,'') && source.src==_.toUpper(exchange_data.name)){
+											exists=true;
+										}
 									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
+								}
+							});
 							
-							case 'bittrex':
-								return ExchangeDataService.bittrexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.BaseCurrency),pair:_.toUpper(_.replace(data.MarketName,'-','')),volume:data.Volume,price:data.Bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitfinex':
-								return ExchangeDataService.bitfinexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.product_id.substr(0,3)),pair:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-				
-							case 'hitbtc':
-								return ExchangeDataService.hitbtcMarketData().
-								then(exchange_data => { 
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.baseCurrency),pair:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-				
-							case 'gate':
-								return ExchangeDataService.gateMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.baseVolume,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-							
-							case 'coinmarketcap':
-								return ExchangeDataService.coinmarketcapMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.symbol),pair:_.toUpper(data.symbol+'USD'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'okex':
-								return ExchangeDataService.okexMarketData().
-								then(exchange_data => { 
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'binance':
-								return ExchangeDataService.binanceMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.baseAsset),pair:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'huobi':
-								return ExchangeDataService.huobiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-
-							case 'gemini':
-								return ExchangeDataService.geminiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.currency),pair:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-
-							case 'kraken':
-								return ExchangeDataService.krakenMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-
-							case 'bitflyer':
-								return ExchangeDataService.bitflyerMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;	
-							
-							case 'bithumb':
-								return ExchangeDataService.bithumbMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitstamp':
-								return ExchangeDataService.bitstampMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitz':
-								return ExchangeDataService.bitzMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'lbank':
-								return ExchangeDataService.lbankMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'coinone':
-								return ExchangeDataService.coinoneMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'wex':
-								return ExchangeDataService.wexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'exmo':
-								return ExchangeDataService.exmoMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'liqui':
-								return ExchangeDataService.liquiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'korbit':
-								return ExchangeDataService.korbitMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-				
-							default:
-								exchange.data=[];
-								return exchange;
-						}
-					})).
-					then(response_data =>{
-						var temp_array=[];
-						var return_array=[];
-						_.forEach(response_data,function(exchange_data){
-							if(!_.isEmpty(exchange_data.data)){
-								temp_array.push(exchange_data);
-							}
-						});
-						
-						_.forEach(temp_array,function(exchange_data){
-							_.forEach(exchange_data.data,function(coins){
-								var exists=false;
+							if(!exists){
+								var is_updated=false;
 								_.forEach(return_array,function(currency_data){
 									if(currency_data.currency==coins.currency){
-										_.forEach(currency_data.data,function(source){
-											if(source.currency==_.replace(coins.pair,coins.currency,'') && source.src==_.toUpper(exchange_data.name)){
-												exists=true;
-											}
-										});
+										currency_data.data.push({price:coins.price,volume:coins.volume,currency:_.replace(coins.pair,coins.currency,''),src:_.toUpper(exchange_data.name)});
+										is_updated=true;
 									}
 								});
 								
-								if(!exists){
-									var is_updated=false;
-									_.forEach(return_array,function(currency_data){
-										if(currency_data.currency==coins.currency){
-											currency_data.data.push({price:coins.price,volume:coins.volume,currency:_.replace(coins.pair,coins.currency,''),src:_.toUpper(exchange_data.name)});
-											is_updated=true;
-										}
-									});
-									
-									if(!is_updated){
-										var temp=[];
-										temp.push({price:coins.price,volume:coins.volume,currency:_.replace(coins.pair,coins.currency,''),src:_.toUpper(exchange_data.name)});
-										return_array.push({currency:coins.currency,data:temp});
-									}
+								if(!is_updated){
+									var temp=[];
+									temp.push({price:coins.price,volume:coins.volume,currency:_.replace(coins.pair,coins.currency,''),src:_.toUpper(exchange_data.name)});
+									return_array.push({currency:coins.currency,data:temp});
 								}
-							});
+							}
 						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						_.forEach(return_array,function(currencies){
-							currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						});
-						
-						callBack({currency:return_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({currency:[],cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				}
-			});
-		}).
-		catch(err => { callBack({currency:[],cryptoData:{},topproducts:[],gdax:[]});});	
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					_.forEach(return_array,function(currencies){
+						currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					});
+					
+					callBack({currency:return_array});
+				}).
+				catch(err => { callBack({currency:[]});});
+			}
+		});
 	},
 	
-	volume_24_hour_currency_symbol(symbol,callBack){
+	volume_24_hour_currency_symbol_data(symbol,callBack){
 		var _ = require('lodash');
 		symbol=_.toLower(symbol);
 		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.totalCryptoPricesHistorySymbol(symbol),
-			ExchangeDataService.gdaxMarketData()
+			ExchangeDataService.totalCryptoPricesHistorySymbol(symbol)
 		]).
 		then(response => {
 			ExchangeList.find({},function(err, currencies){
@@ -881,1195 +868,1149 @@ module.exports = {
 							currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({symbol:return_array,cryptoData:response[0],topproducts:response[1].data,cryptoHistory:response[2],gdax:response[3].data});
+						callBack({markets:return_array,history:response[0],currency:symbol});
 					}).
-					catch(err => { callBack({symbol:[],cryptoData:response[0],topproducts:response[1].data,cryptoHistory:response[2],cryptoHistory:response[2],gdax:response[3].data});});
+					catch(err => { callBack({markets:[],history:response[0],currency:symbol});});
 				}
 			});
 		}).
-		catch(err => { callBack({symbol:[],cryptoData:{},topproducts:[],gdax:[]});});		
+		catch(err => { callBack({markets:[],history:[],currency:symbol});});		
 	},
 	
-	volume_24_hour_market:function(market,callBack){
+	volume_24_hour_market_data:function(market,callBack){
 		var _ = require('lodash');
 		market=_.toLower(market);
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.gdaxMarketData()
-		]).
-		then(response => {
-			ExchangeList.find({},function(err, exchanges){
-				if(!_.isEmpty(exchanges)){
-					var exchange_array=[];
-					_.forEach(exchanges,function(exchange){
-						exchange_array.push({id:exchange.id,name:exchange.name,is_exchange:exchange.is_exchange});
+
+		ExchangeList.find({},function(err, exchanges){
+			if(!_.isEmpty(exchanges)){
+				var exchange_array=[];
+				_.forEach(exchanges,function(exchange){
+					exchange_array.push({id:exchange.id,name:exchange.name,is_exchange:exchange.is_exchange});
+				});
+				
+				return Promise.all(exchange_array.map((exchange)=>{
+					var exchange_data_array=[];
+					switch(exchange.name){
+						case 'gdax':
+							return ExchangeDataService.gdaxMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.display_name,'/',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.display_name,'/','')),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bittrex':
+							return ExchangeDataService.bittrexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.MarketName,'-',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.MarketName,'-','')),volume:data.Volume,price:data.Bid,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitfinex':
+							return ExchangeDataService.bitfinexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product_id)==market){
+										exchange_data_array.push({market:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+			
+						case 'hitbtc':
+							return ExchangeDataService.hitbtcMarketData().
+							then(exchange_data => { 
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.symbol)==market){
+										exchange_data_array.push({market:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+			
+						case 'gate':
+							return ExchangeDataService.gateMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.baseVolume,price:data.last,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+						
+						case 'coinmarketcap':
+							return ExchangeDataService.coinmarketcapMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.symbol+'usd')==symbol){
+										exchange_data_array.push({market:_.toUpper(data.symbol+'usd'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'kuna':
+							return ExchangeDataService.kunaMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){ 
+									if(_.toLower(data.product)==market){ 
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.vol,price:data.price,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+
+						case 'okex':
+							return ExchangeDataService.okexMarketData().
+							then(exchange_data => { 
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+
+						case 'binance':
+							return ExchangeDataService.binanceMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.symbol)==market){
+										exchange_data_array.push({market:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;	
+						
+						case 'huobi':
+							return ExchangeDataService.huobiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product)==market){
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'gemini':
+							return ExchangeDataService.geminiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product)==market){
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'kraken':
+							return ExchangeDataService.krakenMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product)==market){
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitflyer':
+							return ExchangeDataService.bitflyerMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bithumb':
+							return ExchangeDataService.bithumbMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product)==market){
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitstamp':
+							return ExchangeDataService.bitstampMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product)==market){
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitz':
+							return ExchangeDataService.bitzMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'lbank':
+							return ExchangeDataService.lbankMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.symbol,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'coinone':
+							return ExchangeDataService.coinoneMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(data.product)==market){
+										exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'wex':
+							return ExchangeDataService.wexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'exmo':
+							return ExchangeDataService.exmoMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'liqui':
+							return ExchangeDataService.liquiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'korbit':
+							return ExchangeDataService.korbitMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									if(_.toLower(_.replace(data.product,'_',''))==market){
+										exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
+									}
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+			
+						default:
+							exchange.data=[];
+							return exchange;
+					}
+				})).
+				then(market_response =>{
+					var temp_array=[];
+					var return_array=[];
+					_.forEach(market_response,function(exchange_data){
+						if(!_.isEmpty(exchange_data.data)){
+							temp_array.push(exchange_data);
+						}
 					});
 					
-					return Promise.all(exchange_array.map((exchange)=>{
-						var exchange_data_array=[];
-						switch(exchange.name){
-							case 'gdax':
-								return ExchangeDataService.gdaxMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.display_name,'/',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.display_name,'/','')),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
+					_.forEach(temp_array,function(exchange_data){
+						_.forEach(exchange_data.data,function(markets){
+							var exists=false;
+							_.forEach(return_array,function(market_data){
+								if(market_data.market==markets.market){
+									_.forEach(market_data.data,function(source){
+										if(source.src==_.toUpper(exchange_data.name)){
+											exists=true;
 										}
 									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
+								}
+							});
 							
-							case 'bittrex':
-								return ExchangeDataService.bittrexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.MarketName,'-',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.MarketName,'-','')),volume:data.Volume,price:data.Bid,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitfinex':
-								return ExchangeDataService.bitfinexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product_id)==market){
-											exchange_data_array.push({market:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-				
-							case 'hitbtc':
-								return ExchangeDataService.hitbtcMarketData().
-								then(exchange_data => { 
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.symbol)==market){
-											exchange_data_array.push({market:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-				
-							case 'gate':
-								return ExchangeDataService.gateMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.baseVolume,price:data.last,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-							
-							case 'coinmarketcap':
-								return ExchangeDataService.coinmarketcapMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.symbol+'usd')==symbol){
-											exchange_data_array.push({market:_.toUpper(data.symbol+'usd'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'kuna':
-								return ExchangeDataService.kunaMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){ 
-										if(_.toLower(data.product)==market){ 
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.vol,price:data.price,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-
-							case 'okex':
-								return ExchangeDataService.okexMarketData().
-								then(exchange_data => { 
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-
-							case 'binance':
-								return ExchangeDataService.binanceMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.symbol)==market){
-											exchange_data_array.push({market:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;	
-							
-							case 'huobi':
-								return ExchangeDataService.huobiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product)==market){
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'gemini':
-								return ExchangeDataService.geminiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product)==market){
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'kraken':
-								return ExchangeDataService.krakenMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product)==market){
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitflyer':
-								return ExchangeDataService.bitflyerMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bithumb':
-								return ExchangeDataService.bithumbMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product)==market){
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitstamp':
-								return ExchangeDataService.bitstampMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product)==market){
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitz':
-								return ExchangeDataService.bitzMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'lbank':
-								return ExchangeDataService.lbankMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.symbol,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'coinone':
-								return ExchangeDataService.coinoneMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(data.product)==market){
-											exchange_data_array.push({market:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'wex':
-								return ExchangeDataService.wexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'exmo':
-								return ExchangeDataService.exmoMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'liqui':
-								return ExchangeDataService.liquiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'korbit':
-								return ExchangeDataService.korbitMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										if(_.toLower(_.replace(data.product,'_',''))==market){
-											exchange_data_array.push({market:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
-										}
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-				
-							default:
-								exchange.data=[];
-								return exchange;
-						}
-					})).
-					then(market_response =>{
-						var temp_array=[];
-						var return_array=[];
-						_.forEach(market_response,function(exchange_data){
-							if(!_.isEmpty(exchange_data.data)){
-								temp_array.push(exchange_data);
-							}
-						});
-						
-						_.forEach(temp_array,function(exchange_data){
-							_.forEach(exchange_data.data,function(markets){
-								var exists=false;
+							if(!exists){
+								var is_updated=false;
 								_.forEach(return_array,function(market_data){
 									if(market_data.market==markets.market){
-										_.forEach(market_data.data,function(source){
-											if(source.src==_.toUpper(exchange_data.name)){
-												exists=true;
-											}
-										});
+										market_data.data.push({price:markets.price,volume:markets.volume,src:_.toUpper(exchange_data.name)});
+										is_updated=true;
 									}
 								});
 								
-								if(!exists){
-									var is_updated=false;
-									_.forEach(return_array,function(market_data){
-										if(market_data.market==markets.market){
-											market_data.data.push({price:markets.price,volume:markets.volume,src:_.toUpper(exchange_data.name)});
-											is_updated=true;
-										}
-									});
-									
-									if(!is_updated){
-										var temp=[];
-										temp.push({price:markets.price,volume:markets.volume,src:_.toUpper(exchange_data.name)});
-										return_array.push({market:markets.market,data:temp});
-									}
+								if(!is_updated){
+									var temp=[];
+									temp.push({price:markets.price,volume:markets.volume,src:_.toUpper(exchange_data.name)});
+									return_array.push({market:markets.market,data:temp});
 								}
-							});
+							}
 						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						_.forEach(return_array,function(markets){
-							markets.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						});
-						
-						callBack({market:return_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({market:[],cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				}
-			});
-		}).
-		catch(err => {callBack({market:[],cryptoData:{},topproducts:[],gdax:[]});});		
-	},
-	
-	volume_24_hour_exchange:function(callBack){
-		var _ = require('lodash');
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.gdaxMarketData()
-		]).
-		then(response => {
-			ExchangeList.find({},function(err, exchanges){
-				if(!_.isEmpty(exchanges)){
-					var exchange_array=[];
-					_.forEach(exchanges,function(exchange){
-						exchange_array.push({id:exchange.id,name:exchange.name,is_exchange:exchange.is_exchange});
 					});
 					
-					return Promise.all(exchange_array.map((exchange)=>{
-						var exchange_data_array=[];
-						switch(exchange.name){
-							case 'gdax':
-								return ExchangeDataService.gdaxMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.display_name,'/','')),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bittrex':
-								return ExchangeDataService.bittrexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.BaseCurrency),pair:_.toUpper(_.replace(data.MarketName,'-','')),volume:data.Volume,price:data.Bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitfinex':
-								return ExchangeDataService.bitfinexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.product_id.substr(0,3)),pair:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-				
-							case 'hitbtc':
-								return ExchangeDataService.hitbtcMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.baseCurrency),pair:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-				
-							case 'gate':
-								return ExchangeDataService.gateMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.baseVolume,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => { exchange.data=[];return exchange;});
-							break;
-							
-							case 'coinmarketcap':
-								return ExchangeDataService.coinmarketcapMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.symbol),pair:_.toUpper(data.symbol+'USD'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'okex':
-								return ExchangeDataService.okexMarketData().
-								then(exchange_data => { 
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'binance':
-								return ExchangeDataService.binanceMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.baseAsset),pair:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'huobi':
-								return ExchangeDataService.huobiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'gemini':
-								return ExchangeDataService.geminiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.currency),pair:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'kraken':
-								return ExchangeDataService.krakenMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitflyer':
-								return ExchangeDataService.bitflyerMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bithumb':
-								return ExchangeDataService.bithumbMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitstamp':
-								return ExchangeDataService.bitstampMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'bitz':
-								return ExchangeDataService.bitzMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'--'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'lbank':
-								return ExchangeDataService.lbankMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'coinone':
-								return ExchangeDataService.coinoneMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'wex':
-								return ExchangeDataService.wexMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'exmo':
-								return ExchangeDataService.exmoMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'liqui':
-								return ExchangeDataService.liquiMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-							
-							case 'korbit':
-								return ExchangeDataService.korbitMarketData().
-								then(exchange_data => {
-									_.forEach(exchange_data.data,function(data){
-										exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
-									});
-									exchange.data=exchange_data_array;
-									return exchange;
-								}).
-								catch(err => {exchange.data=[];return exchange;});
-							break;
-				
-							default:
-								exchange.data=[];
-								return exchange;
-						}
-					})).
-					then(exchange_response =>{
-						var temp_array=[];
-						var return_array=[];
-						_.forEach(exchange_response,function(exchange_data){
-							if(!_.isEmpty(exchange_data.data)){
-								exchange_data.displayName=_.toUpper(exchange_data.name);
-								temp_array.push(exchange_data);
-							}
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						_.forEach(temp_array,function(exchange_data){
-							exchange_data.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						});
-						
-						callBack({exchange:temp_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({exchange:[],cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				}
-			});
-		}).
-		catch(err => { callBack({exchange:[],cryptoData:{},topproducts:[],gdax:[]});});;		
-	},
-	
-	exchange:function(exchangeName,callBack){	
-		var _ = require('lodash');
-		var exchange_data_array=[];
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.gdaxMarketData()
-		]).
-		then(response => {
-			switch(exchangeName){
-				
-				case 'gdax':
-					ExchangeDataService.gdaxMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.display_name),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
+					//SORT DATA IN DESC ORDER OF VOLUME
+					_.forEach(return_array,function(markets){
+						markets.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					});
 					
-				case 'bittrex':
-					ExchangeDataService.bittrexMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.BaseCurrency),pair:_.toUpper(_.replace(data.MarketName,'-','/')),volume:data.Volume,price:data.Bid,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,ccryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'bitfinex':
-					ExchangeDataService.bitfinexMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.product_id.substr(0,3)),pair:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'hitbtc':
-					ExchangeDataService.hitbtcMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.baseCurrency),pair:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'gate':
-					ExchangeDataService.gateMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(data.product),volume:data.baseVolume,price:data.last,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => { callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'coinmarketcap':
-					return ExchangeDataService.coinmarketcapMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.symbol),pair:_.toUpper(data.symbol+'USD'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'kuna':
-					return ExchangeDataService.kunaMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:'---',pair:_.toUpper(data.product),volume:data.vol,price:data.price,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'okex':
-					return ExchangeDataService.okexMarketData().
-					then(exchange_data => { 
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'binance':
-					return ExchangeDataService.binanceMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.baseAsset),pair:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'huobi':
-					return ExchangeDataService.huobiMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'gemini':
-					return ExchangeDataService.geminiMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.currency),pair:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'kraken':
-					return ExchangeDataService.krakenMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'bitflyer':
-					return ExchangeDataService.bitflyerMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'bithumb':
-					return ExchangeDataService.bithumbMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'bitstamp':
-					return ExchangeDataService.bitstampMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'bitz':
-					return ExchangeDataService.bitzMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'lbank':
-					return ExchangeDataService.lbankMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'coinone':
-					return ExchangeDataService.coinoneMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'wex':
-					return ExchangeDataService.wexMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'exmo':
-					return ExchangeDataService.exmoMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'liqui':
-					return ExchangeDataService.liquiMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-				
-				case 'korbit':
-					return ExchangeDataService.korbitMarketData().
-					then(exchange_data => {
-						_.forEach(exchange_data.data,function(data){
-							exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
-						});
-						
-						//SORT DATA IN DESC ORDER OF VOLUME
-						exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-						
-						callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}).
-					catch(err => {callBack({name:'',url:'',data:exchange_data_array,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});});
-				break;
-
-				default:
-				callBack({name:'',url:'',data:[],cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
+					callBack({market:return_array});
+				}).
+				catch(err => { callBack({market:[]});});
 			}
-		}).
-		catch(err => {callBack({name:'',url:'',data:[],cryptoData:{},topproducts:[],gdax:[]});});	
-	},
-	
-	tc_history:function(callBack){
-		var Promise = require("bluebird");
-		var moment = require("moment");
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.totalCryptosPriceHistory(moment().format('HH'),'day'),
-			ExchangeDataService.totalCryptosPriceHistory(24*7,'week'),
-			ExchangeDataService.gdaxMarketData()
-		]).
-		then(response => { 
-			callBack({history1_day:response[2],history7_day:response[3],cryptoData:response[0],topproducts:response[1].data,gdax:response[4].data});
-		}).
-		catch(err => { callBack({history1_day:[],history7_day:[],cryptoData:{},topproducts:[],gdax:[]});});
-	},
-	
-	gainers_and_losers:function(count=0){
-		var _=require('lodash');
-		return new Promise(function(resolve,reject){
-			return Promise.all([
-				ExchangeDataService.totalCryptosPrice(),
-				ExchangeDataService.topTotalCryptoPrices(),
-				ExchangeDataService.gdaxMarketData()
-			]).
-			then(response => {
-				ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
-					var gainers_losers=[];
-					gainers_losers['gainer_1_h']=[];
-					gainers_losers['loser_1_h']=[];
-					gainers_losers['gainer_24_h']=[];
-					gainers_losers['loser_24_h']=[];
-					gainers_losers['gainer_7_d']=[];
-					gainers_losers['loser_7_d']=[];
-					
-					if(!_.isEmpty(coin_market_exchange)){
-						var tickers=ExchangeTickers.findOne();
-						tickers.where({exchange_id:coin_market_exchange.id});
-						tickers.sort('id DESC');
-						tickers.then(function(tickers){
-							var tickers=tickers.tickers;
-							//PROCESS TO GET LAST 1 HOUR GAINERS AND LOOSERS
-							tickers.sort(function(a,b){ if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
-							var temp=[];
-							_.forEach(tickers,function(ticker){
-								if(parseFloat(ticker.percent_change_1h)>0){
-									temp.push(ticker);
-								}
-							});
-							
-							if(count>0){
-								temp=_.slice(temp,0,count);
-							}
-							gainers_losers['gainer_1_h']=temp;
-							tickers.reverse();
-							temp=[];
-							_.forEach(tickers,function(ticker){
-								if(parseFloat(ticker.percent_change_1h)<0){
-									temp.push(ticker);
-								}
-							});
-							if(count>0){
-								temp=_.slice(temp,0,count);
-							}
-							gainers_losers['loser_1_h']=temp;
-							
-							//PROCESS TO GET LAST 24 HOURS GAINERS AND LOOSERS
-							tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
-							
-							temp=[];
-							_.forEach(tickers,function(ticker){
-								if(parseFloat(ticker.percent_change_24h)>0){
-									temp.push(ticker);
-								}
-							});
-							
-							if(count>0){ 
-								temp=_.slice(temp,0,count);
-							}
-							gainers_losers['gainer_24_h']=temp;
-							
-							tickers.reverse();
-							
-							temp=[];
-							_.forEach(tickers,function(ticker){
-								if(parseFloat(ticker.percent_change_24h)<0){
-									temp.push(ticker);
-								}
-							});
-							if(count>0){ 
-								temp=_.slice(temp,0,count);
-							}
-							gainers_losers['loser_24_h']=temp;
-							
-							//PROCESS TO GET LAST 7 DAYS GAINERS AND LOOSERS
-							tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
-							
-							temp=[];
-							_.forEach(tickers,function(ticker){
-								if(parseFloat(ticker.percent_change_7d)>0){
-									temp.push(ticker);
-								}
-							});
-							if(count>0){ 
-								temp=_.slice(temp,0,count);
-							}
-							gainers_losers['gainer_7_d']=temp;
-							
-							tickers.reverse();
-							
-							temp=[];
-							_.forEach(tickers,function(ticker){
-								if(parseFloat(ticker.percent_change_7d)<0){
-									temp.push(ticker);
-								}
-							});
-							if(count>0){ 
-								temp=_.slice(temp,0,count);
-							}
-							gainers_losers['loser_7_d']=temp;
-							
-							return resolve({gainers_losers:gainers_losers,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-						});
-					}
-					else{
-						return resolve({gainers_losers:gainers_losers,cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-					}
-				});
-			}).
-		catch(err => { return resolve({gainers_losers:[],cryptoData:{},topproducts:[],gdax:[]});});	
 		});	
 	},
 	
-	documentation:function(callBack){
-		var _=require('lodash');
-		return Promise.all([
-			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
-			ExchangeDataService.gdaxMarketData()
-		]).
-		then(response => {
-			callBack({cryptoData:response[0],topproducts:response[1].data,gdax:response[2].data});
-		}).
-		catch(err => {
-			callBack({cryptoData:{},topproducts:[],gdax:[]});
+	volume_24_hour_exchange_data:function(callBack){
+		var _ = require('lodash');
+	
+		ExchangeList.find({},function(err, exchanges){
+			if(!_.isEmpty(exchanges)){
+				var exchange_array=[];
+				_.forEach(exchanges,function(exchange){
+					exchange_array.push({id:exchange.id,name:exchange.name,is_exchange:exchange.is_exchange});
+				});
+				
+				return Promise.all(exchange_array.map((exchange)=>{
+					var exchange_data_array=[];
+					switch(exchange.name){
+						case 'gdax':
+							return ExchangeDataService.gdaxMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.display_name,'/','')),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bittrex':
+							return ExchangeDataService.bittrexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.BaseCurrency),pair:_.toUpper(_.replace(data.MarketName,'-','')),volume:data.Volume,price:data.Bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitfinex':
+							return ExchangeDataService.bitfinexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.product_id.substr(0,3)),pair:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+			
+						case 'hitbtc':
+							return ExchangeDataService.hitbtcMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.baseCurrency),pair:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+			
+						case 'gate':
+							return ExchangeDataService.gateMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.baseVolume,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => { exchange.data=[];return exchange;});
+						break;
+						
+						case 'coinmarketcap':
+							return ExchangeDataService.coinmarketcapMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.symbol),pair:_.toUpper(data.symbol+'USD'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'okex':
+							return ExchangeDataService.okexMarketData().
+							then(exchange_data => { 
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'binance':
+							return ExchangeDataService.binanceMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.baseAsset),pair:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'huobi':
+							return ExchangeDataService.huobiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'gemini':
+							return ExchangeDataService.geminiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.currency),pair:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'kraken':
+							return ExchangeDataService.krakenMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitflyer':
+							return ExchangeDataService.bitflyerMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bithumb':
+							return ExchangeDataService.bithumbMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitstamp':
+							return ExchangeDataService.bitstampMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'bitz':
+							return ExchangeDataService.bitzMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'--'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'lbank':
+							return ExchangeDataService.lbankMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'coinone':
+							return ExchangeDataService.coinoneMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'wex':
+							return ExchangeDataService.wexMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'exmo':
+							return ExchangeDataService.exmoMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'liqui':
+							return ExchangeDataService.liquiMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+						
+						case 'korbit':
+							return ExchangeDataService.korbitMarketData().
+							then(exchange_data => {
+								_.forEach(exchange_data.data,function(data){
+									exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
+								});
+								exchange.data=exchange_data_array;
+								return exchange;
+							}).
+							catch(err => {exchange.data=[];return exchange;});
+						break;
+			
+						default:
+							exchange.data=[];
+							return exchange;
+					}
+				})).
+				then(exchange_response =>{
+					var temp_array=[];
+					var return_array=[];
+					_.forEach(exchange_response,function(exchange_data){
+						if(!_.isEmpty(exchange_data.data)){
+							exchange_data.displayName=_.toUpper(exchange_data.name);
+							temp_array.push(exchange_data);
+						}
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					_.forEach(temp_array,function(exchange_data){
+						exchange_data.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					});
+					
+					callBack({exchange:temp_array});
+				}).
+				catch(err => { callBack({exchange:[]});});
+			}
 		});
 	},
+	
+	exchange_data:function(exchangeName,callBack){	
+		var _ = require('lodash');
+		var exchange_data_array=[];
+		
+		switch(exchangeName){
+			
+			case 'gdax':
+				ExchangeDataService.gdaxMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.display_name),volume:data.ticker.volume,price:data.ticker.price,variation:data.ticker.variation});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+				
+			case 'bittrex':
+				ExchangeDataService.bittrexMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.BaseCurrency),pair:_.toUpper(_.replace(data.MarketName,'-','/')),volume:data.Volume,price:data.Bid,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => { callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'bitfinex':
+				ExchangeDataService.bitfinexMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.product_id.substr(0,3)),pair:_.toUpper(data.product_id),volume:data.volume,price:data.bid,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => { callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'hitbtc':
+				ExchangeDataService.hitbtcMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.baseCurrency),pair:_.toUpper(data.symbol),volume:data.volume,price:data.bid,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => { callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'gate':
+				ExchangeDataService.gateMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(data.product),volume:data.baseVolume,price:data.last,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => { callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'coinmarketcap':
+				return ExchangeDataService.coinmarketcapMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.symbol),pair:_.toUpper(data.symbol+'USD'),volume:data['24h_volume_usd'],price:data.price_usd,variation:data.percent_change_24h});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'kuna':
+				return ExchangeDataService.kunaMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:'---',pair:_.toUpper(data.product),volume:data.vol,price:data.price,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'okex':
+				return ExchangeDataService.okexMarketData().
+				then(exchange_data => { 
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(_.join(_.split(data.product,'_',1))),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.ticker.vol,price:data.ticker.last,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'binance':
+				return ExchangeDataService.binanceMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.baseAsset),pair:_.toUpper(data.symbol),volume:data.volume,price:data.lastPrice,variation:data.priceChangePercent});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'huobi':
+				return ExchangeDataService.huobiMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.tick.vol,price:data.tick.bid[0],variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'gemini':
+				return ExchangeDataService.geminiMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.currency),pair:_.toUpper(data.product),volume:data.vol,price:data.bid,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'kraken':
+				return ExchangeDataService.krakenMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.price,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'bitflyer':
+				return ExchangeDataService.bitflyerMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.best_bid,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'bithumb':
+				return ExchangeDataService.bithumbMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume_1day,price:data.sell_price,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'bitstamp':
+				return ExchangeDataService.bitstampMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.bid,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'bitz':
+				return ExchangeDataService.bitzMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.sell,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'lbank':
+				return ExchangeDataService.lbankMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.symbol,'_','')),volume:data.ticker.vol,price:data.ticker.latest,variation:data.ticker.change});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'coinone':
+				return ExchangeDataService.coinoneMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(data.product),volume:data.volume,price:data.last,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'wex':
+				return ExchangeDataService.wexMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'exmo':
+				return ExchangeDataService.exmoMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last_trade,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'liqui':
+				return ExchangeDataService.liquiMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.vol,price:data.last,variation:'---'});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
+			
+			case 'korbit':
+				return ExchangeDataService.korbitMarketData().
+				then(exchange_data => {
+					_.forEach(exchange_data.data,function(data){
+						exchange_data_array.push({currency:_.toUpper(data.base_currency),pair:_.toUpper(_.replace(data.product,'_','')),volume:data.volume,price:data.last,variation:data.changePercent});
+					});
+					
+					//SORT DATA IN DESC ORDER OF VOLUME
+					exchange_data_array.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					callBack({name:_.toUpper(exchange_data.name),url:exchange_data.url,data:exchange_data_array});
+				}).
+				catch(err => {callBack({name:'',url:'',data:exchange_data_array});});
+			break;
 
+			default:
+			callBack({name:'',url:'',data:[]});
+		}
+	},
+	
+	tc_history_data:function(callBack){
+		var Promise = require("bluebird");
+		var moment = require("moment");
+		return Promise.all([
+			//ExchangeDataService.totalCryptosPriceHistory(moment().format('HH'),'day'),
+			ExchangeDataService.totalCryptosPriceHistory(24,'day'),
+			ExchangeDataService.totalCryptosPriceHistory(24*7,'week'),
+		]).
+		then(response => { 
+			callBack({history1_day:response[0],history7_day:response[1]});
+		}).
+		catch(err => { callBack({history1_day:[],history7_day:[]});});
+	},
+	
+	gainers_and_losers_data:function(count=0){
+		var _=require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
+				var gainers_losers=[];
+				gainers_losers['gainer_1_h']=[];
+				gainers_losers['loser_1_h']=[];
+				gainers_losers['gainer_24_h']=[];
+				gainers_losers['loser_24_h']=[];
+				gainers_losers['gainer_7_d']=[];
+				gainers_losers['loser_7_d']=[];
+				
+				if(!_.isEmpty(coin_market_exchange)){
+					var tickers=ExchangeTickers.findOne();
+					tickers.where({exchange_id:coin_market_exchange.id});
+					tickers.sort('id DESC');
+					tickers.then(function(tickers){
+						var tickers=tickers.tickers;
+						//PROCESS TO GET LAST 1 HOUR GAINERS AND LOOSERS
+						tickers.sort(function(a,b){ if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
+						var temp=[];
+						_.forEach(tickers,function(ticker){
+							if(parseFloat(ticker.percent_change_1h)>0){
+								temp.push(ticker);
+							}
+						});
+						
+						if(count>0){
+							temp=_.slice(temp,0,count);
+						}
+						gainers_losers['gainer_1_h']=temp;
+						tickers.reverse();
+						temp=[];
+						_.forEach(tickers,function(ticker){
+							if(parseFloat(ticker.percent_change_1h)<0){
+								temp.push(ticker);
+							}
+						});
+						if(count>0){
+							temp=_.slice(temp,0,count);
+						}
+						gainers_losers['loser_1_h']=temp;
+						
+						//PROCESS TO GET LAST 24 HOURS GAINERS AND LOOSERS
+						tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
+						
+						temp=[];
+						_.forEach(tickers,function(ticker){
+							if(parseFloat(ticker.percent_change_24h)>0){
+								temp.push(ticker);
+							}
+						});
+						
+						if(count>0){ 
+							temp=_.slice(temp,0,count);
+						}
+						gainers_losers['gainer_24_h']=temp;
+						
+						tickers.reverse();
+						
+						temp=[];
+						_.forEach(tickers,function(ticker){
+							if(parseFloat(ticker.percent_change_24h)<0){
+								temp.push(ticker);
+							}
+						});
+						if(count>0){ 
+							temp=_.slice(temp,0,count);
+						}
+						gainers_losers['loser_24_h']=temp;
+						
+						//PROCESS TO GET LAST 7 DAYS GAINERS AND LOOSERS
+						tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
+						
+						temp=[];
+						_.forEach(tickers,function(ticker){
+							if(parseFloat(ticker.percent_change_7d)>0){
+								temp.push(ticker);
+							}
+						});
+						if(count>0){ 
+							temp=_.slice(temp,0,count);
+						}
+						gainers_losers['gainer_7_d']=temp;
+						
+						tickers.reverse();
+						
+						temp=[];
+						_.forEach(tickers,function(ticker){
+							if(parseFloat(ticker.percent_change_7d)<0){
+								temp.push(ticker);
+							}
+						});
+						if(count>0){ 
+							temp=_.slice(temp,0,count);
+						}
+						gainers_losers['loser_7_d']=temp;
+						
+						return resolve({gainers_losers});
+					});
+				}
+				else{
+					return resolve({gainers_losers:gainers_losers});
+				}
+			});
+		});	
+	},
+	
 	RSS:function(callBack){
 		let Parser = require('rss-parser');
 		let parser = new Parser();
