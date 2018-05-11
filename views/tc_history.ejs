@@ -16,16 +16,10 @@
 						<th>Date Time</th>
 					</tr>
 					</thead>
-					<tbody>
-					<%history1_day.history_array.forEach(function(history,index){%>
-					<tr>
-						<td><%=index+1%></td>
-						<td><%=history.tc100%></td>
-						<td><%=history.tcw100%></td>
-						<td><%=history.total_usd_market_cap%></td>
-						<td><%=history.date_created%></td>
-					</tr>
-					<%});%>
+					<tbody id="history1_day">
+						<tr>
+							<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+						</tr>
 					</tbody>
 					</table>
 				</div>
@@ -46,16 +40,10 @@
 						<th>Date Time</th>
 					</tr>
 					</thead>
-					<tbody>
-					<%history7_day.history_array.forEach(function(history,index){%>
-					<tr>
-						<td><%=index+1%></td>
-						<td><%=history.tc100%></td>
-						<td><%=history.tcw100%></td>
-						<td><%=history.total_usd_market_cap%></td>
-						<td><%=history.date_created%></td>
-					</tr>
-					<%});%>
+					<tbody id="history7_day">
+						<tr>
+							<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+						</tr>
 					</tbody>
 					</table>
 				</div>
@@ -72,182 +60,169 @@
 </div>
 <script>
 $(document).ready(function(){
-	$('.table').DataTable({
-		pageLength: 10,
-		lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
-		responsive: true,
-		dom: '<"html5buttons"B>lTfgitp',
-		aoColumnDefs: [{
-			'bSortable': false,
-			'aTargets': [0] 
-		}],
-		"ordering": false,
-		buttons: [
-			//{extend: 'copy'},
-			{extend: 'csv'},
-			{extend: 'excel', title: 'ExampleFile'},
-			{extend: 'pdf', title: 'ExampleFile'},
+	
+	$.ajax({
+		type:'GET',
+		url:'/tc_history_data',
+		success:function(data){ 
+			var str='';
+			
+			if(data.history1_day.history_array.length>0){
+				data.history1_day.history_array.forEach(function(history,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+history.tc100+'</td>';
+					str+='<td>'+history.tcw100+'</td>';
+					str+='<td>'+history.total_usd_market_cap+'</td>';
+					str+='<td>'+history.date_created+'</td>';
+					str+='</tr>';
+				});
+				$("#history1_day").html(str);
+			}	
+			
+			str='';
+			if(data.history7_day.history_array.length>0){
+				data.history7_day.history_array.forEach(function(history,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+history.tc100+'</td>';
+					str+='<td>'+history.tcw100+'</td>';
+					str+='<td>'+history.total_usd_market_cap+'</td>';
+					str+='<td>'+history.date_created+'</td>';
+					str+='</tr>';
+				});
+				$("#history7_day").html(str);
+			}	
+			
+			$('.table').DataTable({
+				pageLength: 10,
+				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+				responsive: true,
+				dom: '<"html5buttons"B>lTfgitp',
+				aoColumnDefs: [{
+					'bSortable': false,
+					'aTargets': [0] 
+				}],
+				"ordering": false,
+				buttons: [
+					//{extend: 'copy'},
+					{extend: 'csv'},
+					{extend: 'excel', title: 'ExampleFile'},
+					{extend: 'pdf', title: 'ExampleFile'},
 
-			//{extend: 'print',
-			 //customize: function (win){
-				//$(win.document.body).addClass('white-bg');
-				//$(win.document.body).css('font-size', '10px');
-				//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-			//}
-			//}
-		]
-	});
-	
-	c3.generate({
-		bindto: '#history_1day_chart_price',
-		data: {
-        x: 'x',
-        columns: [
-            ['x', <%=history1_day.date_time_array%>],
-            ['TC100', <%=history1_day.tc100_array%>],
+					//{extend: 'print',
+					 //customize: function (win){
+						//$(win.document.body).addClass('white-bg');
+						//$(win.document.body).css('font-size', '10px');
+						//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+					//}
+					//}
+				]
+			});
 			
-        ],
-		colors:{
-			TC100: '#1ab394'
-		},
-		type: 'spline'
-    },
-    axis: {
-        x: {
-            //type: 'timeseries',
-            tick: {
-				format: function (x) {  if(x<=12){ return x+'am'}else{return (x-12)+'pm';} }
-            }
-        }
-    }
-	});
+			c3.generate({
+			bindto: '#history_1day_chart_price',
+			  data: {
+				json:data.history1_day.tc100_array, 
+				keys: {
+				  x: 'time', 
+				  value: ['TC100'],
+				},
+				type: 'spline'
+			  },
+			  axis: {
+				x: {
+				  type: 'category',
+				}
+			  }
+			});
 	
-	c3.generate({
-		bindto: '#history_1day_chart_weight',
-		data: {
-        x: 'x',
-        columns: [
-            ['x', <%=history1_day.date_time_array%>],
-            ['TCw100', <%=history1_day.tcw100_array%>],
+			c3.generate({
+			bindto: '#history_1day_chart_weight',
+			  data: {
+				json:data.history1_day.tcw100_array, 
+				keys: {
+				  x: 'time',
+				  value: ['TCw100'],
+				},
+				type: 'spline'
+			  },
+			  axis: {
+				x: {
+				  type: 'category',
+				}
+			  }
+			});
 			
-        ],
-		colors:{
-			TCw100: '#35D8D8'
-		},
-		type: 'spline'
-    },
-    axis: {
-        x: {
-            //type: 'timeseries',
-            tick: {
-                format: function (x) {  if(x<=12){ return x+'am'}else{return (x-12)+'pm';} }
-            }
-        }
-    }
-	});
+			c3.generate({
+			bindto: '#history_1day_chart_market_cap',
+			  data: {
+				json:data.history1_day.market_cap_array, 
+				keys: {
+				  x: 'time',
+				  value: ['MARKETCAP'],
+				},
+				type: 'spline'
+			  },
+			  axis: {
+				x: {
+				  type: 'category',
+				}
+			  }
+			});
+			
+			c3.generate({
+			bindto: '#history_7day_chart_price',
+			  data: {
+				json:data.history7_day.tc100_array, 
+				keys: {
+				  x: 'time', 
+				  value: ['TC100'],
+				},
+				type: 'spline'
+			  },
+			  axis: {
+				x: {
+				  type: 'category',
+				}
+			  }
+			});
 	
-	
-	c3.generate({
-		bindto: '#history_1day_chart_market_cap',
-		data: {
-        x: 'x',
-        columns: [
-            ['x', <%=history1_day.date_time_array%>],
-            ['MARKETCAP', <%=history1_day.market_cap_array%>],
+			c3.generate({
+			bindto: '#history_7day_chart_weight',
+			  data: {
+				json:data.history7_day.tcw100_array, 
+				keys: {
+				  x: 'time',
+				  value: ['TCw100'],
+				},
+				type: 'spline'
+			  },
+			  axis: {
+				x: {
+				  type: 'category',
+				}
+			  }
+			});
 			
-        ],
-		colors:{
-			MARKETCAP: '#6CD835'
-		},
-		type: 'spline'
-    },
-    axis: {
-        x: {
-            //type: 'timeseries',
-            tick: {
-                format: function (x) {  if(x<=12){ return x+'am'}else{return (x-12)+'pm';} }
-            }
-        }
-    }
+			c3.generate({
+			bindto: '#history_7day_chart_market_cap',
+			  data: {
+				json:data.history7_day.market_cap_array, 
+				keys: {
+				  x: 'time',
+				  value: ['MARKETCAP'],
+				},
+				type: 'spline'
+			  },
+			  axis: {
+				x: {
+				  type: 'category',
+				}
+			  }
+			});
+		}
 	});
-	
-	c3.generate({
-		bindto: '#history_7day_chart_price',
-		data: {
-        x: 'x',
-        columns: [
-            ['x', <%=history7_day.date_time_array%>],
-            ['TC100', <%=history7_day.tc100_array%>],
-			
-        ],
-		colors:{
-			TC100: '#1ab394'
-		},
-		type: 'spline'
-    },
-    axis: {
-        x: {
-            //type: 'timeseries',
-            tick: {
-				fit: true,
-				count: 7,
-                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return month+'-'+day; }
-            }
-        }
-    }
-	});
-
-	c3.generate({
-		bindto: '#history_7day_chart_weight',
-		data: {
-        x: 'x',
-        columns: [
-            ['x', <%=history7_day.date_time_array%>],
-            ['TCw100', <%=history7_day.tcw100_array%>],
-			
-        ],
-		colors:{
-			TCw100: '#35D8D8'
-		},
-		type: 'spline'
-    },
-    axis: {
-        x: {
-            //type: 'timeseries',
-            tick: {
-				fit: true,
-				count: 7,
-                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return month+'-'+day; }
-            }
-        }
-    }
-	});
-	
-	c3.generate({
-		bindto: '#history_7day_chart_market_cap',
-		data: {
-        x: 'x',
-        columns: [
-            ['x', <%=history7_day.date_time_array%>],
-            ['MARKETCAP', <%=history7_day.market_cap_array%>],
-			
-        ],
-		colors:{
-			MARKETCAP: '#6CD835'
-		},
-		type: 'spline'
-    },
-    axis: {
-        x: {
-            //type: 'timeseries',
-            tick: {
-				fit: true,
-				count: 7,
-                format: function (x) { x = x.toString(); var year = x.substring(0, 4), month = x.substring(4, 6), day = x.substring(6, 8); return month+'-'+day; }
-            }
-        }
-    }
-	});	
 });
 </script>
 

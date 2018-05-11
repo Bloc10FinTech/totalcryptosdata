@@ -1,68 +1,77 @@
 <div id="wrapper">
 	
 	<div class="animated fadeInRight">
-		<div class="col-lg-10 col-lg-offset-1 Vol24Hex">
-			<%data.forEach(function(coins){%>
-			
-				<div class="table-responsive">
-					<h1><%=coins.currency%></h1>
-					<table class="table table-striped table-bordered table-hover 24_hour_currency">
-					<thead>
-					<tr>
-						<th>#</th>
-						<th>Volume (24h)</th>
-						<th>Currency</th>
-						<th>Price</th>
-						<th>Source</th>
-					</tr>
-					</thead>
-					<tbody>
-					<%coins.data.forEach(function(volume,index){%>
-					<tr>
-						<td><%=index+1%></td>
-						<td><%=Math.round(volume.volume)%></td>
-						<td><%=volume.currency%></td>
-						<td><%=parseFloat(volume.price).toFixed(5)%></td>
-						<td><a href="/exchange/<%=volume.src.toLowerCase()%>"><%=volume.src%></a></td>
-					</tr>
-					<%});%>
-					</tbody>
-					</table>
-				</div>	
-			<%});%>
-			
-		</div>
-			
+		<div class="col-lg-10 col-lg-offset-1 Vol24Hex" id="volume_24_hour_currency">
+			<div style="text-align:center;padding:50px;"><img src="/images/data-loader.gif"/></div>
+		</div>	
 	</div>
 	
 </div>
 <script>
 $(document).ready(function(){
-	$('.24_hour_currency').DataTable({
-		pageLength: 10,
-		lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
-		responsive: true,
-		dom: '<"html5buttons"B>lTfgitp',
-		aoColumnDefs: [{
-			'bSortable': false,
-			'aTargets': [0] 
-		}],
-		order: [],
-		buttons: [
-			//{extend: 'copy'},
-			{extend: 'csv'},
-			{extend: 'excel', title: 'ExampleFile'},
-			{extend: 'pdf', title: 'ExampleFile'},
+	
 
-			//{extend: 'print',
-			 //customize: function (win){
-				//$(win.document.body).addClass('white-bg');
-				//$(win.document.body).css('font-size', '10px');
-				//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-			//}
-			//}
-		]
-	});
+	$.ajax({
+		type:'GET',
+		url:'/volume_24_hour_currency_data',
+		success:function(data){ 
+			var str='';
+			data.currency.forEach(function(coins){
+				str+='<div class="table-responsive">';
+				str+='<h1>'+coins.currency+'</h1>';
+				str+='<table class="table table-striped table-bordered table-hover 24_hour_currency">';
+				str+='<thead>';
+				str+='<tr>';
+				str+='<th>#</th>';
+				str+='<th>Volume (24h)</th>';
+				str+='<th>Currency</th>';
+				str+='<th>Price</th>';
+				str+='<th>Source</th>';
+				str+='</tr>';
+				str+='</thead>';
+				str+='<tbody>';
+				coins.data.forEach(function(volume,index){
+				str+='<tr>';
+				str+='<td>'+(index+1)+'</td>';
+				str+='<td>'+Math.round(volume.volume)+'</td>';
+				str+='<td>'+volume.currency+'</td>';
+				str+='<td>'+parseFloat(volume.price).toFixed(5)+'</td>';
+				str+='<td><a href="/exchange/'+volume.src.toLowerCase()+'">'+volume.src+'</a></td>';
+				str+='</tr>';
+				});
+				str+='</tbody>';
+				str+='</table>';
+				str+='</div>';	
+			});
+			$("#volume_24_hour_currency").html(str);
+			
+			$('.24_hour_currency').DataTable({
+				pageLength: 10,
+				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+				responsive: true,
+				dom: '<"html5buttons"B>lTfgitp',
+				aoColumnDefs: [{
+					'bSortable': false,
+					'aTargets': [0] 
+				}],
+				order: [],
+				buttons: [
+					//{extend: 'copy'},
+					{extend: 'csv'},
+					{extend: 'excel', title: 'ExampleFile'},
+					{extend: 'pdf', title: 'ExampleFile'},
+
+					//{extend: 'print',
+					 //customize: function (win){
+						//$(win.document.body).addClass('white-bg');
+						//$(win.document.body).css('font-size', '10px');
+						//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+					//}
+					//}
+				]
+			});
+		}
+	});	
 });
 </script>
 

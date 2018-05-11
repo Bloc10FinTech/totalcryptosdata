@@ -2,8 +2,8 @@
 	
 	<div class="animated fadeInRight">
 		<div class="row">
-			<div class="col-lg-10 col-lg-offset-1"><h2><strong><%=data.name%></strong></h2></div>
-			<div class="col-lg-10 col-lg-offset-1"><h4><a href="<%=data.url%>"><%=data.url%></a></h4></div>
+			<div class="col-lg-10 col-lg-offset-1"><h2><strong id="name"></strong></h2></div>
+			<div class="col-lg-10 col-lg-offset-1"><h4 id="url"></h4></div>
 			<div class="col-lg-10 col-lg-offset-1"></div>
 			<div class="col-lg-10 col-lg-offset-1">
 				<div class="table-responsive">
@@ -18,29 +18,10 @@
 						<th>Volume (%)</th>
 					</tr>
 					</thead>
-					<tbody>
-					<%data.data.forEach(function(summary,index){%>
-					<tr>
-						<td><%=index+1%></td>
-						<td>
-						<%if((summary.currency!=undefined) && (summary.currency.match(/^[0-9a-zA-Z]+$/))){%>
-						<a href="/volume-24-hour-currency/<%=summary.currency%>">
-						<%=summary.currency%>
-						</a>
-						<%}else{%>
-						<%=summary.currency%>
-						<%}%>
-						</td>
-						<td>
-						<a href="/volume-24-hour-market/<%=summary.pair.replace(/\W/g, '').replace('_', '')%>">
-						<%=summary.pair%>
-						</a>
-						</td>
-						<td><%=summary.volume%></td>
-						<td><%=summary.price%></td>
-						<td><%=summary.variation%></td>
-					</tr>
-					<%});%>
+					<tbody id="exchange_data">
+						<tr>
+							<td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+						</tr>
 					</tbody>
 					</table>
 				</div>	
@@ -50,31 +31,69 @@
 	
 </div>
 <script>
+var exchangeName='<%=exchangeName%>';
 $(document).ready(function(){
-	$('.exchange').DataTable({
-		pageLength: 50,
-		lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
-		responsive: true,
-		dom: '<"html5buttons"B>lTfgitp',
-		aoColumnDefs: [{
-			'bSortable': false,
-			'aTargets': [0] 
-		}],
-		order: [],
-		buttons: [
-			//{extend: 'copy'},
-			{extend: 'csv'},
-			{extend: 'excel', title: 'TotalCryptos.com'},
-			{extend: 'pdf', title: 'TotalCryptos.com'},
+	$.ajax({
+		type:'GET',
+		url:'/exchange_data/'+exchangeName,
+		success:function(data){
+			var str='';
+			$("#name").html(data.name);
+			$("#url").html('<a href="'+data.url+'">'+data.url+'</a>');
+			data.data.forEach(function(summary,index){
+				str+='<tr>';
+				str+='<td>'+(index+1)+'</td>';
+				str+='<td>';
+				if((summary.currency!=undefined) && (summary.currency.match(/^[0-9a-zA-Z]+$/))){
+				str+='<a href="/volume-24-hour-currency/'+summary.currency+'">';
+				str+=summary.currency;
+				str+='</a>';
+				}
+				else{
+				str+=summary.currency;
+				}
+				str+='</td>';
+				str+='<td>';
+				str+='<a href="/volume-24-hour-market/'+summary.pair.replace(/\W/g, '').replace('_', '')+'">';
+				str+=summary.pair;
+				str+='</a>';
+				str+='</td>';
+				str+='<td>'+summary.volume+'</td>';
+				str+='<td>'+summary.price+'</td>';
+				str+='<td>'+summary.variation+'</td>';
+				str+='</tr>';
+			
+			});
+			
+			
+			$("#exchange_data").html(str);
+			
+			$('.exchange').DataTable({
+				pageLength: 50,
+				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+				responsive: true,
+				dom: '<"html5buttons"B>lTfgitp',
+				aoColumnDefs: [{
+					'bSortable': false,
+					'aTargets': [0] 
+				}],
+				order: [],
+				buttons: [
+					//{extend: 'copy'},
+					{extend: 'csv'},
+					{extend: 'excel', title: 'TotalCryptos.com'},
+					{extend: 'pdf', title: 'TotalCryptos.com'},
 
-			//{extend: 'print',
-			 //customize: function (win){
-				//$(win.document.body).addClass('white-bg');
-				//$(win.document.body).css('font-size', '10px');
-				//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-			//}
-			//}
-		]
+					//{extend: 'print',
+					 //customize: function (win){
+						//$(win.document.body).addClass('white-bg');
+						//$(win.document.body).css('font-size', '10px');
+						//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+					//}
+					//}
+				]
+			});
+		}
 	});
 });
 

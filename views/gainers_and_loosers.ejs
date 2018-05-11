@@ -19,7 +19,7 @@
 			<div class="tab-content" style="margin-top:20px;">
 				<div class="tab-pane active" id="1h_gainer_div">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover gainers_and_loosers">
+						<table class="table table-striped table-bordered table-hover gainers_and_losers">
 						<thead>
 						<tr>
 							<th>#</th>
@@ -29,23 +29,17 @@
 							<th>% 1h</th>
 						</tr>
 						</thead>
-						<tbody>
-						<%data['gainer_1_h'].forEach(function(gainer,index){%>
-						<tr>
-							<td><%=index+1%></td>
-							<td><%=gainer.name%></td>
-							<td><%=gainer.symbol%></td>
-							<td><%=parseFloat(gainer.price_usd).toFixed(5)%></td>
-							<td><span style="color:green;font-weight:bold;"><%=gainer.percent_change_1h%>%</span></td>
-						</tr>
-						<%});%>
+						<tbody id="1h_gainer_data">
+							<tr>
+								<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+							</tr>
 						</tbody>
 						</table>
 					</div>	
 				</div>
 				<div class="tab-pane" id="24h_gainer_div">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover gainers_and_loosers">
+						<table class="table table-striped table-bordered table-hover gainers_and_losers">
 						<thead>
 						<tr>
 							<th>#</th>
@@ -55,23 +49,17 @@
 							<th>% 24h</th>
 						</tr>
 						</thead>
-						<tbody>
-						<%data['gainer_24_h'].forEach(function(gainer,index){%>
-						<tr>
-							<td><%=index+1%></td>
-							<td><%=gainer.name%></td>
-							<td><%=gainer.symbol%></td>
-							<td><%=parseFloat(gainer.price_usd).toFixed(5)%></td>
-							<td><span style="color:green;font-weight:bold;"><%=gainer.percent_change_24h%>%</span></td>
-						</tr>
-						<%});%>
+						<tbody id="24h_gainer_data">
+							<tr>
+								<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+							</tr>
 						</tbody>
 						</table>
 					</div>	
 				</div>
 				<div class="tab-pane" id="7d_gainer_div">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover gainers_and_loosers">
+						<table class="table table-striped table-bordered table-hover gainers_and_losers">
 						<thead>
 						<tr>
 							<th>#</th>
@@ -81,16 +69,10 @@
 							<th>% 7d</th>
 						</tr>
 						</thead>
-						<tbody>
-						<%data['gainer_7_d'].forEach(function(gainer,index){%>
-						<tr>
-							<td><%=index+1%></td>
-							<td><%=gainer.name%></td>
-							<td><%=gainer.symbol%></td>
-							<td><%=parseFloat(gainer.price_usd).toFixed(5)%></td>
-							<td><span style="color:green;font-weight:bold;"><%=gainer.percent_change_7d%>%</span></td>
-						</tr>
-						<%});%>
+						<tbody id="7d_gainer_data">
+							<tr>
+								<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+							</tr>
 						</tbody>
 						</table>
 					</div>	
@@ -100,20 +82,20 @@
 			<div class="alert alert-danger"><strong>Biggest Loosers!</strong></div>
 			<ul class="nav nav-tabs">
 				<li class="active">
-					<a data-toggle="tab" href="#1h_looser_div">1 h</a>
+					<a data-toggle="tab" href="#1h_loser_div">1 h</a>
 				</li>
 				<li>
-					<a data-toggle="tab" href="#24h_looser_div">24 h</a>
+					<a data-toggle="tab" href="#24h_loser_div">24 h</a>
 				</li>
 				<li>
-					<a data-toggle="tab" href="#7d_looser_div">7 d</a>
+					<a data-toggle="tab" href="#7d_loser_div">7 d</a>
 				</li>
 			</ul>
 			
 			<div class="tab-content" style="margin-top:20px;">
-				<div class="tab-pane active" id="1h_looser_div">
+				<div class="tab-pane active" id="1h_loser_div">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover gainers_and_loosers">
+						<table class="table table-striped table-bordered table-hover gainers_and_losers">
 						<thead>
 						<tr>
 							<th>#</th>
@@ -123,49 +105,37 @@
 							<th>% 1h</th>
 						</tr>
 						</thead>
-						<tbody>
-						<%data['looser_1_h'].forEach(function(looser,index){%>
-						<tr>
-							<td><%=index+1%></td>
-							<td><%=looser.name%></td>
-							<td><%=looser.symbol%></td>
-							<td><%=parseFloat(looser.price_usd).toFixed(5)%></td>
-							<td><span style="color:red;font-weight:bold;"><%=looser.percent_change_1h%>%</span></td>
-						</tr>
-						<%});%>
+						<tbody id="1h_loser_data">
+							<tr>
+								<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+							</tr>
 						</tbody>
 						</table>
 					</div>	
 				</div>
-				<div class="tab-pane" id="24h_looser_div">
+				<div class="tab-pane" id="24h_loser_div">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover gainers_and_loosers">
+						<table class="table table-striped table-bordered table-hover gainers_and_losers">
 						<thead>
 						<tr>
-							<th>Name</th>
+							<th>#</th>
 							<th>Name</th>
 							<th>Symbol</th>
 							<th>Price</th>
 							<th>% 24h</th>
 						</tr>
 						</thead>
-						<tbody>
-						<%data['looser_24_h'].forEach(function(looser,index){%>
-						<tr>
-							<td><%=index+1%></td>
-							<td><%=looser.name%></td>
-							<td><%=looser.symbol%></td>
-							<td><%=parseFloat(looser.price_usd).toFixed(5)%></td>
-							<td><span style="color:red;font-weight:bold;"><%=looser.percent_change_24h%>%</span></td>
-						</tr>
-						<%});%>
+						<tbody id="24h_loser_data">
+							<tr>
+								<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+							</tr>
 						</tbody>
 						</table>
 					</div>	
 				</div>
-				<div class="tab-pane" id="7d_looser_div">
+				<div class="tab-pane" id="7d_loser_div">
 					<div class="table-responsive">
-						<table class="table table-striped table-bordered table-hover gainers_and_loosers">
+						<table class="table table-striped table-bordered table-hover gainers_and_losers">
 						<thead>
 						<tr>
 							<th>#</th>
@@ -175,16 +145,10 @@
 							<th>% 7d</th>
 						</tr>
 						</thead>
-						<tbody>
-						<%data['looser_7_d'].forEach(function(looser,index){%>
-						<tr>
-							<td><%=index+1%></td>
-							<td><%=looser.name%></td>
-							<td><%=looser.symbol%></td>
-							<td><%=parseFloat(looser.price_usd).toFixed(5)%></td>
-							<td><span style="color:red;font-weight:bold;"><%=looser.percent_change_7d%>%</span></td>
-						</tr>
-						<%});%>
+						<tbody id="7d_loser_data">
+							<tr>
+								<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+							</tr>
 						</tbody>
 						</table>
 					</div>	
@@ -197,31 +161,122 @@
 </div>
 <script>
 $(document).ready(function(){
-	$('.gainers_and_loosers').DataTable({
-		pageLength: 10,
-		lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
-		responsive: true,
-		dom: '<"html5buttons"B>lTfgitp',
-		aoColumnDefs: [{
-			'bSortable': false,
-			'aTargets': [0] 
-		}],
-		"ordering": false,
-		buttons: [
-			//{extend: 'copy'},
-			{extend: 'csv'},
-			{extend: 'excel', title: 'ExampleFile'},
-			{extend: 'pdf', title: 'ExampleFile'},
 
-			//{extend: 'print',
-			 //customize: function (win){
-				//$(win.document.body).addClass('white-bg');
-				//$(win.document.body).css('font-size', '10px');
-				//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-			//}
-			//}
-		]
-	});
+	$.ajax({
+		type:'GET',
+		url:'/gainers_and_losers_data',
+		success:function(data){  
+			var str='';
+			if(data.gainers_losers['gainer_1_h']){
+				data.gainers_losers['gainer_1_h'].forEach(function(gainer,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+gainer.name+'</td>';
+					str+='<td>'+gainer.symbol+'</td>';
+					str+='<td>'+parseFloat(gainer.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:green;font-weight:bold;">'+gainer.percent_change_1h+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#1h_gainer_data").html(str);
+		
+			str='';
+			if(data.gainers_losers['gainer_24_h']){
+				data.gainers_losers['gainer_24_h'].forEach(function(gainer,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+gainer.name+'</td>';
+					str+='<td>'+gainer.symbol+'</td>';
+					str+='<td>'+parseFloat(gainer.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:green;font-weight:bold;">'+gainer.percent_change_24h+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#24h_gainer_data").html(str);
+		
+			str='';
+			if(data.gainers_losers['gainer_7_d']){
+				data.gainers_losers['gainer_7_d'].forEach(function(gainer,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+gainer.name+'</td>';
+					str+='<td>'+gainer.symbol+'</td>';
+					str+='<td>'+parseFloat(gainer.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:green;font-weight:bold;">'+gainer.percent_change_7d+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#7d_gainer_data").html(str);
+		
+			str='';
+			if(data.gainers_losers['loser_1_h']){
+				data.gainers_losers['loser_1_h'].forEach(function(looser,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+looser.name+'</td>';
+					str+='<td>'+looser.symbol+'</td>';
+					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+looser.percent_change_1h+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#1h_loser_data").html(str);
+			
+			str='';
+			if(data.gainers_losers['loser_24_h']){
+				data.gainers_losers['loser_24_h'].forEach(function(looser,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+(looser.name)+'</td>';
+					str+='<td>'+looser.symbol+'</td>';
+					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+looser.percent_change_24h+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#24h_loser_data").html(str);
+			
+			str='';
+			if(data.gainers_losers['loser_7_d']){
+				data.gainers_losers['loser_7_d'].forEach(function(looser,index){
+					str+='<tr>';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td>'+looser.name+'</td>';
+					str+='<td>'+looser.symbol+'</td>';
+					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+looser.percent_change_7d+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#7d_loser_data").html(str);
+			
+			$('.gainers_and_losers').DataTable({
+				pageLength: 10,
+				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+				responsive: true,
+				dom: '<"html5buttons"B>lTfgitp',
+				aoColumnDefs: [{
+					'bSortable': false,
+					'aTargets': [0] 
+				}],
+				"ordering": false,
+				buttons: [
+					//{extend: 'copy'},
+					{extend: 'csv'},
+					{extend: 'excel', title: 'ExampleFile'},
+					{extend: 'pdf', title: 'ExampleFile'},
+
+					//{extend: 'print',
+					 //customize: function (win){
+						//$(win.document.body).addClass('white-bg');
+						//$(win.document.body).css('font-size', '10px');
+						//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+					//}
+					//}
+				]
+			});
+		}
+	});	
 });
 </script>
 
