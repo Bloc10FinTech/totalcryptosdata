@@ -162,29 +162,19 @@ module.exports = {
 		});
 	},
 	
-	topProductsPrices:function(callBack,request){
+	biggestGainers:function(callBack,request){
 		var _ = require('lodash');
-		MobileApisService.checkUpdateApiCalls(request.ip,'topProductsPrices').
-		then(response => {
+		var Promise = require("bluebird");
+		MobileApisService.checkUpdateApiCalls(request.ip,'biggestGainers').
+		then(response => { 
 			if(response){
-				return new Promise(function(resolve,reject){
-					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
-						if(err){
-							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-						}
-						if(!_.isEmpty(productPrices)){ 
-							productPrices=_.head(productPrices);
-							productPrices=productPrices.prices;
-							productPrices=_.filter(productPrices,{quote_currency:'usd'});
-							_.remove(productPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
-							productPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
-							productPrices=_.slice(productPrices,0,10);
-							callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
-						}
-						else{
-							callBack({errCode:404,message:'Record not found.',data:[]});
-						}
-					});
+				return Promise.all([
+					MobileApisService.topProductsPrices(callBack,request,'internal_call'),
+					MobileApisService.topGainersLosers(callBack,request,'internal_call')
+				]).then(response => { 
+					callBack({errCode:1,message:'Request processed successfully.',data:{products:response[0],gainers:response[1]}});
+				}).catch(err => {
+					callBack({errCode:500,message:'Server error. Please try again.',data:[]});
 				});
 			}
 			else{
@@ -194,6 +184,63 @@ module.exports = {
 		catch(err => {
 			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
 		});
+	},
+	
+	topProductsPrices:function(callBack,request,internal_call=null){
+		var _ = require('lodash');
+		if(_.isEmpty(internal_call)){
+			MobileApisService.checkUpdateApiCalls(request.ip,'topProductsPrices').
+			then(response => {
+				if(response){
+					return new Promise(function(resolve,reject){
+						TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
+							if(err){
+								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+							}
+							if(!_.isEmpty(productPrices)){ 
+								productPrices=_.head(productPrices);
+								productPrices=productPrices.prices;
+								productPrices=_.filter(productPrices,{quote_currency:'usd'});
+								_.remove(productPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
+								productPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
+								productPrices=_.slice(productPrices,0,10);
+								callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
+							}
+							else{
+								callBack({errCode:404,message:'Record not found.',data:[]});
+							}
+						});
+					});
+				}
+				else{
+					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+				}
+			}).
+			catch(err => {
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			});
+		}
+		else{ 
+			return new Promise(function(resolve,reject){
+				TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
+					if(err){
+						return [];
+					}
+					if(!_.isEmpty(productPrices)){ 
+						productPrices=_.head(productPrices);
+						productPrices=productPrices.prices;
+						productPrices=_.filter(productPrices,{quote_currency:'usd'});
+						_.remove(productPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
+						productPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
+						productPrices=_.slice(productPrices,0,10); 
+						return resolve(productPrices);
+					}
+					else{
+						return resolve([]);
+					}
+				});
+			});	
+		}
 	},
 	
 	tcHistory24H:function(callBack,request){
@@ -280,41 +327,65 @@ module.exports = {
 		});
 	},
 	
-	topGainersLosers:function(callBack,request){
+	topGainersLosers:function(callBack,request,internal_call=null){
 		var _=require('lodash');
-		
-		MobileApisService.checkUpdateApiCalls(request.ip,'topGainersLosers').
-		then(response => {
-			if(response){
-				return new Promise(function(resolve,reject){
-					ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
-						if(err){
-							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-						}
-						if(!_.isEmpty(coin_market_exchange)){
-							var tickers=ExchangeTickers.findOne();
-							tickers.where({exchange_id:coin_market_exchange.id});
-							tickers.sort('id DESC');
-							tickers.then(function(tickers){
-								var tickers=tickers.tickers;
-								tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
-								callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
-							}).
-							catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
-						}
-						else{
-							callBack({errCode:404,message:'Record not found.',data:[]});
-						}
-					});	
-				});
-			}
-			else{
-				callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-			}
-		}).
-		catch(err => {
-			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-		});
+		if(_.isEmpty(internal_call)){
+			MobileApisService.checkUpdateApiCalls(request.ip,'topGainersLosers').
+			then(response => {
+				if(response){
+					return new Promise(function(resolve,reject){
+						ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
+							if(err){
+								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+							}
+							if(!_.isEmpty(coin_market_exchange)){
+								var tickers=ExchangeTickers.findOne();
+								tickers.where({exchange_id:coin_market_exchange.id});
+								tickers.sort('id DESC');
+								tickers.then(function(tickers){
+									var tickers=tickers.tickers;
+									tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
+									callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,10)}});
+								}).
+								catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+							}
+							else{
+								callBack({errCode:404,message:'Record not found.',data:[]});
+							}
+						});	
+					});
+				}
+				else{
+					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+				}
+			}).
+			catch(err => {
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			});
+		}
+		else{	
+			return new Promise(function(resolve,reject){
+				ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
+					if(err){
+						return [];
+					}
+					if(!_.isEmpty(coin_market_exchange)){
+						var tickers=ExchangeTickers.findOne();
+						tickers.where({exchange_id:coin_market_exchange.id});
+						tickers.sort('id DESC');
+						tickers.then(function(tickers){
+							var tickers=tickers.tickers;
+							tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
+							return resolve(_.slice(tickers,0,10));
+						}).
+						catch(err => {return resolve([]);});
+					}
+					else{
+						return resolve([]);
+					}
+				});	
+			});
+		}
 	},
 	
 	userRegistration:function(callBack,request){

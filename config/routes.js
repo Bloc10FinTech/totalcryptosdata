@@ -61,6 +61,7 @@ module.exports.routes = {
   '/api/tcHistory24H':'ApiController.tcHistory24H',
   '/api/tcHistory7D':'ApiController.tcHistory7D',
   '/api/topGainersLosers':'ApiController.topGainersLosers',
+  '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},
