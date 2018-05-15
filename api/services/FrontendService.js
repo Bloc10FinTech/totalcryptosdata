@@ -179,7 +179,7 @@ module.exports = {
 		}
 	},
 	
-	gainersLoosers:function(callBack){
+	gainersLosers:function(callBack){
 		return Promise.all([
 			FrontendService.gainers_and_losers_data(10),
 		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});

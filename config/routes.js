@@ -33,7 +33,7 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {controller: 'home'},
-  '/gainersLoosers':'HomeController.gainersLoosers',
+  '/gainersLosers':'HomeController.gainersLosers',
   '/headerFooterData':'HomeController.headerFooterData',
   '/tabData/:tab':'HomeController.tabData',
   '/volume-24-hour-currency':'HomeController.volume_24_hour_currency',
@@ -60,7 +60,8 @@ module.exports.routes = {
   '/api/topProductsPrices':'ApiController.topProductsPrices',
   '/api/tcHistory24H':'ApiController.tcHistory24H',
   '/api/tcHistory7D':'ApiController.tcHistory7D',
-  '/api/topGainersLosers':'ApiController.topGainersLosers',
+  '/api/topGainersLosers/:time':'ApiController.topGainersLosers',
+  'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
   '/home': {view: 'homepage'},

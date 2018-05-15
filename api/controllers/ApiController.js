@@ -50,6 +50,11 @@ module.exports = {
   topGainersLosers:function(request, response) {
 	  MobileApisService.topGainersLosers(function(data){
 		return response.send(data);
+	},request,request.param('time'));
+  },
+  sliderData:function(request,response) {
+	  MobileApisService.sliderData(function(data){
+		return response.send(data);
 	},request);
   },
   biggestGainers:function(request, response) {

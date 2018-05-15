@@ -20,8 +20,8 @@ module.exports = {
 		  response.send(data);
 	  });
   },
-  gainersLoosers:function(request, response){
-	  FrontendService.gainersLoosers(function(data){
+  gainersLosers:function(request, response){
+	  FrontendService.gainersLosers(function(data){
 		  response.send(data);
 	  });
   },

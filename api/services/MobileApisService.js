@@ -170,7 +170,7 @@ module.exports = {
 			if(response){
 				return Promise.all([
 					MobileApisService.topProductsPrices(callBack,request,'internal_call'),
-					MobileApisService.topGainersLosers(callBack,request,'internal_call')
+					MobileApisService.topGainersLosers(callBack,request,'','internal_call')
 				]).then(response => { 
 					callBack({errCode:1,message:'Request processed successfully.',data:{products:response[0],gainers:response[1]}});
 				}).catch(err => {
@@ -327,7 +327,7 @@ module.exports = {
 		});
 	},
 	
-	topGainersLosers:function(callBack,request,internal_call=null){
+	topGainersLosers:function(callBack,request,time,internal_call=null){
 		var _=require('lodash');
 		if(_.isEmpty(internal_call)){
 			MobileApisService.checkUpdateApiCalls(request.ip,'topGainersLosers').
@@ -344,8 +344,20 @@ module.exports = {
 								tickers.sort('id DESC');
 								tickers.then(function(tickers){
 									var tickers=tickers.tickers;
-									tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
-									callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,10)}});
+									if(time=='1h'){
+										tickers=_.reject(tickers,{percent_change_1h:null});
+										tickers.sort(function(a,b){if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
+									}
+									else if(time=='24h'){
+										tickers=_.reject(tickers,{percent_change_24h:null});
+										tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
+									}
+									else if(time=='7d'){
+										tickers=_.reject(tickers,{percent_change_7d:null});
+										tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
+									}
+									
+									callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
 								}).
 								catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 							}
@@ -375,6 +387,7 @@ module.exports = {
 						tickers.sort('id DESC');
 						tickers.then(function(tickers){
 							var tickers=tickers.tickers;
+							tickers=_.reject(tickers,{percent_change_24h:null});
 							tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
 							return resolve(_.slice(tickers,0,10));
 						}).
@@ -386,6 +399,75 @@ module.exports = {
 				});	
 			});
 		}
+	},
+	
+	
+	sliderData:function(callBack,request){
+		var _=require('lodash');
+		var time=request.param('time');
+		var currencies=request.param('currencies');
+		if(_.indexOf(['1h','24h','7d'],time)==-1){
+			callBack({errCode:300,message:'Invalid arguments.',data:[]});
+		}
+		else{
+			MobileApisService.checkUpdateApiCalls(request.ip,'sliderData').
+			then(response => {
+				if(response){
+					return new Promise(function(resolve,reject){
+						ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
+							if(err){
+								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+							}
+							if(!_.isEmpty(coin_market_exchange)){
+								var tickers=ExchangeTickers.findOne();
+								tickers.where({exchange_id:coin_market_exchange.id});
+								tickers.sort('id DESC');
+								tickers.then(function(tickers){
+									var tickers=tickers.tickers;
+									if(time=='1h'){
+										tickers=_.reject(tickers,{percent_change_1h:null});
+										tickers.sort(function(a,b){if(parseFloat(a.percent_change_1h)>parseFloat(b.percent_change_1h)){return -1;}else {return 1;}});
+									}
+									else if(time=='24h'){
+										tickers=_.reject(tickers,{percent_change_24h:null});
+										tickers.sort(function(a,b){if(parseFloat(a.percent_change_24h)>parseFloat(b.percent_change_24h)){return -1;}else {return 1;}});
+									}
+									else if(time=='7d'){
+										tickers=_.reject(tickers,{percent_change_7d:null});
+										tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
+									}
+									
+									if(currencies.length==0){
+										callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
+									}
+									else{
+										var temp=[];
+										_.forEach(tickers,function(ticker){
+											_.forEach(currencies,function(currency){
+												if(_.toUpper(currency)==_.toUpper(ticker.symbol)){
+													temp.push(ticker);
+												}
+											});
+										});
+										callBack({errCode:1,message:'Request processed successfully.',data:temp});
+									}
+								}).
+								catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+							}
+							else{
+								callBack({errCode:404,message:'Record not found.',data:[]});
+							}
+						});	
+					});
+				}
+				else{
+					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+				}
+			}).
+			catch(err => {
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			});
+		}	
 	},
 	
 	userRegistration:function(callBack,request){
