@@ -167,8 +167,8 @@ $(document).ready(function(){
 		url:'/gainers_and_losers_data',
 		success:function(data){  
 			var str='';
-			if(data.gainers_losers['gainer_1_h']){
-				data.gainers_losers['gainer_1_h'].forEach(function(gainer,index){
+			if(data.gainers_1h){
+				data.gainers_1h.forEach(function(gainer,index){
 					str+='<tr>';
 					str+='<td>'+(index+1)+'</td>';
 					str+='<td>'+gainer.name+'</td>';
@@ -181,8 +181,8 @@ $(document).ready(function(){
 			$("#1h_gainer_data").html(str);
 		
 			str='';
-			if(data.gainers_losers['gainer_24_h']){
-				data.gainers_losers['gainer_24_h'].forEach(function(gainer,index){
+			if(data.gainers_24h){
+				data.gainers_24h.forEach(function(gainer,index){
 					str+='<tr>';
 					str+='<td>'+(index+1)+'</td>';
 					str+='<td>'+gainer.name+'</td>';
@@ -195,8 +195,8 @@ $(document).ready(function(){
 			$("#24h_gainer_data").html(str);
 		
 			str='';
-			if(data.gainers_losers['gainer_7_d']){
-				data.gainers_losers['gainer_7_d'].forEach(function(gainer,index){
+			if(data.gainers_7d){
+				data.gainers_7d.forEach(function(gainer,index){
 					str+='<tr>';
 					str+='<td>'+(index+1)+'</td>';
 					str+='<td>'+gainer.name+'</td>';
@@ -209,42 +209,42 @@ $(document).ready(function(){
 			$("#7d_gainer_data").html(str);
 		
 			str='';
-			if(data.gainers_losers['loser_1_h']){
-				data.gainers_losers['loser_1_h'].forEach(function(looser,index){
+			if(data.losers_1h){
+				data.losers_1h.forEach(function(loser,index){
 					str+='<tr>';
 					str+='<td>'+(index+1)+'</td>';
-					str+='<td>'+looser.name+'</td>';
-					str+='<td>'+looser.symbol+'</td>';
+					str+='<td>'+loser.name+'</td>';
+					str+='<td>'+loser.symbol+'</td>';
 					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
-					str+='<td><span style="color:red;font-weight:bold;">'+looser.percent_change_1h+'%</span></td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+loser.percent_change_1h+'%</span></td>';
 					str+='</tr>';
 				});
 			}	
 			$("#1h_loser_data").html(str);
 			
 			str='';
-			if(data.gainers_losers['loser_24_h']){
-				data.gainers_losers['loser_24_h'].forEach(function(looser,index){
+			if(data.losers_24h){
+				data.losers_24h.forEach(function(loser,index){
 					str+='<tr>';
 					str+='<td>'+(index+1)+'</td>';
-					str+='<td>'+(looser.name)+'</td>';
-					str+='<td>'+looser.symbol+'</td>';
+					str+='<td>'+(loser.name)+'</td>';
+					str+='<td>'+loser.symbol+'</td>';
 					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
-					str+='<td><span style="color:red;font-weight:bold;">'+looser.percent_change_24h+'%</span></td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+loser.percent_change_24h+'%</span></td>';
 					str+='</tr>';
 				});
 			}	
 			$("#24h_loser_data").html(str);
 			
 			str='';
-			if(data.gainers_losers['loser_7_d']){
-				data.gainers_losers['loser_7_d'].forEach(function(looser,index){
+			if(data.losers_7d){
+				data.losers_7d.forEach(function(loser,index){
 					str+='<tr>';
 					str+='<td>'+(index+1)+'</td>';
-					str+='<td>'+looser.name+'</td>';
-					str+='<td>'+looser.symbol+'</td>';
+					str+='<td>'+loser.name+'</td>';
+					str+='<td>'+loser.symbol+'</td>';
 					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
-					str+='<td><span style="color:red;font-weight:bold;">'+looser.percent_change_7d+'%</span></td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+loser.percent_change_7d+'%</span></td>';
 					str+='</tr>';
 				});
 			}	

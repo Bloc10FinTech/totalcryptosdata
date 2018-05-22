@@ -85,8 +85,8 @@ module.exports = {
   },
   
   gainers_and_losers_data:function(request,response){
-	  FrontendService.gainers_and_losers_data().then(data => {
-		  return response.send(data); 
+	  FrontendService.gainers_and_losers_data(function(data){
+		  return response.send(data);
 	  });
   },
 

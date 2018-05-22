@@ -181,8 +181,14 @@ module.exports = {
 	
 	gainersLosers:function(callBack){
 		return Promise.all([
-			FrontendService.gainers_and_losers_data(10),
+			FrontendService.gainers_and_losers(10),
 		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});
+	},
+	
+	gainers_and_losers_data:function(callBack){
+		return Promise.all([
+			FrontendService.gainers_and_losers(),
+		]).then(response => {callBack({gainers_1h:response[0].gainers_losers['gainer_1_h'],gainers_24h:response[0].gainers_losers['gainer_24_h'],gainers_7d:response[0].gainers_losers['gainer_7_d'],losers_1h:response[0].gainers_losers['loser_1_h'],losers_24h:response[0].gainers_losers['loser_24_h'],losers_7d:response[0].gainers_losers['loser_7_d']});}).catch( err => {callBack({gainers_1h:[],gainers_24h:[],gainers_7d:[],losers_1h:[],losers_24h:[],losers_7d:[]});});
 	},
 
 	volume_24_hour_currency_data:function(callBack){
@@ -1903,7 +1909,7 @@ module.exports = {
 		catch(err => { callBack({history1_day:[],history7_day:[]});});
 	},
 	
-	gainers_and_losers_data:function(count=0){
+	gainers_and_losers:function(count=0){
 		var _=require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
@@ -1914,7 +1920,6 @@ module.exports = {
 				gainers_losers['loser_24_h']=[];
 				gainers_losers['gainer_7_d']=[];
 				gainers_losers['loser_7_d']=[];
-				
 				if(!_.isEmpty(coin_market_exchange)){
 					var tickers=ExchangeTickers.findOne();
 					tickers.where({exchange_id:coin_market_exchange.id});
@@ -1999,9 +2004,8 @@ module.exports = {
 						if(count>0){ 
 							temp=_.slice(temp,0,count);
 						}
-						gainers_losers['loser_7_d']=temp;
-						
-						return resolve({gainers_losers});
+						gainers_losers['loser_7_d']=temp; 
+						return resolve({gainers_losers:gainers_losers});
 					});
 				}
 				else{
