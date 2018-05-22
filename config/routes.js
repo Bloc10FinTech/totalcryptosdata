@@ -64,6 +64,11 @@ module.exports.routes = {
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
+  
+  'GET /widget/gainers': { view: 'widget/gainers_widget',locals: {layout: false}},
+  'GET /widget/losers': { view: 'widget/losers_widget',locals: {layout: false}},
+  'GET /widget/gainers_losers': { view: 'widget/gainers_losers_widget',locals: {layout: false}},
+ 
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},
   '/about':'HomeController.about',
