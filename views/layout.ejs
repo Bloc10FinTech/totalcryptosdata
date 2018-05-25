@@ -4,19 +4,29 @@
     <title><%=typeof title == 'undefined' ? 'New Sails App' : title%></title>
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <!--STYLES-->
-    <link rel="stylesheet" href="/styles/animate.css">
-    <link rel="stylesheet" href="/styles/bootstrap.min.css">
-    <link rel="stylesheet" href="/styles/c3.min.css">
-    <link rel="stylesheet" href="/styles/custom.css">
-    <link rel="stylesheet" href="/styles/datatables.min.css">
-    <link rel="stylesheet" href="/styles/font-awesome.css">
-    <link rel="stylesheet" href="/styles/font-awesome.min.css">
-    <link rel="stylesheet" href="/styles/importer.css">
-    <link rel="stylesheet" href="/styles/style.css">
+    <!--STYLES data-->
+    <link rel="stylesheet" href="/styles/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="/styles/lib/c3.min.css">
+    <link rel="stylesheet" href="/styles/lib/vendor.css">
     <!--STYLES END-->
+	<link rel="stylesheet" href="/styles/theme/theme-blue.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+	<script>
+	var themeSettings = (localStorage.getItem('themeSettings')) ? JSON.parse(localStorage.getItem('themeSettings')) :
+	{};
+	var themeName = themeSettings.themeName || '';
+	if (themeName)
+	{
+	document.write('<link rel="stylesheet" id="theme-style" href="/styles/theme/theme-' + themeName + '.css">');
+	}
+	else
+	{
+	document.write('<link rel="stylesheet" id="theme-style" href="/styles/theme/theme-blue.css">');
+	}
+	</script>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+	<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117305391-1"></script>
@@ -50,153 +60,209 @@
 
 	</script>
 
-<nav class="navbar navbar-inverse navbar-fixed-top hidden-xs">
-  <div class="container-fluid ">
-  <div class="row Header">
-    <div class="col-md-2">
-          <a href="/">
-            <img class="img-responsive" src="/images/Logo2.png" height="70px" alt="TotalCryptosLogo">
-          </a>
-    </div>
-    <div class="col-md-5">
-
-      <div class="row wrapper">
-          <div class="col-lg-12 marquee_div">
-			<img src="/images/data-loader.gif"/>
-          </div>        
+	<header> 
+        <nav class="navbar navbar-expand-lg navbar-dark main-nav">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavBar" aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+			</button> 
+			
+			<div class="collapse navbar-collapse" id="mainNavBar">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item active">
+						<a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Cryptos</a>
+						<div class="dropdown-menu" aria-labelledby="dropdown02">
+							<a class="dropdown-item" href="/exchange_prices/totalcryptospriceusd">USD Based</a>
+							<a class="dropdown-item" href="/exchange_prices/totalcryptospricepairs">Crypto Based</a> 
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Market</a>
+						<div class="dropdown-menu" aria-labelledby="dropdown04"> 
+						<div class="row">
+						<div class="col-sm-6">
+						<ul class="multi-column-dropdown">
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/coin">COIN</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bittrex">BITTREX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitfinex">BITFINEX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/hitbtc">HIT BIC</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/gate">GATE</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/kuna">KUNA</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/okex">OKEX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/binance">BINANCE</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/huobi">HUOBI</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/gemini">GEMINI</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/kraken">KRAKEN</a></li>
+						</ul>
+						</div>
+						<div class="col-sm-6">
+								<ul class="multi-column-dropdown">
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitflyer">BITFLYER</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bithumb">BITHUMB</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitstamp">BITSTAMP</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitz">BITZ</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/lbank">LABANK</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/coinone">COIN-ONE</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/wex">WEX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/exmo">EXMO</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/liqui">LIQUI</a></li>
+								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/korbit">KORBIT</a></li>
+						</ul> 
+						</div>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link" href="/TCindex">TC Indexes</a> 
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/api/documentation">API</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/about">About</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="http://bloc10.com/">Block10</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="https://portal.totalcryptos.com/">Portal</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		
+        <div class="container-fluid header-container">
+            <div class="row header-bg">
+				<div class="col-md-2">
+					<div class="col-lg-12 col-md-6 col-sm-12 logo_brand">
+						<div class="brand">
+							<h1>
+							<a href="/" class="totolcryptos-logo">LOGO</a>
+							</h1>
+							<span class="logo-title">Total Cryptos</span>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-10 marquee_div">
+					<div style="text-align:center;"><img src="/images/data-loader.gif"/></div>
+				</div>
+            </div>
+        </div>  
+    </header>
+	<div class="container-fluid">
+		<a href="/tc-history">
+        <div class="row main-news">
+            <div class="col-lg-4 col-md-12 col-sm-12 news-title1">
+                <h5>Price of TC 100: <span class="news-highlights tc100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></h5>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12 news-title2">
+                <h5>Total Market Cap in USD: <span class="news-highlights total_usd_market_cap"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></h5>
+            </div>
+            <div class="col-lg-4 col-md-12 col-sm-12 news-title3">
+                <h5>TCw100: <span class="news-highlights tcw100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></h5>
+            </div>
         </div>
-
+		</a>
     </div>
-    <div class="col-md-3">
-      <div class="row h-50 menu">
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="/">HOME</a></li>
-            <li><a href="https://portal.totalcryptos.com">Portal</a></li>
-            <li><a href="/api/documentation">API</a></li>
-            <li><a href="/TCindex">TC Indexes</a></li>
-            <li><a href="/about">ABOUT US</a></li>           
-          </ul>
-      </div>
-      <!--
-      <div class="row col-md-12 h-50">
-           Saved for future use in ADS 
-      </div>
-      -->
-    </div>
-    <div class="col-lg-2 col-md-2 col-sm-2">
-      <a href="http://www.bloc10.com/">
-        <img class="img-responsive" src="/images/LogoBloc.png" height="70px" alt="Bloc10.com">
-      </a>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-4">
-      <h3><a class="aBanner" href="/tc-history">Price of TC 100: <strong><span class="tc100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></strong></a></h3>
-    </div>
-    <div class="col-md-4">
-      <h3><a class="aBanner" href="/tc-history">Total Market Cap in USD: <strong><span class="FormatNum total_usd_market_cap"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></strong></a></h3>
-    </div>
-    <div class="col-md-4">
-      <h3>
-        <a class="aBanner" href="/tc-history">TCw100: <strong><span class="tcw100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></strong></a>
-      </h3>
-    </div>
-  </div>
-  </div>
-</nav>
-
-<nav class="navbar navbar-inverse navbar-fixed-top hidden-sm hidden-md hidden-lg">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">
-        <img class="img-responsive" src="/images/LogoSmall.png" height="70px" alt="TotalCryptosLogo">
-      </a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li><a href="/">HOME</a></li>
-    <li><a href="/api/documentation">API</a></li>
-    <li><a href="#">CONTAC US</a></li>
-    <li><a href="#">ABOUT US</a></li> 
-      </ul>
-    </div>
-  </div>
-</nav> 
-
-  <div class="container-fluid">
-  
-    <%- body %>
-    
-  </div>
-<div class="container-fluid" id="top_products">
-	<div style="text-align:center;"><img src="/images/data-loader.gif"/></div>
-</div>	
-    <!--SCRIPTS-->
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/c3.min.js"></script>
-    <script src="/js/custom.js"></script>
-    <script src="/js/d3.min.js"></script>
-    <script src="/js/datatables.min.js"></script>
-    <script src="/js/easing.min.js"></script>
-    <script src="/js/hoverIntent.js"></script>
-    <script src="/js/jquery.marquee.js"></script>
-    <script src="/js/jquery.sparkline.min.js"></script>
-    <script src="/js/superfish.min.js"></script>
-    <script src="/js/wow.min.js"></script>
-    <!--SCRIPTS END-->
+	<%- body %>
+	<footer class="footer">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-4 color-options" id="color-options">
+					<h4>Color Options</h4>
+					<ul class="color-options-list">
+						<li>
+							<span class="color-item color-blue active" data-theme="blue"></span>
+						</li>
+						<li>
+							<span class="color-item color-red" data-theme="red"></span>
+						</li>
+						<li>
+							<span class="color-item color-green" data-theme="green"></span>
+						</li>
+						<li>
+							<span class="color-item color-orange" data-theme="orange"></span>
+						</li>
+						<li>
+							<span class="color-item color-purple" data-theme="purple"></span>
+						</li>
+					</ul>
+				</div>
+				<div class="col-lg-4">
+					<ul class="footer-nav">
+						<li>
+							<a href="/exchange_prices/totalcryptospriceusd">Total Cryptos</a><span class="divider">|</span>
+						</li>
+						<li>
+							<a href="https://portal.totalcryptos.com/">Portal</a><span class="divider">|</span>
+						</li>
+						<li>
+							<a href="/api/documentation">API</a><span class="divider">|</span>
+						</li> 
+						<li>
+							<a href="http://bloc10.com/">Blok10</a>
+						</li>
+					</ul>
+					<p class="copyright">Price Data brought to you free by <a href="https://www.totalcryptos.com">www.totalcryptos.com</a></p>
+				</div>
+				<div class="col-lg-4">
+					<ul class="social-media-icons pull-right">
+						<li><a href="#"><i class="fab fa-facebook-square"></i></a></li>
+						<li><a href="#"><i class="fab fa-twitter-square"></i></a></li>
+						<li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+						<li><a href="#"><i class="fab fa-google-plus-square"></i></a></li>
+						<li><a href="#"><i class="fab fa-youtube-square"></i></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</footer> 
+	<!--SCRIPTS data-->
+	<script src="/js/app.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/c3.min.js"></script>
+	<script src="/js/d3.min.js"></script>
+	<script src="/js/jquery.marquee.js"></script>
+	<script src="/js/jquery.sparkline.min.js"></script>
+	<script src="/js/popper.min.js"></script>
+	<!--SCRIPTS END-->
 	<script>
 	$(window).load(function() {
-		$(".se-pre-con").fadeOut("slow");;
+		$(".se-pre-con").fadeOut("slow");
 	});
-	
 	$(document).ready(function(){
 		$.ajax({
 			type:'GET',
 			url:'/headerFooterData',
 			success:function(data){
-				
 				//PROCESS TO MANAGE GDAX DATA
-				var str='<ul class="list-aggregate" id="top_exchange">';
+				var str='<ul class="row" id="top_exchange" style="list-style:none;">';
 				data.gdax.forEach(function(product){
 				  str+='<li class="marquee_list_item '+product.id+'">';
-				  str+='<div class="row">';
-				  str+='<div class="col-md-6">';
-				  str+='<h4>';
+		
+				  //str+='<div class="col-lg-2 col-md-6 col-sm-1 header-crypto-item">';
+				  str+='<div class="header-crypto-item" style="width:200px;">';
+                  str+='<div class="card">';
+                  str+='<div class="card-body">';
+                  str+='<div class="stock-title text-left">';
+                  str+='<h5 class="card-title">';
 				  str+='<a href="/volume-24-hour-market/'+product.display_name.replace('/','')+'">';
 				  str+=product.display_name;
 				  str+='</a>';
-				  str+='<b>&nbsp;';
-				  if(parseFloat(product.ticker.variation)>0){
-				  str+='<span style="color:green;">'+parseFloat(product.ticker.variation).toFixed(2)+'%</span>';
-				  }
-				  else if(product.ticker.variation!=undefined){
-				  str+='<span style="color:red;">'+parseFloat(product.ticker.variation).toFixed(2)+'%</span>';
-				  }
-				  str+='</b>';  
-				  str+='</h4>';
-				  str+='<h4>';
-				  str+=parseFloat(product.ticker.price).toFixed(2);
-				  str+='&nbsp;';
-				  str+=product.quote_currency;
-				  str+='</h4>';
-				  str+='<h4>Volume:&nbsp;';
-				  str+=parseFloat(product.ticker.volume).toFixed(2);
-				  str+=product.base_currency;
-				  str+='</h4>';
-				  str+='</div>';
-				  str+='<div class="col-md-4">';
-				  str+='<br/>';
+				  str+='</h5>';
+                  str+='<h4 class="card-price">'+parseFloat(product.ticker.variation).toFixed(2)+'%</h4>';
+                  str+='</div>';
+                  str+='<div class="stock-content text-right">';
+                  str+='<p class="card-text">'+parseFloat(product.ticker.price).toFixed(2)+' '+product.quote_currency+'</p>';
+                  str+='<span class="card-volume">';
+				  str+='Vol: '+parseFloat(product.ticker.volume).toFixed(2)+''+product.base_currency+'</span>';
+                  str+='</div>';  
+                  str+='</div>';
+                  str+='<div>';
 				  str+='<div class="chart_'+product.id+'"><input type="hidden" class="hidden_'+product.id+'" value="'+product.ticker.chart+'"/></div>';
-				  str+='</div>';
-				  str+='<div class="col-md-2">';
-				  str+='</div>';
 				  str+='</div>'; 
+                  str+='</div>';
+                  str+='</div>';
 				  str+='</li>';
                 });
 				str+='</ul>';
@@ -211,7 +277,7 @@
 				  var val=$(".hidden_"+cls).val();
 				  if(val!=undefined){
 					$(".chart_"+cls).html('');
-					$(".chart_"+cls).sparkline(val.split(","), {type: 'line',width: '100%',height: '50',lineColor: '#ff6439',fillColor: "transparent"});
+					$(".chart_"+cls).sparkline(val.split(","), {type: 'line',width: '100%',height: '30',lineColor: '#ff6439',fillColor: "transparent"});
 				  }
 				}
 			    });
@@ -225,7 +291,7 @@
 				//PROCESS TO MANAGE TOP PRODUCTS DATA
 				var str='';
 				var topproducts=data.topproducts;
-				if(topproducts.length==10){	
+				/*if(topproducts.length==10){	
 					str+='<div class="row">';
 					str+='<div class="col-lg-12 center" style="padding: 20px 0px;font-weight:bold;background-color:#DCDCDC;">';
 					str+='<div class="col-lg-2 col-lg-offset-1">';
@@ -264,9 +330,9 @@
 					str+='<div class="col-lg-12 center" style="padding: 20px 0px 20px 0px;background-color:#DCDCDC;">';
 					str+='<strong>Price Data brought to you free by <a href="">www.totalcryptos.com</a></strong>';
 					str+='</div>';
-					str+='</div>';
+					str+='</div>';	
 					$("#top_products").html(str);
-				}	
+				}*/	
 			}
 		});
 	});

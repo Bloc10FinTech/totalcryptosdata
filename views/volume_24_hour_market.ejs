@@ -1,12 +1,23 @@
-<div id="wrapper">
-	
-	<div class="animated fadeInRight">
-		<div class="col-lg-10 col-lg-offset-1 Vol24Hex" id="market_data">
-			<div style="text-align:center;"><img src="/images/data-loader.gif"/></div>
+<main class="main-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card card-table-pane">
+							<div class="card-body">
+								<div class="col-lg-12" id="market_data">
+									<div style="text-align:center;"><img src="/images/data-loader.gif"/></div>
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>	
+			</div>
+			<%- partial('./partials/ads.ejs') %>
 		</div>	
 	</div>
-	
-</div>
+</main>
 <script>
 var market='<%=market%>';
 $(document).ready(function(){
@@ -19,7 +30,7 @@ $(document).ready(function(){
 			var str='';
 			data.market.forEach(function(markets){
 				str+='<div class="table-responsive">';
-				str+='<h1 id="market">'+markets.market+'</h1>';
+				str+='<h5 id="market">'+markets.market+'</h5>';
 				str+='<table class="table table-striped table-bordered table-hover 24_hour_market">';
 				str+='<thead>';
 				str+='<tr>';

@@ -56,121 +56,121 @@ module.exports = {
 		});
 	},
 	
-	tabData:function(tab,callBack){
+	tabData:function(tab,callBack,count){
 		switch(tab){
 			case 'totalcryptospriceusd':
 				return Promise.all([
-					ExchangeDataService.totalCryptoPricesUsd()
+					ExchangeDataService.totalCryptoPricesUsd(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'totalcryptospricepairs':
 				return Promise.all([
-					ExchangeDataService.totalCryptoPricesPairs()
+					ExchangeDataService.totalCryptoPricesPairs(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'coin':
 				return Promise.all([
-					ExchangeDataService.coinmarketcapMarketData()
+					ExchangeDataService.coinmarketcapMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bittrex':
 				return Promise.all([
-					ExchangeDataService.bittrexMarketData()
+					ExchangeDataService.bittrexMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitfinex':
 				return Promise.all([
-					ExchangeDataService.bitfinexMarketData()
+					ExchangeDataService.bitfinexMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'hitbtc':
 				return Promise.all([
-					ExchangeDataService.hitbtcMarketData()
+					ExchangeDataService.hitbtcMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'gate':
 				return Promise.all([
-					ExchangeDataService.gateMarketData()
+					ExchangeDataService.gateMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'kuna':
 				return Promise.all([
-					ExchangeDataService.kunaMarketData()
+					ExchangeDataService.kunaMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'okex':
 				return Promise.all([
-					ExchangeDataService.okexMarketData()
+					ExchangeDataService.okexMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'binance':
 				return Promise.all([
-					ExchangeDataService.binanceMarketData()
+					ExchangeDataService.binanceMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'huobi':
 				return Promise.all([
-					ExchangeDataService.huobiMarketData()
+					ExchangeDataService.huobiMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'gemini':
 				return Promise.all([
-					ExchangeDataService.geminiMarketData()
+					ExchangeDataService.geminiMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'kraken':
 				return Promise.all([
-					ExchangeDataService.krakenMarketData()
+					ExchangeDataService.krakenMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitflyer':
 				return Promise.all([
-					ExchangeDataService.bitflyerMarketData()
+					ExchangeDataService.bitflyerMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bithumb':
 				return Promise.all([
-					ExchangeDataService.bithumbMarketData()
+					ExchangeDataService.bithumbMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitstamp':
 				return Promise.all([
-					ExchangeDataService.bitstampMarketData()
+					ExchangeDataService.bitstampMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitz':
 				return Promise.all([
-					ExchangeDataService.bitzMarketData()
+					ExchangeDataService.bitzMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'lbank':
 				return Promise.all([
-					ExchangeDataService.lbankMarketData()
+					ExchangeDataService.lbankMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'coinone':
 				return Promise.all([
-					ExchangeDataService.coinoneMarketData()
+					ExchangeDataService.coinoneMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'wex':
 				return Promise.all([
-					ExchangeDataService.wexMarketData()
+					ExchangeDataService.wexMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'exmo':
 				return Promise.all([
-					ExchangeDataService.exmoMarketData()
+					ExchangeDataService.exmoMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'liqui':
 				return Promise.all([
-					ExchangeDataService.liquiMarketData()
+					ExchangeDataService.liquiMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'korbit':
 				return Promise.all([
-					ExchangeDataService.korbitMarketData()
+					ExchangeDataService.korbitMarketData(count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			default:
@@ -179,9 +179,9 @@ module.exports = {
 		}
 	},
 	
-	gainersLosers:function(callBack){
+	gainersLosers:function(callBack,count){
 		return Promise.all([
-			FrontendService.gainers_and_losers(10),
+			FrontendService.gainers_and_losers(count),
 		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});
 	},
 	
@@ -189,6 +189,18 @@ module.exports = {
 		return Promise.all([
 			FrontendService.gainers_and_losers(),
 		]).then(response => {callBack({gainers_1h:response[0].gainers_losers['gainer_1_h'],gainers_24h:response[0].gainers_losers['gainer_24_h'],gainers_7d:response[0].gainers_losers['gainer_7_d'],losers_1h:response[0].gainers_losers['loser_1_h'],losers_24h:response[0].gainers_losers['loser_24_h'],losers_7d:response[0].gainers_losers['loser_7_d']});}).catch( err => {callBack({gainers_1h:[],gainers_24h:[],gainers_7d:[],losers_1h:[],losers_24h:[],losers_7d:[]});});
+	},
+	
+	gainers_data:function(callBack){
+		return Promise.all([
+			FrontendService.gainers_and_losers(),
+		]).then(response => {callBack({gainers_1h:response[0].gainers_losers['gainer_1_h'],gainers_24h:response[0].gainers_losers['gainer_24_h'],gainers_7d:response[0].gainers_losers['gainer_7_d']});}).catch( err => {callBack({gainers_1h:[],gainers_24h:[],gainers_7d:[]});});
+	},
+	
+	losers_data:function(callBack){
+		return Promise.all([
+			FrontendService.gainers_and_losers(),
+		]).then(response => {callBack({losers_1h:response[0].gainers_losers['loser_1_h'],losers_24h:response[0].gainers_losers['loser_24_h'],losers_7d:response[0].gainers_losers['loser_7_d']});}).catch( err => {callBack({losers_1h:[],losers_24h:[],losers_7d:[]});});
 	},
 
 	volume_24_hour_currency_data:function(callBack){

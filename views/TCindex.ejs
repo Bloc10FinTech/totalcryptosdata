@@ -1,46 +1,57 @@
-<div class="row">
-	<div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2 Vol24Hex">
-		<h1 class="ridge">Total Cryptos Data</h1>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2">
-		<u><h2>Indexes</h2></u>
+<main class="main-content">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10"> 
+			<div class="card card-table-pane table-scrolling">
+				<div class="card-body">
+					<div class="card-header">
+						<h4 class="card-title">Total Cryptos Data</h4>
+					</div>
+					<div class="row">
+						<div class="col-lg-12"><br>
+							<u><h5>Indexes</h5></u>
 
-		<h2>TC 100</h2>
-		<p class="text-justify">
-			The TC 100 is a price of the top 100 Crypto Currencies by market cap.<br>
-			Currently market cap data only provided by coinmarketcap API we will eventually do this calc ourselves.
-			<h3><strong>So what we do:</strong></h3>
-			Find the top 100 Crypto Pairs with USD base (such as BTC/USD) by market cap (size, largest to smallest)
-			Then we add all the prices and divide by 100.  Then we add the total USD market cap for all 100 and display 2 numbers:<br><br>
-			<h3><strong>Price of TC 100 </strong>   and    <strong>Total Market Cap  in USD.</strong></h3>
-		</p>
-	</div>
-</div>
-<div class="row">
-	<div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2">
-		<h2 class="ridge">Weighted Version</h2>
-	</div>
-</div>
+							<h5>TC 100</h5>
+							<p class="text-justify">
+								The TC 100 is a price of the top 100 Crypto Currencies by market cap.<br>
+								Currently market cap data only provided by coinmarketcap API we will eventually do this calc ourselves.
+								<h5>So what we do:</h5>
+								Find the top 100 Crypto Pairs with USD base (such as BTC/USD) by market cap (size, largest to smallest)
+								Then we add all the prices and divide by 100.  Then we add the total USD market cap for all 100 and display 2 numbers:<br><br>
+								<h5><strong>Price of TC 100 </strong>   and    <strong>Total Market Cap  in USD.</strong></h5>
+							</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<h5 style="border-bottom-style: ridge;">Weighted Version</h5>
+						</div>
+					</div>
 
-<div class="row">
-	<div class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2">
-		<h2>TCw 100</h2>
-		<p class="text-justify">
-			The weighted calculation is the same, except that Cryptos with the higher market cap will be <mark>‘weighted’</mark> as follows:<br>
-			The market cap becomes a % ‘weight’ as follows:<br>
-			Find the total market cap of the <mark>TCw 100</mark> by adding all the market caps together for a simple sum:<br>
-			<pre>10<var>a</var> + 20<var>b</var> + 30<var>c</var> = 60<var>w</var></pre>
-			Divide each number by the sum
-			<pre class="text-size-lg">10/60<var>a</var> = <span class="text-info">.16</span>  20/60<var>b</var> =  <span class="text-info">.33</span> 30/60<var>c</var>  = <span class="text-info">.5</span> </pre>
-		</p>
-		<p>
-			Then when calculating the <mark>TCw 100</mark>, multiple the Crypto price by the weighted value, before calculating the average of <mark>TCw 100</mark>.  So if:<br>
-			<pre><var>A</var> = 100   <var>b</var> = 200   <var>c</var> = 300</pre>    then <br>
-			<pre>100 x .16 = 16     200 x .33 = 66   300 x .50 = 150 </pre>  so then calculate average of sum<br>
-			<pre>16 + 66 + 150 =   232</pre>
-			This number should be saved as it’s own symbol, <mark>TC100</mark> and <mark>TCw100</mark> respectively
-		</p>
+					<div class="row">
+						<div class="col-lg-12">
+							<h5>TCw 100</h5>
+							<p class="text-justify">
+								The weighted calculation is the same, except that Cryptos with the higher market cap will be <mark>‘weighted’</mark> as follows:<br>
+								The market cap becomes a % ‘weight’ as follows:<br>
+								Find the total market cap of the <mark>TCw 100</mark> by adding all the market caps together for a simple sum:<br>
+								<pre>10<var>a</var> + 20<var>b</var> + 30<var>c</var> = 60<var>w</var></pre>
+								Divide each number by the sum
+								<pre class="text-size-lg">10/60<var>a</var> = <span class="text-info">.16</span>  20/60<var>b</var> =  <span class="text-info">.33</span> 30/60<var>c</var>  = <span class="text-info">.5</span> </pre>
+							</p>
+							<p>
+								Then when calculating the <mark>TCw 100</mark>, multiple the Crypto price by the weighted value, before calculating the average of <mark>TCw 100</mark>.  So if:<br>
+								<pre><var>A</var> = 100   <var>b</var> = 200   <var>c</var> = 300</pre>    then <br>
+								<pre>100 x .16 = 16     200 x .33 = 66   300 x .50 = 150 </pre>  so then calculate average of sum<br>
+								<pre>16 + 66 + 150 =   232</pre>
+								This number should be saved as it’s own symbol, <mark>TC100</mark> and <mark>TCw100</mark> respectively
+							</p>
+						</div>
+					</div>
+				</div>
+			</div> 
+			</div>
+			<%- partial('./partials/ads.ejs') %>
+		</div>		
 	</div>
-</div>
+</main>	

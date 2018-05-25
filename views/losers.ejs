@@ -1,0 +1,147 @@
+<main class="main-content">     
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card card-table-pane">
+							<div class="card-body">
+								<div class="card-header">
+									<h5 class="card-title">LOSERS</h5> 
+								</div>
+								<div class="sub-menu">
+								   <ul class="nav nav-tabs">
+									  <li class="nav-item">
+										<a class="nav-link active" data-toggle="tab" href="#1h">1 Hour</a>
+									  </li>
+									  <li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#24h">24 Hour</a>
+									  </li>
+									  <li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#7d">7 Day</a>
+									  </li> 
+									</ul>
+								</div>
+								<div class="tab-content" style="margin-top:20px;">
+									<div class="tab-pane active" id="1h">
+										<div class="dataTables_wrapper no-footer">
+											<table class="display table-custom dataTable no-footer" style="width: 100%;" role="grid">
+												<thead>
+													<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 45px;">#</th><th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width: 176px;">Symbol</th><th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width: 209px;">%24h</th></tr>
+												</thead>
+												<tbody id="losers_1h"> 
+												</tbody>
+											</table>
+										</div> 
+									</div>
+									<div class="tab-pane" id="24h">
+										<div class="dataTables_wrapper no-footer">
+											<table class="display table-custom dataTable no-footer" style="width: 100%;" role="grid">
+												<thead>
+													<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 45px;">#</th><th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width: 176px;">Symbol</th><th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width: 209px;">%24h</th></tr>
+												</thead>
+												<tbody id="losers_24h"> 
+												</tbody>
+											</table>
+										</div> 
+									</div>
+									<div class="tab-pane" id="7d">
+										<div class="dataTables_wrapper no-footer">
+											<table class="display table-custom dataTable no-footer" style="width: 100%;" role="grid">
+												<thead>
+													<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 45px;">#</th><th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width: 176px;">Symbol</th><th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width: 209px;">%24h</th></tr>
+												</thead>
+												<tbody id="losers_7d"> 
+												</tbody>
+											</table>
+										</div> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</div> 	 
+				</div>
+			</div>
+			<%- partial('./partials/ads.ejs') %>  
+		</div> 
+	</div>
+</main>
+
+<script>
+$(document).ready(function(){
+	$("#losers_1h").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$("#losers_24h").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$("#losers_7d").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$.ajax({
+		type:'GET',
+		url:'/losers_data',
+		success:function(data){
+			$("#losers_1h").html('');
+			$("#losers_24h").html('');
+			$("#losers_7d").html('');
+			data.losers_1h.forEach(function(loser,index){
+			
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+				var str='<tr role="row" class="'+even_odd_class+'">';
+				str+='<td class="sorting_1">'+(index+1)+'</td>';
+				str+='<td class="text-bold">';
+				
+				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+				str+='<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
+				str+=loser.symbol;
+				str+='</a>';
+				str+'</td>';
+				str+='<td><span class="market-down-text">'+loser.percent_change_1h+'</span>'; 
+				str+='<img src="/images/red-down-arrow.png" alt="red arrow"></td>';
+				str+='</tr>';
+				$("#losers_1h").append(str);
+			});
+
+			data.losers_24h.forEach(function(loser,index){
+			
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+				var str='<tr role="row" class="'+even_odd_class+'">';
+				str+='<td class="sorting_1">'+(index+1)+'</td>';
+				str+='<td class="text-bold">';
+				
+				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+				str+='<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
+				str+=loser.symbol;
+				str+='</a>';
+				str+'</td>';
+				str+='<td><span class="market-down-text">'+loser.percent_change_24h+'</span>'; 
+				str+='<img src="/images/red-down-arrow.png" alt="red arrow"></td>';
+				str+='</tr>';
+				$("#losers_24h").append(str);
+			});	
+			
+			data.losers_7d.forEach(function(loser,index){
+			
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+				var str='<tr role="row" class="'+even_odd_class+'">';
+				str+='<td class="sorting_1">'+(index+1)+'</td>';
+				str+='<td class="text-bold">';
+				
+				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
+				str+='<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
+				str+=loser.symbol;
+				str+='</a>';
+				str+'</td>';
+				str+='<td><span class="market-down-text">'+loser.percent_change_7d+'</span>'; 
+				str+='<img src="/images/red-down-arrow.png" alt="red arrow"></td>';
+				str+='</tr>';
+				$("#losers_7d").append(str);
+			});	
+		}
+	});
+});
+</script>

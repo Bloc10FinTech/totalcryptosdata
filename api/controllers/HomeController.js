@@ -18,12 +18,39 @@ module.exports = {
   tabData:function(request, response){
 	  FrontendService.tabData(request.param('tab'),function(data){
 		  response.send(data);
+	  },10);
+  },
+  tabDataAll:function(request, response){
+	  FrontendService.tabData(request.param('tab'),function(data){
+		  response.send(data);
 	  });
   },
   gainersLosers:function(request, response){
 	  FrontendService.gainersLosers(function(data){
 		  response.send(data);
+	  },10);
+  },
+  gainers:function(request,response){
+	  return response.view('gainers', {title: 'Total Cryptos'});
+  },
+  gainers_data:function(request, response){
+	  FrontendService.gainers_data(function(data){
+		  response.send(data);
 	  });
+  },
+  losers:function(request,response){
+	  return response.view('losers', {title: 'Total Cryptos'});
+  },
+  losers_data:function(request, response){
+	  FrontendService.losers_data(function(data){
+		  response.send(data);
+	  });
+  },
+  exchange_prices:function(request,response){
+	  return response.view('exchange_prices', {title: 'Total Cryptos',tab:request.param('tab')});
+  },
+  exchange_prices_details:function(request,response){
+	  return response.view('exchange_prices_details', {title: 'Total Cryptos',tab:request.param('tab')});
   },
   volume_24_hour_currency:function(request, response) {
 	  return response.view('volume_24_hour_currency', {title: 'Total Cryptos'});
