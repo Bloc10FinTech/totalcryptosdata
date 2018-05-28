@@ -437,7 +437,7 @@ module.exports = {
 										tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
 									}
 									
-									if(currencies.length==0){
+									if(_.isEmpty(currencies)){
 										callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
 									}
 									else{
