@@ -241,7 +241,7 @@ module.exports = {
 						if(!_.isEmpty(kunaTickers)){
 							kunaTickers=kunaTickers.tickers;
 							kunaTickers.sort(function(a,b){if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count=0){
+							if(count>0){
 								kunaTickers=_.slice(kunaTickers,0,count);
 							}
 							return resolve({name:kunaExchange.name,url:kunaExchange.url,is_exchange:kunaExchange.is_exchange,data:kunaTickers});
@@ -649,7 +649,7 @@ module.exports = {
 						if(!_.isEmpty(liquiTickers)){
 							liquiTickers=liquiTickers.tickers;
 							liquiTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count=0){
+							if(count>0){
 								liquiTickers=_.slice(liquiTickers,0,count);
 							}
 							return resolve({name:liquiExchange.name,url:liquiExchange.url,is_exchange:liquiExchange.is_exchange,data:liquiTickers});

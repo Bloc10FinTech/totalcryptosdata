@@ -68,61 +68,66 @@
 			
 			<div class="collapse navbar-collapse" id="mainNavBar">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
+					<li class="nav-item <%if(path=='/'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
 					</li>
-					<li class="nav-item dropdown">
+					<li class="nav-item dropdown <%if((path=='/exchange_prices/totalcryptospriceusd') || (path=='/exchange_prices/totalcryptospriceusd/details') || (path=='/exchange_prices/totalcryptospricepairs') || (path=='/exchange_prices/totalcryptospricepairs/details')){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Cryptos</a>
 						<div class="dropdown-menu" aria-labelledby="dropdown02">
-							<a class="dropdown-item" href="/exchange_prices/totalcryptospriceusd">USD Based</a>
-							<a class="dropdown-item" href="/exchange_prices/totalcryptospricepairs">Crypto Based</a> 
+							<a class="dropdown-item <%if((path=='/exchange_prices/totalcryptospriceusd') || (path=='/exchange_prices/totalcryptospriceusd/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/totalcryptospriceusd">USD Based</a>
+							<a class="dropdown-item <%if((path=='/exchange_prices/totalcryptospricepairs') || (path=='/exchange_prices/totalcryptospricepairs/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/totalcryptospricepairs">Crypto Based</a> 
 						</div>
 					</li>
-					<li class="nav-item dropdown">
+					<% 
+					var exchange_sub_menu=['/exchange_prices/coin','/exchange_prices/bittrex','/exchange_prices/bitfinex','/exchange_prices/hitbtc','/exchange_prices/gate','/exchange_prices/kuna','/exchange_prices/okex','/exchange_prices/binance','/exchange_prices/huobi','/exchange_prices/gemini','/exchange_prices/kraken','/exchange_prices/bitflyer','/exchange_prices/bithumb','/exchange_prices/bitstamp','/exchange_prices/bitz','/exchange_prices/lbank','/exchange_prices/coinone','/exchange_prices/wex','/exchange_prices/exmo','/exchange_prices/liqui','/exchange_prices/korbit'];
+					
+					var exchange_sub_menu_details=['/exchange_prices/coin/details','/exchange_prices/bittrex/details','/exchange_prices/bitfinex/details','/exchange_prices/hitbtc/details','/exchange_prices/gate/details','/exchange_prices/kuna/details','/exchange_prices/okex/details','/exchange_prices/binance/details','/exchange_prices/huobi/details','/exchange_prices/gemini/details','/exchange_prices/kraken/details','/exchange_prices/bitflyer/details','/exchange_prices/bithumb/details','/exchange_prices/bitstamp/details','/exchange_prices/bitz/details','/exchange_prices/lbank/details','/exchange_prices/coinone/details','/exchange_prices/wex/details','/exchange_prices/exmo/details','/exchange_prices/liqui/details','/exchange_prices/korbit/details'];
+					%>
+					<li class="nav-item dropdown <%if((exchange_sub_menu.indexOf(path)=='-1') && (exchange_sub_menu_details.indexOf(path)=='-1')){%>'' <%}else{%> active<%}%>">
 						<a class="nav-link" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Market</a>
 						<div class="dropdown-menu" aria-labelledby="dropdown04"> 
 						<div class="row">
 						<div class="col-sm-6">
 						<ul class="multi-column-dropdown">
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/coin">COIN</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bittrex">BITTREX</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitfinex">BITFINEX</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/hitbtc">HIT BIC</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/gate">GATE</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/kuna">KUNA</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/okex">OKEX</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/binance">BINANCE</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/huobi">HUOBI</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/gemini">GEMINI</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/kraken">KRAKEN</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/coin') || (path=='/exchange_prices/coin/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/coin">COIN</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bittrex') || (path=='/exchange_prices/bittrex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bittrex">BITTREX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitfinex') || (path=='/exchange_prices/bitfinex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitfinex">BITFINEX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/hitbtc') || (path=='/exchange_prices/hitbtc/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/hitbtc">HIT BIC</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/gate') || (path=='/exchange_prices/gate/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/gate">GATE</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/kuna') || (path=='/exchange_prices/kuna/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/kuna">KUNA</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/okex') || (path=='/exchange_prices/okex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/okex">OKEX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/binance') || (path=='/exchange_prices/binance/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/binance">BINANCE</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/huobi') || (path=='/exchange_prices/huobi/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/huobi">HUOBI</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/gemini') || (path=='/exchange_prices/gemini/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/gemini">GEMINI</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/kraken') || (path=='/exchange_prices/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/kraken">KRAKEN</a></li>
 						</ul>
 						</div>
 						<div class="col-sm-6">
 								<ul class="multi-column-dropdown">
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitflyer">BITFLYER</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bithumb">BITHUMB</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitstamp">BITSTAMP</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/bitz">BITZ</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/lbank">LABANK</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/coinone">COIN-ONE</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/wex">WEX</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/exmo">EXMO</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/liqui">LIQUI</a></li>
-								<li class="nav-item"></li><a class="dropdown-item" href="/exchange_prices/korbit">KORBIT</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitflyer') || (path=='/exchange_prices/bitflyer/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitflyer">BITFLYER</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bithumb') || (path=='/exchange_prices/bithumb/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bithumb">BITHUMB</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitstamp') || (path=='/exchange_prices/bitstamp/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitstamp">BITSTAMP</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitz') || (path=='/exchange_prices/bitz/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitz">BITZ</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/lbank') || (path=='/exchange_prices/lbank/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/lbank">LBANK</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/coinone') || (path=='/exchange_prices/coinone/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/coinone">COIN-ONE</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/wex') || (path=='/exchange_prices/wex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/wex">WEX</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/exmo') || (path=='/exchange_prices/exmo/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/exmo">EXMO</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/liqui') || (path=='/exchange_prices/liqui/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/liqui">LIQUI</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/korbit') || (path=='/exchange_prices/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/korbit">KORBIT</a></li>
 						</ul> 
 						</div>
 					</li>
-					<li class="nav-item dropdown">
+					<li class="nav-item dropdown <%if(path=='/TCindex'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/TCindex">TC Indexes</a> 
 					</li>
-					<li class="nav-item">
+					<li class="nav-item <%if(path=='/api/documentation'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/api/documentation">API</a>
 					</li>
-					<li class="nav-item">
+					<li class="nav-item <%if(path=='/about'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/about">About</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" href="http://bloc10.com/">Block10</a>
+						<a class="nav-link" href="http://bloc10.com/">Bloc10</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="https://portal.totalcryptos.com/">Portal</a>
@@ -200,7 +205,7 @@
 							<a href="/api/documentation">API</a><span class="divider">|</span>
 						</li> 
 						<li>
-							<a href="http://bloc10.com/">Blok10</a>
+							<a href="http://bloc10.com/">Bloc10</a>
 						</li>
 					</ul>
 					<p class="copyright">Price Data brought to you free by <a href="https://www.totalcryptos.com">www.totalcryptos.com</a></p>

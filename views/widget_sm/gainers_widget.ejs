@@ -13,24 +13,23 @@ Total Cryptos
 	<div class="container-fluid">
 		<div class="row">
 			<div class="table-responsive">
-				<h5><b>Top Losers</b></h5>
+				<h6><b>Top Gainers</b></h6>
 				<table class="display table-custom dataTable no-footer" style="width: 100%;" role="grid">
 				<thead>
 				<tr>
 					<th>#</th>
-					<th>Name</th>
 					<th>Symbol</th>
 					<th>Price</th>
 					<th>% 24h</th>
 				</tr>
 				</thead>
-				<tbody id="losers">
+				<tbody id="gainers">
 					<tr>
-						<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+						<td colspan="4" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
 					</tr>
 				</tbody>
 				</table>
-			</div>	
+			</div>
 		</div>	
 	</div>
 </main>
@@ -42,26 +41,24 @@ $(document).ready(function(){
 
 	$.ajax({
 		type:'GET',
-		url:'/widget/losers_data',
+		url:'/widget/gainers_data',
 		success:function(data){  
 			var str='';
 			if(data.errCode==1){
-				data.data.forEach(function(loser,index){
-				
+				data.data.forEach(function(gainer,index){
 					var even_odd_class='even';
 					if(index%2==0){
 						even_odd_class='odd';
 					}
 					str+='<tr role="row" class="'+even_odd_class+'">';
 					str+='<td class="sorting_1">'+(index+1)+'</td>';
-					str+='<td><b>'+loser.name+'<b/></td>';
-					str+='<td>'+loser.symbol+'</td>';
-					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
-					str+='<td><span style="color:red;font-weight:bold;">'+loser.percent_change_24h+'%</span></td>';
+					str+='<td><b>'+gainer.symbol+'</b></td>';
+					str+='<td>'+parseFloat(gainer.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:green;font-weight:bold;">'+gainer.percent_change_24h+'%</span></td>';
 					str+='</tr>';
 				});
 			}	
-			$("#losers").html(str);
+			$("#gainers").html(str);
 		}
 	});	
 });
