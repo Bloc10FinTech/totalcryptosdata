@@ -340,6 +340,16 @@ module.exports = {
 			}
 		});
 		
+		//PROCESS TO INSERT BITMEX STATIC DATA
+		ExchangeList.count({name:'bitmex'},function(err,count){
+			if(err){ ApiService.exchangeErrors('bitmex','query_select',err,'exchange_select',curDateTime);}
+			if(count==0){
+				ExchangeList.create({name:'bitmex',url:'https://www.bitmex.com',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+					if(err){ ApiService.exchangeErrors('bitmex','query_insert',err,'exchange_insert',curDateTime);}
+				});
+			}
+		});
+		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES 24 HOUR HISTORY
 		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, data){
 			if(err){ 
@@ -1738,6 +1748,51 @@ module.exports = {
 			}
 		});
 		
+		//PROCESS TO INSERT BITMEX PRODUCTS/MARKETS TICKERS
+		ExchangeList.findOne({name:'bitmex'},function(err,data){ 
+			if(err){ 
+				ApiService.exchangeErrors('bitmex','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('bitmex','query_select',err,'tickers_select',curDateTime);
+					}
+					
+					ApiService.bitMexTicker().then(tickers=>{
+						tickers=JSON.parse(tickers);
+						if(_.isEmpty(tickers.error)){
+							tickers=_.reject(tickers,{settledPrice:null});
+							_.forEach(tickers,function(ticker){
+								var chart_data=[];
+								ticker.base_currency=ticker.rootSymbol;
+								ticker.quote_currency=_.replace(ticker.symbol,ticker.rootSymbol,'');
+								_.forEach(charts,function(chart){
+									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.settledPrice);
+									}
+								});
+								chart_data.push(ticker.settledPrice);
+								ticker.chart=chart_data;
+							});
+						
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('bitmex','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('bitmex','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});
+		
 		//PROCESS TO CALCULATE TOTAL CRYPTO PRICE
 		TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 			if(err){ 
@@ -1963,7 +2018,7 @@ module.exports = {
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
 							break;
 							case 'korbit':
-								product=_.toLower(_.replace(ticker.product,'_',''));
+								product=_.toLower(_.replace(ticker.product,'_',''));        
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});

@@ -714,9 +714,25 @@ module.exports = {
 		});
 	},
 	
-	dataPredictionAPI:function(csvUrl,fileName){
+	bitMexTicker:function(){
 		var request = require('request');
 		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://www.bitmex.com/api/v1/instrument?count=500',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
+	dataPredictionAPI:function(csvUrl,fileName){
+		var request = require('request');
+		/*return new Promise(function(resolve, reject){
 			var options = {
 			  url: 'https://backend-dot-predict-stress.appspot.com'	,
 			  headers: {
@@ -730,7 +746,7 @@ module.exports = {
 				if (err) { return reject(err); }
 				return resolve(body);
 			});
-		});
+		});*/
 	},
 	
 	exchangeErrors:function(name,error_type,error,custom_message,date_time){ 

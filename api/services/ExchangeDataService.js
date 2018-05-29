@@ -695,6 +695,35 @@ module.exports = {
 		});
 	},
 	
+	bitmexMarketData:function(count=0){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeList.findOne({name:'bitmex'},function(err, bitmexExchange){
+				if(!_.isEmpty(bitmexExchange)){
+					var bitmexTickers=ExchangeTickers.findOne();
+					bitmexTickers.where({exchange_id:bitmexExchange.id});
+					bitmexTickers.sort('id DESC');
+					bitmexTickers.exec(function(err,bitmexTickers){
+						if(!_.isEmpty(bitmexTickers)){
+							bitmexTickers=bitmexTickers.tickers;
+							bitmexTickers.sort(function(a,b){ if(parseFloat(a.totalVolume)>parseFloat(b.totalVolume)){return -1;}else {return 1;}});
+							if(count>0){
+								bitmexTickers=_.slice(bitmexTickers,0,count);
+							}
+							return resolve({name:bitmexExchange.name,url:bitmexExchange.url,is_exchange:bitmexExchange.is_exchange,data:bitmexTickers});
+						}
+						else{
+							return resolve({name:'',url:'',is_exchange:'',data:[]});
+						}
+					});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
 	totalCryptoPricesUsd:function(count=0){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){

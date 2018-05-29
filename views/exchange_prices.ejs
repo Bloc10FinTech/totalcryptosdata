@@ -55,6 +55,8 @@
 									LIQUI
 									<%}else if(tab=='korbit') {%>
 									KORBIT
+									<%}else if(tab=='bitmex') {%>
+									BITMEX
 									<%}%>
 									</h5>
 									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#coins" aria-expanded="false" aria-controls="collapseExample"></i>
@@ -213,6 +215,11 @@
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
+													<%}else if(tab=='bitmex') {%>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Total Volume</th>
 													<%}%>
 													
 													<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Chart 1d</th>
@@ -285,7 +292,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -332,7 +339,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>'; 
@@ -383,7 +390,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+ticker.symbol+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+ticker.symbol+'">'+ticker.symbol+'</a></td>';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+ticker.symbol+'">'+ticker.symbol+'</a></td>';
 						str+='<td id="'+ticker.name+'_price_coinmarket">';
 						if(ticker.percent_change_1h>0){
 						str+=parseFloat(ticker.price_usd).toFixed(8)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
@@ -433,7 +440,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.BaseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.BaseCurrency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.BaseCurrency+'">';
 						str+=summary.BaseCurrency;
 						str+='</a>';
 						str+='</td>';
@@ -472,7 +479,7 @@ function show_tab_data(tab){
 							str+='<td class="sorting_1">'+(index+1)+'</td>';
 							str+='<td class="text-bold">';
 							str+='<img src="/images/currencies/'+summary.product_id.substr(0,3)+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-							str+='<a href="/volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
+							str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
 							str+=summary.product_id.substr(0,3).toUpperCase();
 							str+='</a>';
 							str+='</td>';
@@ -509,7 +516,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.baseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.baseCurrency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.baseCurrency+'">';
 						str+=summary.baseCurrency;
 						str+='</a>';
 						str+='</td>';
@@ -547,7 +554,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
 						str+=summary.product.split('_',1).join().toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -617,7 +624,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
 						str+=summary.product.split('_',1).join().toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -648,7 +655,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.baseAsset+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.baseAsset+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.baseAsset+'">';
 						str+=summary.baseAsset;
 						str+='</a>';
 						str+='</td>';
@@ -679,7 +686,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -710,7 +717,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.currency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.currency+'">';
 						str+=summary.currency;
 						str+='</a>';
 						str+='</td>';
@@ -739,7 +746,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency;
 						str+='</a>';
 						str+='</td>';
@@ -770,7 +777,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency;
 						str+='</a>';
 						str+='</td>';
@@ -799,7 +806,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency
 						str+='</a>';
 						str+='</td>';
@@ -828,7 +835,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency;
 						str+='</a>';
 						str+='</td>';
@@ -857,7 +864,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -886,7 +893,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -915,7 +922,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -944,7 +951,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -973,7 +980,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -1002,7 +1009,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td class="text-bold">';
@@ -1031,7 +1038,7 @@ function show_tab_data(tab){
 						str+='<td class="sorting_1">'+(index+1)+'</td>';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
@@ -1045,6 +1052,35 @@ function show_tab_data(tab){
 						str+='<td>';
 						str+='<div class="row">';
 						str+='<div class="col-md-12" id="chart_'+summary.product+'_korbit"><input type="hidden" id="hidden_'+summary.product+'_korbit" value="'+summary.chart+'" /></div>';
+						str+='</div>';
+						str+='</td>';
+						str+='</tr>';
+						});
+					break;
+					case 'bitmex':
+						data.forEach(function(summary,index){
+						var even_odd_class='even';
+						if(index%2==0){
+							even_odd_class='odd';
+						}
+						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_bitmex">';
+						str+='<td class="sorting_1">'+(index+1)+'</td>';
+						str+='<td class="text-bold">';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+=summary.base_currency.toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td class="text-bold">';
+						str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('_','').toUpperCase()+'">';
+						str+=summary.symbol.replace('_','').toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td id="'+summary.symbol+'_price_bitmex">'+parseFloat(summary.settledPrice).toFixed(2)+'</td>';
+						str+='<td id="'+summary.symbol+'_vol_bitmex">'+Math.round(parseFloat(summary.totalVolume))+'</td>';
+						str+='<td>';
+						str+='<div class="row">';
+						str+='<div class="col-md-12" id="chart_'+summary.symbol+'_bitmex"><input type="hidden" id="hidden_'+summary.symbol+'_bitmex" value="'+summary.chart+'" /></div>';
 						str+='</div>';
 						str+='</td>';
 						str+='</tr>';
