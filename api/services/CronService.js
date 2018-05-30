@@ -2261,7 +2261,7 @@ module.exports = {
 	
 	socketUpdates:function(){
 		FrontendService.socketData();
-		CronService.dataPrediction();
+		//CronService.dataPrediction();
 	},
 	
 	dataPrediction:function(){

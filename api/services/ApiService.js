@@ -780,7 +780,7 @@ module.exports = {
 	
 	dataPredictionAPI:function(csvUrl,fileName){
 		var request = require('request');
-		/*return new Promise(function(resolve, reject){
+		return new Promise(function(resolve, reject){
 			var options = {
 			  url: 'https://backend-dot-predict-stress.appspot.com'	,
 			  headers: {
@@ -794,7 +794,7 @@ module.exports = {
 				if (err) { return reject(err); }
 				return resolve(body);
 			});
-		});*/
+		});
 	},
 	
 	exchangeErrors:function(name,error_type,error,custom_message,date_time){ 
