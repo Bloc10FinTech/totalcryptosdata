@@ -350,6 +350,32 @@ module.exports = {
 			}
 		});
 		
+		//PROCESS TO INSERT LIVECOIN STATIC DATA
+		ExchangeList.count({name:'livecoin'},function(err,count){
+			if(err){ ApiService.exchangeErrors('livecoin','query_select',err,'exchange_select',curDateTime);}
+			if(count==0){
+				ExchangeList.create({name:'livecoin',url:'https://www.livecoin.net',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+					if(err){ ApiService.exchangeErrors('livecoin','query_insert',err,'exchange_insert',curDateTime);}
+				});
+			}
+		});
+		
+		//PROCESS TO INSERT CEX STATIC DATA
+		ExchangeList.count({name:'cex'},function(err,count){
+			if(err){ ApiService.exchangeErrors('cex','query_select',err,'exchange_select',curDateTime);}
+			if(count==0){
+				Promise.all([
+					ApiService.cexProducts()
+				]).
+				then(response => {  
+					ExchangeList.create({name:'cex',url:'https://cex.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						if(err){ ApiService.exchangeErrors('cex','query_insert',err,'exchange_insert',curDateTime);}
+					});
+				}).
+				catch(err => { ApiService.exchangeErrors('cex','api',err,'exchange_api_select',curDateTime);});
+			}
+		});
+		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES 24 HOUR HISTORY
 		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, data){
 			if(err){ 
@@ -1242,6 +1268,65 @@ module.exports = {
 				});	
 			}
 		});
+		
+		//PROCESS TO INSERT CEX MARKET TICKERS
+		ExchangeList.findOne({name:'cex'},function(err,data){
+			if(err){ 
+				ApiService.exchangeErrors('cex','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				var products=data.products.data.pairs;
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('cex','query_select',err,'tickers_select',curDateTime);
+					}
+					return Promise.all(products.map((product) => {
+						return ApiService.cexMarketTicker(product.symbol1,product.symbol2).
+						then(ticker => {
+							ticker=JSON.parse(ticker);
+							ticker.product=product.symbol1+product.symbol2;
+							ticker.base_currency=product.symbol1;
+							ticker.quote_currency=product.symbol2;
+							
+							var chart_data=[];
+							_.forEach(charts,function(chart){
+								chart=_.filter(chart.tickers,{product:product.symbol1+product.symbol2});
+								if(!_.isEmpty(chart)){
+									chart=_.head(chart);
+									chart_data.push(chart.bid);
+								}
+							});
+							
+							chart_data.push(ticker.bid);
+							ticker.chart=chart_data;
+							return ticker;
+						}).
+						catch(err => { 
+							ApiService.exchangeErrors('cex','api',err,'tickers_api_select',curDateTime);
+						});
+					})).
+					then(tickers => {
+						var tickers_data=[];	
+						_.forEach(tickers,function(ticker){
+							if(!_.isEmpty(ticker)){
+								tickers_data.push(ticker);
+							}
+						});
+						if(!_.isEmpty(tickers_data)){
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('cex','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+					}).
+					catch(err => { 
+						ApiService.exchangeErrors('cex','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}
+		});
 	},
 	
 	createExchangeTickers2:function(){
@@ -1748,7 +1833,7 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT BITMEX PRODUCTS/MARKETS TICKERS
+		//PROCESS TO INSERT BITMEX PRODUCT/MARKET TICKERS
 		ExchangeList.findOne({name:'bitmex'},function(err,data){ 
 			if(err){ 
 				ApiService.exchangeErrors('bitmex','query_select',err,'tickers_select',curDateTime);
@@ -1760,7 +1845,7 @@ module.exports = {
 						ApiService.exchangeErrors('bitmex','query_select',err,'tickers_select',curDateTime);
 					}
 					
-					ApiService.bitMexTicker().then(tickers=>{
+					ApiService.bitmexTicker().then(tickers=>{
 						tickers=JSON.parse(tickers);
 						if(_.isEmpty(tickers.error)){
 							tickers=_.reject(tickers,{settledPrice:null});
@@ -1788,6 +1873,53 @@ module.exports = {
 					}).
 					catch(err=> { 
 						ApiService.exchangeErrors('bitmex','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});
+		
+		//PROCESS TO CREATE LIVECOIN MARKET TICKERS
+		ExchangeList.findOne({name:'livecoin'},function(err,data){ 
+			if(err){ 
+				ApiService.exchangeErrors('livecoin','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('livecoin','query_select',err,'tickers_select',curDateTime);
+					}
+					
+					ApiService.livecoinTicker().then(tickers=>{
+						tickers=JSON.parse(tickers);
+						
+						if(_.isEmpty(tickers.errorCode)){
+						_.forEach(tickers,function(ticker){
+								var chart_data=[];
+								ticker.base_currency=ticker.cur;
+								ticker.quote_currency=_.replace(ticker.symbol,ticker.cur+'/','');
+								ticker.product=_.replace(ticker.symbol,'/','');
+								_.forEach(charts,function(chart){
+									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.last);
+									}
+								});
+								chart_data.push(ticker.last);
+								ticker.chart=chart_data;
+							});
+						}	
+					
+						ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+							if(err){ 
+								ApiService.exchangeErrors('livecoin','query_insert',err,'tickers_insert',curDateTime);
+							}
+						});
+						
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('livecoin','api',err,'tickers_api_select',curDateTime);
 					});
 				});
 			}	
@@ -1883,10 +2015,13 @@ module.exports = {
 				ExchangeDataService.wexMarketData(),
 				ExchangeDataService.exmoMarketData(),
 				ExchangeDataService.liquiMarketData(),
-				ExchangeDataService.korbitMarketData()
+				ExchangeDataService.korbitMarketData(),
+				ExchangeDataService.bitmexMarketData(),
+				ExchangeDataService.livecoinMarketData(),
+				ExchangeDataService.cexMarketData()
 			]
 			).then(response => { 
-				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data};
+				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data};
 				var total_crypto_prices=[];
 				
 				_.forEach(Object.keys(exchange_objects),function(exchange){
@@ -2022,6 +2157,24 @@ module.exports = {
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+							break;
+							case 'bitmex':
+								product=_.toLower(_.replace(ticker.symbol,'_',''));        
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.settledPrice,volume:ticker.totalVolume});
+							break;
+							case 'livecoin':
+								product=_.toLower(ticker.product);        
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume});
+							break;
+							case 'cex':
+								product=_.toLower(ticker.product);        
+								base_currency=_.toLower(ticker.base_currency);
+								quote_currency=_.toLower(ticker.quote_currency);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
 							break;
 						}
 					});	

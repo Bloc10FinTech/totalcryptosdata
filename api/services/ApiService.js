@@ -714,11 +714,59 @@ module.exports = {
 		});
 	},
 	
-	bitMexTicker:function(){
+	bitmexTicker:function(){
 		var request = require('request');
 		return new Promise(function(resolve, reject){
 			var options = {
 			  url: 'https://www.bitmex.com/api/v1/instrument?count=500',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
+	livecoinTicker:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://api.livecoin.net/exchange/ticker',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
+	cexProducts:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://cex.io/api/currency_limits',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
+	cexMarketTicker:function(base_currency,quote_currency){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://cex.io/api/ticker/'+base_currency+'/'+quote_currency,
 			  headers: {
 				'User-Agent': 'request'
 			  }

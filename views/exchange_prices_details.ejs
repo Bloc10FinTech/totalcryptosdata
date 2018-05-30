@@ -57,6 +57,10 @@
 									KORBIT
 									<%}else if(tab=='bitmex') {%>
 									BITMEX
+									<%}else if(tab=='livecoin') {%>
+									LIVECOIN
+									<%}else if(tab=='cex') {%>
+									cex
 									<%}%>
 									</h5>
 									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#coins" aria-expanded="false" aria-controls="collapseExample"></i>
@@ -220,6 +224,20 @@
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Total Volume</th>
+													<%}else if(tab=='livecoin') {%>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Low</th>
+													<%}else if(tab=='cex') {%>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Low</th>
 													<%}%>
 													
 													<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Chart 1d</th>
@@ -1077,6 +1095,68 @@ function show_tab_data(tab){
 						str+='<td>';
 						str+='<div class="row">';
 						str+='<div class="col-md-12" id="chart_'+summary.symbol+'_bitmex"><input type="hidden" id="hidden_'+summary.symbol+'_bitmex" value="'+summary.chart+'" /></div>';
+						str+='</div>';
+						str+='</td>';
+						str+='</tr>';
+						});
+					break;
+					case 'livecoin':
+						data.forEach(function(summary,index){
+						var even_odd_class='even';
+						if(index%2==0){
+							even_odd_class='odd';
+						}
+						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_livecoin">';
+						str+='<td class="sorting_1">'+(index+1)+'</td>';
+						str+='<td class="text-bold">';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+=summary.base_currency.toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td class="text-bold">';
+						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+						str+=summary.product.replace('_','').toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td id="'+summary.product+'_price_livecoin">'+parseFloat(summary.last).toFixed(8)+'</td>';
+						str+='<td id="'+summary.product+'_vol_livecoin">'+Math.round(parseFloat(summary.volume))+'</td>';
+						str+='<td id="'+summary.product+'_livecoin_high">'+summary.high+'</td>';
+						str+='<td id="'+summary.product+'_livecoin_low">'+summary.low+'</td>';
+						str+='<td>';
+						str+='<div class="row">';
+						str+='<div class="col-md-12" id="chart_'+summary.product+'_livecoin"><input type="hidden" id="hidden_'+summary.product+'_livecoin" value="'+summary.chart+'" /></div>';
+						str+='</div>';
+						str+='</td>';
+						str+='</tr>';
+						});
+					break;
+					case 'cex':
+						data.forEach(function(summary,index){
+						var even_odd_class='even';
+						if(index%2==0){
+							even_odd_class='odd';
+						}
+						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_cex">';
+						str+='<td class="sorting_1">'+(index+1)+'</td>';
+						str+='<td class="text-bold">';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+						str+=summary.base_currency.toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td class="text-bold">';
+						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+						str+=summary.product.toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td id="'+summary.product+'_price_cex">'+parseFloat(summary.bid)+'</td>';
+						str+='<td id="'+summary.product+'_vol_cex">'+Math.round(parseFloat(summary.volume))+'</td>';
+						str+='<td id="'+summary.product+'_high_cex">'+summary.high+'</td>';
+						str+='<td id="'+summary.product+'_low_cex">'+summary.low+'</td>';
+						str+='<td>';
+						str+='<div class="row">';
+						str+='<div class="col-md-12" id="chart_'+summary.product+'_cex"><input type="hidden" id="hidden_'+summary.product+'_cex" value="'+summary.chart+'" /></div>';
 						str+='</div>';
 						str+='</td>';
 						str+='</tr>';

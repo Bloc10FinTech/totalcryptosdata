@@ -79,16 +79,16 @@
 						</div>
 					</li>
 					<% 
-					var exchange_sub_menu=['/exchange_prices/coin','/exchange_prices/bittrex','/exchange_prices/bitfinex','/exchange_prices/hitbtc','/exchange_prices/gate','/exchange_prices/kuna','/exchange_prices/okex','/exchange_prices/binance','/exchange_prices/huobi','/exchange_prices/gemini','/exchange_prices/kraken','/exchange_prices/bitflyer','/exchange_prices/bithumb','/exchange_prices/bitstamp','/exchange_prices/bitz','/exchange_prices/lbank','/exchange_prices/coinone','/exchange_prices/wex','/exchange_prices/exmo','/exchange_prices/liqui','/exchange_prices/korbit','/exchange_prices/bitmex'];
+					var exchange_sub_menu=['/exchange_prices/coin','/exchange_prices/bittrex','/exchange_prices/bitfinex','/exchange_prices/hitbtc','/exchange_prices/gate','/exchange_prices/kuna','/exchange_prices/okex','/exchange_prices/binance','/exchange_prices/huobi','/exchange_prices/gemini','/exchange_prices/kraken','/exchange_prices/bitflyer','/exchange_prices/bithumb','/exchange_prices/bitstamp','/exchange_prices/bitz','/exchange_prices/lbank','/exchange_prices/coinone','/exchange_prices/wex','/exchange_prices/exmo','/exchange_prices/liqui','/exchange_prices/korbit','/exchange_prices/bitmex','/exchange_prices/livecoin','/exchange_prices/cex'];
 					
-					var exchange_sub_menu_details=['/exchange_prices/coin/details','/exchange_prices/bittrex/details','/exchange_prices/bitfinex/details','/exchange_prices/hitbtc/details','/exchange_prices/gate/details','/exchange_prices/kuna/details','/exchange_prices/okex/details','/exchange_prices/binance/details','/exchange_prices/huobi/details','/exchange_prices/gemini/details','/exchange_prices/kraken/details','/exchange_prices/bitflyer/details','/exchange_prices/bithumb/details','/exchange_prices/bitstamp/details','/exchange_prices/bitz/details','/exchange_prices/lbank/details','/exchange_prices/coinone/details','/exchange_prices/wex/details','/exchange_prices/exmo/details','/exchange_prices/liqui/details','/exchange_prices/korbit/details','/exchange_prices/bitmex/details'];
+					var exchange_sub_menu_details=['/exchange_prices/coin/details','/exchange_prices/bittrex/details','/exchange_prices/bitfinex/details','/exchange_prices/hitbtc/details','/exchange_prices/gate/details','/exchange_prices/kuna/details','/exchange_prices/okex/details','/exchange_prices/binance/details','/exchange_prices/huobi/details','/exchange_prices/gemini/details','/exchange_prices/kraken/details','/exchange_prices/bitflyer/details','/exchange_prices/bithumb/details','/exchange_prices/bitstamp/details','/exchange_prices/bitz/details','/exchange_prices/lbank/details','/exchange_prices/coinone/details','/exchange_prices/wex/details','/exchange_prices/exmo/details','/exchange_prices/liqui/details','/exchange_prices/korbit/details','/exchange_prices/bitmex/details','/exchange_prices/livecoin/details','/exchange_prices/cex/details'];
 					%>
 					<li class="nav-item dropdown <%if((exchange_sub_menu.indexOf(path)=='-1') && (exchange_sub_menu_details.indexOf(path)=='-1')){%>'' <%}else{%> active<%}%>">
 						<a class="nav-link" href="#" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Market</a>
 						<div class="dropdown-menu" aria-labelledby="dropdown04"> 
 						<div class="row">
 						<div class="col-sm-6">
-						<ul class="multi-column-dropdown">
+							<ul class="multi-column-dropdown">
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/coin') || (path=='/exchange_prices/coin/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/coin">COIN</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bittrex') || (path=='/exchange_prices/bittrex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bittrex">BITTREX</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitfinex') || (path=='/exchange_prices/bitfinex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitfinex">BITFINEX</a></li>
@@ -100,11 +100,11 @@
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/huobi') || (path=='/exchange_prices/huobi/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/huobi">HUOBI</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/gemini') || (path=='/exchange_prices/gemini/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/gemini">GEMINI</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/kraken') || (path=='/exchange_prices/kraken/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/kraken">KRAKEN</a></li>
-						</ul>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitflyer') || (path=='/exchange_prices/bitflyer/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitflyer">BITFLYER</a></li>
+							</ul>
 						</div>
 						<div class="col-sm-6">
-								<ul class="multi-column-dropdown">
-								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitflyer') || (path=='/exchange_prices/bitflyer/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitflyer">BITFLYER</a></li>
+							<ul class="multi-column-dropdown">
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bithumb') || (path=='/exchange_prices/bithumb/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bithumb">BITHUMB</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitstamp') || (path=='/exchange_prices/bitstamp/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitstamp">BITSTAMP</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitz') || (path=='/exchange_prices/bitz/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitz">BITZ</a></li>
@@ -115,7 +115,9 @@
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/liqui') || (path=='/exchange_prices/liqui/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/liqui">LIQUI</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/korbit') || (path=='/exchange_prices/korbit/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/korbit">KORBIT</a></li>
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/bitmex') || (path=='/exchange_prices/bitmex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/bitmex">BITMEX</a></li>
-						</ul> 
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/livecoin') || (path=='/exchange_prices/livecoin/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/livecoin">LIVECOIN</a></li>
+								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/cex') || (path=='/exchange_prices/cex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/cex">CEX</a></li>
+							</ul> 
 						</div>
 					</li>
 					<li class="nav-item dropdown <%if(path=='/TCindex'){%>active <%}else{%> ''<%}%>">

@@ -724,6 +724,64 @@ module.exports = {
 		});
 	},
 	
+	livecoinMarketData:function(count=0){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeList.findOne({name:'livecoin'},function(err, livecoinExchange){
+				if(!_.isEmpty(livecoinExchange)){
+					var livecoinTickers=ExchangeTickers.findOne();
+					livecoinTickers.where({exchange_id:livecoinExchange.id});
+					livecoinTickers.sort('id DESC');
+					livecoinTickers.exec(function(err,livecoinTickers){
+						if(!_.isEmpty(livecoinTickers)){
+							livecoinTickers=livecoinTickers.tickers;
+							livecoinTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+							if(count>0){
+								livecoinTickers=_.slice(livecoinTickers,0,count);
+							}
+							return resolve({name:livecoinExchange.name,url:livecoinExchange.url,is_exchange:livecoinExchange.is_exchange,data:livecoinTickers});
+						}
+						else{
+							return resolve({name:'',url:'',is_exchange:'',data:[]});
+						}
+					});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
+	cexMarketData:function(count=0){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeList.findOne({name:'cex'},function(err, cexExchange){
+				if(!_.isEmpty(cexExchange)){
+					var cexTickers=ExchangeTickers.findOne();
+					cexTickers.where({exchange_id:cexExchange.id});
+					cexTickers.sort('id DESC');
+					cexTickers.exec(function(err,cexTickers){
+						if(!_.isEmpty(cexTickers)){
+							cexTickers=cexTickers.tickers;
+							cexTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+							if(count>0){
+								cexTickers=_.slice(cexTickers,0,count);
+							}
+							return resolve({name:cexExchange.name,url:cexExchange.url,is_exchange:cexExchange.is_exchange,data:cexTickers});
+						}
+						else{
+							return resolve({name:'',url:'',is_exchange:'',data:[]});
+						}
+					});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
 	totalCryptoPricesUsd:function(count=0){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
