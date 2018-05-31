@@ -176,6 +176,11 @@
 	<footer class="footer">
 		<div class="container-fluid">
 			<div class="row">
+				<div class="col-lg-12">
+					<p style="font-size:12px;">CRYPTO CURRENCY TRADING AND INVESTING IS EXTREMELY RISKY AND ONLY SHOULD BE DONE WITH FUNDS YOU CAN AFFORD TO LOSE.&nbsp; IF YOU ARE NOT COMFORTABLE WITH LOSING 100% OF YOUR DEPOSIT CONSIDER GETTING A BLOCKCHAIN JOB INSTEAD.&nbsp; PAST PERFORMANCE DOES NOT IMPLY FUTURE RESULTS.&nbsp; CRYPTO IS NOT SUITABLE FOR ALL INVESTORS.&nbsp; PLEASE CONSULT YOUR FINANCIAL ADVISOR IF YOU ARE CONCERNED ABOUT THE HIGH RISKS ASSOCIATED WITH CRYPTO CURRENCY.&nbsp; CRYPTO CURRENCY IS UNREGULATED AND THEREFORE ANY PROTECTIONS OFFERED BY REGULATIONS ARE NON-EXISTANT.&nbsp; THEREFORE DO NOT BE SURPRISED IF BITCOIN GOES TO ZERO IT IS UNLIKELY BUT POSSIBLE.&nbsp; THIS BRIEF RISK DISCLOSURE SUMMARY CANNOT INCLUDE ALL THE POSSIBLE RISKS ASSOCIATED WITH CRYPTO CURRENCY INVESTMENT.&nbsp; FOR A FULL RISK DISCLOSURE CLICK HERE:&nbsp;<a style="color: #fff; text-decoration-line: underline; outline: 0px; text-align: center;" href="#">Risk Disclosure</a></p>
+				</div>
+			</div>
+			<div class="row">
 				<div class="col-lg-4 color-options" id="color-options">
 					<h4>Color Options</h4>
 					<ul class="color-options-list">
@@ -258,7 +263,11 @@
 				  str+=product.display_name;
 				  str+='</a>';
 				  str+='</h5>';
-                  str+='<h4 class="card-price">'+parseFloat(product.ticker.variation).toFixed(2)+'%</h4>';
+				  str+='<h4 class="card-price">';
+				  if(product.ticker.variation){
+					str+=parseFloat(product.ticker.variation).toFixed(2)+'%';
+				  }
+				  str+='</h4>';
                   str+='</div>';
                   str+='<div class="stock-content text-right">';
                   str+='<p class="card-text">'+parseFloat(product.ticker.price).toFixed(2)+' '+product.quote_currency+'</p>';
@@ -293,7 +302,7 @@
 				//PROCESS TO MANAGE CRYPTO DATA
 				var cryptoData=data.cryptoData;
 				$(".tc100").html("$"+cryptoData.tc100);
-				$(".total_usd_market_cap").html("$"+cryptoData.total_usd_market_cap);
+				$(".total_usd_market_cap").html("$"+cryptoData.total_usd_market_cap.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 				$(".tcw100").html(cryptoData.tcw100);
 				
 				//PROCESS TO MANAGE TOP PRODUCTS DATA

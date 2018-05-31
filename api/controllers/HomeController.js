@@ -18,7 +18,7 @@ module.exports = {
   tabData:function(request, response){
 	  FrontendService.tabData(request.param('tab'),function(data){
 		  response.send(data);
-	  },10);
+	  },50);
   },
   tabDataAll:function(request, response){
 	  FrontendService.tabData(request.param('tab'),function(data){

@@ -465,11 +465,34 @@ module.exports = {
 						}
 					});
 					if(!_.isEmpty(tickers_data)){
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+						
+						//PROCESS TO SYNC WITH LAST ENTRY
+						var last_tickers=ExchangeTickers.findOne();
+						last_tickers.where({exchange_id:exchange_id});
+						last_tickers.sort('id DESC');
+						last_tickers.exec(function(err,last_tickers){
 							if(err){ 
-								ApiService.exchangeErrors('gdax','query_insert',err,'tickers_insert',curDateTime);
+								ApiService.exchangeErrors('gdax','query_select',err,'tickers_select',curDateTime);
 							}
+							
+							if(!_.isEmpty(last_tickers)){
+								last_tickers=last_tickers.tickers;
+								_.forEach(last_tickers,function(ticker){
+									var filter=_.filter(tickers_data,{product_id:ticker.product_id});
+									if(_.isEmpty(filter)){
+										tickers_data.push(ticker);
+									}
+								});
+							}
+							
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('gdax','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+							
 						});
+						
 					}
 				}).
 				catch(err=> { 
@@ -505,11 +528,34 @@ module.exports = {
 						}
 					});
 					if(!_.isEmpty(stats_data)){
-						ExchangeStats.create({exchange_id:exchange_id,stats:stats_data,date_created:curDateTime},function(err,data){
+						
+						//PROCESS TO SYNC WITH LAST ENTRY
+						var last_stats=ExchangeStats.findOne();
+						last_stats.where({exchange_id:exchange_id});
+						last_stats.sort('id DESC');
+						last_stats.exec(function(err,last_stats){
 							if(err){ 
-								ApiService.exchangeErrors('gdax','query_insert',err,'stats_insert',curDateTime);
+								ApiService.exchangeErrors('gdax','query_select',err,'stats_select',curDateTime);
 							}
-						});	
+							
+							if(!_.isEmpty(last_stats)){
+								last_stats=last_stats.stats;
+								_.forEach(last_stats,function(stat){
+									var filter=_.filter(stats_data,{product_id:stat.product_id});
+									if(_.isEmpty(filter)){
+										stats_data.push(stat);
+									}
+								});
+							}
+							
+							ExchangeStats.create({exchange_id:exchange_id,stats:stats_data,date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('gdax','query_insert',err,'stats_insert',curDateTime);
+								}
+							});	
+							
+						});
+						
 					}
 				}).
 				catch(err=> { 
@@ -544,11 +590,34 @@ module.exports = {
 						}
 					});
 					if(!_.isEmpty(trades_data)){
-						ExchangeTrades.create({exchange_id:exchange_id,trades:trades_data,date_created:curDateTime},function(err,data){
+						
+						//PROCESS TO SYNC WITH LAST ENTRY
+						var last_trades=ExchangeTrades.findOne();
+						last_trades.where({exchange_id:exchange_id});
+						last_trades.sort('id DESC');
+						last_trades.exec(function(err,last_trades){
 							if(err){ 
-								ApiService.exchangeErrors('gdax','query_insert',err,'trades_insert',curDateTime);
+								ApiService.exchangeErrors('gdax','query_select',err,'trades_select',curDateTime);
 							}
-						});	
+							
+							if(!_.isEmpty(last_trades)){
+								last_trades=last_trades.trades;
+								_.forEach(last_trades,function(trade){
+									var filter=_.filter(trades_data,{product_id:trade.product_id});
+									if(_.isEmpty(filter)){
+										trades_data.push(trade);
+									}
+								});
+							}
+							
+							ExchangeTrades.create({exchange_id:exchange_id,trades:trades_data,date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('gdax','query_insert',err,'trades_insert',curDateTime);
+								}
+							});	
+							
+						});
+						
 					}
 				}).
 				catch(err=> { 
@@ -563,7 +632,6 @@ module.exports = {
 				ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);
 			}
 			if(!_.isEmpty(data)){
-				var exchange_id=data.id;
 				var exchange_id=data.id;
 				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){ 
 					if(err){  
@@ -597,11 +665,33 @@ module.exports = {
 							});	
 							
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('kuna','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('kuna','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch (e){
 							ApiService.exchangeErrors('kuna','api',e,'tickers_api_select',curDateTime);
@@ -657,10 +747,32 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('okex','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('okex','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+								
 							});
 						}
 					}).
@@ -724,11 +836,34 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('gemini','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('gemini','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+								
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -795,11 +930,34 @@ module.exports = {
 						});
 						
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('kraken','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('kraken','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+								
 							});
+					
 						}
 					}).
 					catch(err => { 
@@ -861,11 +1019,34 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('bitflyer','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('bitflyer','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+								
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -893,31 +1074,56 @@ module.exports = {
 							if(parseInt(tickers.status)==0){
 								var temp=[];
 								_.forEach(Object.keys(tickers.data),function(currency){
-									var ticker=tickers.data[currency];
-									ticker.base_currency=currency;
-									ticker.quote_currency='KRW';
-									ticker.product=currency+'KRW';
-									
-									var chart_data=[];
-									_.forEach(charts,function(chart){
-										chart=_.filter(chart.tickers,{product:currency+'KRW'});
-										if(!_.isEmpty(chart)){
-											chart=_.head(chart);
-											chart_data.push(chart.sell_price);
-										}
-									});
-									
-									chart_data.push(ticker.sell_price);
-									ticker.chart=chart_data;
-									temp.push(ticker);
-								});
-								tickers=temp;
-								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-								date_created:curDateTime},function(err, data){
-									if(err){ 
-										ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);
+									if(currency!='date'){
+										var ticker=tickers.data[currency];
+										ticker.base_currency=currency;
+										ticker.quote_currency='KRW';
+										ticker.product=currency+'KRW';
+										
+										var chart_data=[];
+										_.forEach(charts,function(chart){
+											chart=_.filter(chart.tickers,{product:currency+'KRW'});
+											if(!_.isEmpty(chart)){
+												chart=_.head(chart);
+												chart_data.push(chart.sell_price);
+											}
+										});
+										
+										chart_data.push(ticker.sell_price);
+										ticker.chart=chart_data;
+										temp.push(ticker);
 									}
 								});
+								tickers=temp;
+								
+								//PROCESS TO SYNC WITH LAST ENTRY
+								var last_tickers=ExchangeTickers.findOne();
+								last_tickers.where({exchange_id:exchange_id});
+								last_tickers.sort('id DESC');
+								last_tickers.exec(function(err,last_tickers){
+									if(err){ 
+										ApiService.exchangeErrors('bithumb','query_select',err,'tickers_select',curDateTime);
+									}
+									
+									if(!_.isEmpty(last_tickers)){
+										last_tickers=last_tickers.tickers;
+										_.forEach(last_tickers,function(ticker){
+											if(!_.isEmpty(ticker.product)){
+												var filter=_.filter(tickers,{product:ticker.product});
+												if(_.isEmpty(filter)){
+													tickers.push(ticker);
+												}
+											}
+										});
+									}
+									
+									ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+										if(err){ 
+											ApiService.exchangeErrors('bithumb','query_insert',err,'tickers_insert',curDateTime);
+										}
+									});
+								});
+								
 							}
 						}
 						catch(e){
@@ -976,11 +1182,33 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('bitstamp','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('bitstamp','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -1021,12 +1249,33 @@ module.exports = {
 								chart_data.push(ticker.ticker.latest);
 								ticker.chart=chart_data;
 							});
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-							date_created:curDateTime},function(err, data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('lbank','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{symbol:ticker.symbol});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('lbank','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch(e){
 							ApiService.exchangeErrors('lbank','api',e,'tickers_api_select',curDateTime);
@@ -1079,12 +1328,33 @@ module.exports = {
 								});
 							}	
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-							date_created:curDateTime},function(err, data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('coinone','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('coinone','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch(e){
 							ApiService.exchangeErrors('coinone','api',e,'tickers_api_select',curDateTime);
@@ -1136,12 +1406,33 @@ module.exports = {
 							});
 				
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-							date_created:curDateTime},function(err, data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('wex','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('wex','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch(e){ 
 							ApiService.exchangeErrors('wex','api',e,'tickers_api_select',curDateTime);
@@ -1192,12 +1483,33 @@ module.exports = {
 							});
 				
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-							date_created:curDateTime},function(err, data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('exmo','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('exmo','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch(e){
 							ApiService.exchangeErrors('exmo','api',e,'tickers_api_select',curDateTime);
@@ -1255,11 +1567,33 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('korbit','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('korbit','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -1314,11 +1648,33 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('cex','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('cex','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers_data,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers_data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('cex','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -1353,7 +1709,7 @@ module.exports = {
 					ApiService.bittrexMarketSummaries().then(tickers=>{
 						if(_.isEmpty(JSON.parse(tickers).message)){
 							 tickers=JSON.parse(tickers);
-							 
+							 var temp=[];
 							 _.forEach(tickers.result,function(ticker){
 								 var product=_.filter(products,{MarketName:ticker.MarketName});
 								 if(!_.isEmpty(product)){
@@ -1378,14 +1734,38 @@ module.exports = {
 									});
 									chart_data.push(ticker.Last);
 									ticker.chart=chart_data;
+									temp.push(ticker);
 								 }
 							 });
-							 
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+							 tickers.result=temp;
+							 //PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('bittrex','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers.result;
+									_.forEach(last_tickers,function(ticker){
+										if(!_.isEmpty(ticker.BaseCurrency)){
+											var filter=_.filter(tickers.result,{MarketName:ticker.MarketName});
+											if(_.isEmpty(filter)){
+												tickers.result.push(ticker);
+											}
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('bittrex','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 					}).
 					catch(err=> { 
@@ -1422,11 +1802,35 @@ module.exports = {
 							ticker.chart=chart_data;
 						});
 						
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+						 //PROCESS TO SYNC WITH LAST ENTRY
+						var last_tickers=ExchangeTickers.findOne();
+						last_tickers.where({exchange_id:exchange_id});
+						last_tickers.sort('id DESC');
+						last_tickers.exec(function(err,last_tickers){
 							if(err){ 
-								ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);
+								ApiService.exchangeErrors('coinmarketcap','query_select',err,'tickers_select',curDateTime);
 							}
+							
+							if(!_.isEmpty(last_tickers)){
+								last_tickers=last_tickers.tickers;
+								_.forEach(last_tickers,function(ticker){
+									var filter=_.filter(tickers,{symbol:ticker.symbol});
+									if(_.isEmpty(filter)){
+										tickers.push(ticker);
+									}
+								});
+							}
+							
+							tickers=_.reject(tickers,{market_cap_usd:null});
+							tickers=_.reject(tickers,{percent_change_1h:null});
+							tickers=_.reject(tickers,{percent_change_24h:null});
+							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+								if(err){ 
+									ApiService.exchangeErrors('coinmarketcap','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
 						});
+						
 					}).
 					catch(err=> { 
 						ApiService.exchangeErrors('coinmarketcap','api',err,'tickers_api_select',curDateTime);
@@ -1477,11 +1881,33 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('bitfinex','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product_id:ticker.product_id});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('bitfinex','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -1503,6 +1929,7 @@ module.exports = {
 					if(err){ 
 						ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);
 					}
+					var temp=[];
 					ApiService.hitbtcMarketTicker().then(tickers=>{
 						try{ 
 							tickers=JSON.parse(tickers);
@@ -1525,14 +1952,40 @@ module.exports = {
 									
 									chart_data.push(ticker.bid);
 									ticker.chart=chart_data;
+									temp.push(ticker);
 								}
+							});
+							tickers=temp;
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
+								if(err){ 
+									ApiService.exchangeErrors('hitbtc','query_select',err,'tickers_select',curDateTime);
+								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										if(!_.isEmpty(ticker.baseCurrency)){
+											var filter=_.filter(tickers,{symbol:ticker.symbol});
+											if(_.isEmpty(filter)){
+												tickers.push(ticker);
+											}
+										}
+									});
+								}
+								
+								tickers=_.reject(tickers,{bid:null});
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
 							
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
-								if(err){ 
-									ApiService.exchangeErrors('hitbtc','query_insert',err,'tickers_insert',curDateTime);
-								}
-							});
 						}
 						catch(e){ 
 							ApiService.exchangeErrors('hitbtc','api',e,'tickers_api_select',curDateTime);
@@ -1581,11 +2034,33 @@ module.exports = {
 							});
 							
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('gate','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('gate','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch(e){
 							ApiService.exchangeErrors('gate','api',e,'tickers_api_select',curDateTime);
@@ -1614,7 +2089,7 @@ module.exports = {
 					then(tickers => {
 						try{
 							tickers=JSON.parse(tickers);
-							
+							var temp=[];
 							_.forEach(tickers,function(ticker){
 								var product=_.filter(products,{symbol:ticker.symbol});
 								if(!_.isEmpty(product)){
@@ -1631,15 +2106,39 @@ module.exports = {
 									});
 									chart_data.push(ticker.lastPrice);
 									ticker.chart=chart_data;
+									temp.push(ticker);
 								}
+							});
+							tickers=temp;
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
+								if(err){ 
+									ApiService.exchangeErrors('binance','query_select',err,'tickers_select',curDateTime);
+								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										if(!_.isEmpty(ticker.baseAsset)){
+											var filter=_.filter(tickers,{symbol:ticker.symbol});
+											if(_.isEmpty(filter)){
+												tickers.push(ticker);
+											}
+										}	
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
 							
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-							date_created:curDateTime},function(err, data){
-								if(err){ 
-									ApiService.exchangeErrors('binance','query_insert',err,'tickers_insert',curDateTime);
-								}
-							});
 						}
 						catch(e){
 							ApiService.exchangeErrors('binance','api',e,'tickers_api_select',curDateTime);
@@ -1706,11 +2205,33 @@ module.exports = {
 							}
 						});
 						if(!_.isEmpty(tickers_data)){
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('huobi','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers_data,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('huobi','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 					}).
 					catch(err => { 
@@ -1758,11 +2279,32 @@ module.exports = {
 								});
 								tickers=temp;
 							
-								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+								//PROCESS TO SYNC WITH LAST ENTRY
+								var last_tickers=ExchangeTickers.findOne();
+								last_tickers.where({exchange_id:exchange_id});
+								last_tickers.sort('id DESC');
+								last_tickers.exec(function(err,last_tickers){
 									if(err){ 
-										ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);
+										ApiService.exchangeErrors('bitz','query_select',err,'tickers_select',curDateTime);
 									}
+									
+									if(!_.isEmpty(last_tickers)){
+										last_tickers=last_tickers.tickers;
+										_.forEach(last_tickers,function(ticker){
+											var filter=_.filter(tickers,{product:ticker.product});
+											if(_.isEmpty(filter)){
+												tickers.push(ticker);
+											}
+										});
+									}
+									
+									ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+										if(err){ 
+											ApiService.exchangeErrors('bitz','query_insert',err,'tickers_insert',curDateTime);
+										}
+									});
 								});
+							
 							}
 						}
 						catch (e){
@@ -1815,12 +2357,33 @@ module.exports = {
 							});
 				
 							tickers=temp;
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,
-							date_created:curDateTime},function(err, data){
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('liqui','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err, data){
+									if(err){ 
+										ApiService.exchangeErrors('liqui','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+							
 						}
 						catch(e){ 
 							ApiService.exchangeErrors('liqui','api',e,'tickers_api_select',curDateTime);
@@ -1863,12 +2426,34 @@ module.exports = {
 								chart_data.push(ticker.settledPrice);
 								ticker.chart=chart_data;
 							});
-						
-							ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+							
+							
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
 								if(err){ 
-									ApiService.exchangeErrors('bitmex','query_insert',err,'tickers_insert',curDateTime);
+									ApiService.exchangeErrors('bitmex','query_select',err,'tickers_select',curDateTime);
 								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{symbol:ticker.symbol});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('bitmex','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
 							});
+						
 						}
 					}).
 					catch(err=> { 
@@ -1909,14 +2494,34 @@ module.exports = {
 								chart_data.push(ticker.last);
 								ticker.chart=chart_data;
 							});
+						
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
+								if(err){ 
+									ApiService.exchangeErrors('livecoin','query_select',err,'tickers_select',curDateTime);
+								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers,function(ticker){
+										var filter=_.filter(tickers,{product:ticker.product});
+										if(_.isEmpty(filter)){
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('livecoin','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+							});
 						}	
 					
-						ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
-							if(err){ 
-								ApiService.exchangeErrors('livecoin','query_insert',err,'tickers_insert',curDateTime);
-							}
-						});
-						
 					}).
 					catch(err=> { 
 						ApiService.exchangeErrors('livecoin','api',err,'tickers_api_select',curDateTime);
