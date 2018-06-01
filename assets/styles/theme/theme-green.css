@@ -250,6 +250,33 @@ a {
 .sub-menu {
   margin-top: 1rem; }
 
+  .custom-dropdown {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  .custom-dropdown-btn {
+    background-color: #fff;
+    border: 1px solid #ddd;
+  }
+  .custom-dropdown-menu {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0px !important;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    -moz-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    -ms-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+  }
+  .custom-dropdown-menu-title {
+    font-size: 15px;
+    background: #232b33;
+    color: #fff;
+    padding: 10px;
+    margin: 0px !important;
+  }
+
 /* ===========================================
   DATA TABLE CUSTOMISATION START
 ============================================ */

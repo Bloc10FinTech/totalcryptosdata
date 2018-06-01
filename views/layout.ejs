@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/styles/lib/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/lib/c3.min.css">
     <link rel="stylesheet" href="/styles/lib/vendor.css">
+    <link rel="stylesheet" href="/styles/lib/liMarquee.css">
     <!--STYLES END-->
 	<link rel="stylesheet" href="/styles/theme/theme-blue.css">
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
@@ -157,27 +158,25 @@
             </div>
         </div>  
     </header>
-	<div class="container-fluid">
-		<a href="/tc-history">
+	<div class="container-fluid"> 
         <div class="row main-news">
             <div class="col-lg-4 col-md-12 col-sm-12 news-title1">
-                <h5>Price of TC 100: <span class="news-highlights tc100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></h5>
+                <h5><a href="/tc-history">Price of TC 100: <span class="news-highlights tc100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></a></h5>
             </div>
             <div class="col-lg-4 col-md-12 col-sm-12 news-title2">
-                <h5>Total Market Cap in USD: <span class="news-highlights total_usd_market_cap"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></h5>
+                <h5><a href="/tc-history">Total Market Cap in USD: <span class="news-highlights total_usd_market_cap"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></a></h5>
             </div>
             <div class="col-lg-4 col-md-12 col-sm-12 news-title3">
-                <h5>TCw100: <span class="news-highlights tcw100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></h5>
+                <h5><a href="/tc-history">TCw100: <span class="news-highlights tcw100"><img width="15px" height="15px" src="/images/data-loader.gif"/></span></a></h5>
             </div>
-        </div>
-		</a>
+        </div> 
     </div>
 	<%- body %>
 	<footer class="footer">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-lg-12">
-					<p style="font-size:12px;">CRYPTO CURRENCY TRADING AND INVESTING IS EXTREMELY RISKY AND ONLY SHOULD BE DONE WITH FUNDS YOU CAN AFFORD TO LOSE.&nbsp; IF YOU ARE NOT COMFORTABLE WITH LOSING 100% OF YOUR DEPOSIT CONSIDER GETTING A BLOCKCHAIN JOB INSTEAD.&nbsp; PAST PERFORMANCE DOES NOT IMPLY FUTURE RESULTS.&nbsp; CRYPTO IS NOT SUITABLE FOR ALL INVESTORS.&nbsp; PLEASE CONSULT YOUR FINANCIAL ADVISOR IF YOU ARE CONCERNED ABOUT THE HIGH RISKS ASSOCIATED WITH CRYPTO CURRENCY.&nbsp; CRYPTO CURRENCY IS UNREGULATED AND THEREFORE ANY PROTECTIONS OFFERED BY REGULATIONS ARE NON-EXISTANT.&nbsp; THEREFORE DO NOT BE SURPRISED IF BITCOIN GOES TO ZERO IT IS UNLIKELY BUT POSSIBLE.&nbsp; THIS BRIEF RISK DISCLOSURE SUMMARY CANNOT INCLUDE ALL THE POSSIBLE RISKS ASSOCIATED WITH CRYPTO CURRENCY INVESTMENT.&nbsp; FOR A FULL RISK DISCLOSURE CLICK HERE:&nbsp;<a style="color: #fff; text-decoration-line: underline; outline: 0px; text-align: center;" href="#">Risk Disclosure</a></p>
+					<p style="font-size:12px; margin-bottom: 20px;">CRYPTO CURRENCY TRADING AND INVESTING IS EXTREMELY RISKY AND ONLY SHOULD BE DONE WITH FUNDS YOU CAN AFFORD TO LOSE.&nbsp; IF YOU ARE NOT COMFORTABLE WITH LOSING 100% OF YOUR DEPOSIT CONSIDER GETTING A BLOCKCHAIN JOB INSTEAD.&nbsp; PAST PERFORMANCE DOES NOT IMPLY FUTURE RESULTS.&nbsp; CRYPTO IS NOT SUITABLE FOR ALL INVESTORS.&nbsp; PLEASE CONSULT YOUR FINANCIAL ADVISOR IF YOU ARE CONCERNED ABOUT THE HIGH RISKS ASSOCIATED WITH CRYPTO CURRENCY.&nbsp; CRYPTO CURRENCY IS UNREGULATED AND THEREFORE ANY PROTECTIONS OFFERED BY REGULATIONS ARE NON-EXISTANT.&nbsp; THEREFORE DO NOT BE SURPRISED IF BITCOIN GOES TO ZERO IT IS UNLIKELY BUT POSSIBLE.&nbsp; THIS BRIEF RISK DISCLOSURE SUMMARY CANNOT INCLUDE ALL THE POSSIBLE RISKS ASSOCIATED WITH CRYPTO CURRENCY INVESTMENT.&nbsp; FOR A FULL RISK DISCLOSURE CLICK HERE:&nbsp;<a style="color: #fff; text-decoration-line: underline; outline: 0px; text-align: center;" href="#">Risk Disclosure</a></p>
 				</div>
 			</div>
 			<div class="row">
@@ -232,12 +231,13 @@
 	</footer> 
 	<!--SCRIPTS data-->
 	<script src="/js/app.js"></script>
+	<script src="/js/popper.min.js"></script>
 	<script src="/js/bootstrap.min.js"></script>
 	<script src="/js/c3.min.js"></script>
 	<script src="/js/d3.min.js"></script>
-	<script src="/js/jquery.marquee.js"></script>
-	<script src="/js/jquery.sparkline.min.js"></script>
-	<script src="/js/popper.min.js"></script>
+	<!--<script src="/js/jquery.marquee.js"></script>-->
+	<script src="/js/jquery.liMarquee.js"></script>
+	<script src="/js/jquery.sparkline.min.js"></script> 
 	<!--SCRIPTS END-->
 	<script>
 	$(window).load(function() {
@@ -249,12 +249,9 @@
 			url:'/headerFooterData',
 			success:function(data){
 				//PROCESS TO MANAGE GDAX DATA
-				var str='<ul class="row" id="top_exchange" style="list-style:none;">';
+				var str='<div class="row" id="top_exchange">';
 				data.gdax.forEach(function(product){
-				  str+='<li class="marquee_list_item '+product.id+'">';
-		
-				  //str+='<div class="col-lg-2 col-md-6 col-sm-1 header-crypto-item">';
-				  str+='<div class="header-crypto-item" style="width:200px;">';
+				  str+='<div class="header-crypto-item marquee_list_item '+product.id+'" style="width:200px;height:100px;display:inline-block;">';
                   str+='<div class="card">';
                   str+='<div class="card-body">';
                   str+='<div class="stock-title text-left">';
@@ -280,14 +277,11 @@
 				  str+='</div>'; 
                   str+='</div>';
                   str+='</div>';
-				  str+='</li>';
                 });
-				str+='</ul>';
+				str+='</div>';
 				$('.marquee_div').html(str);
-				
-				$('#top_exchange').marquee({direction:'horizontal', delay:0, timing:20});
-        
-			    $("#top_exchange").children('li').each(function(){
+				$('#top_exchange').liMarquee({direction: 'left',loop:-1,scrolldelay: 0,scrollamount:50,circular: true,drag:true});
+			    $("#top_exchange").children('div').children('div').each(function(){
 				var cls=this.className.split(" ");
 				cls=cls[cls.length-1];
 				if($(".hidden_"+cls)){

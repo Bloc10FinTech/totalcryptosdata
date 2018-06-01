@@ -32,7 +32,7 @@ module.exports = {
 			ExchangeDataService.totalCryptoPricesUsd(),
 			ExchangeDataService.totalCryptoPricesPairs(),
 			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
+			ExchangeDataService.totalCryptoPricesUsd(10),
 			FrontendService.gainers_and_losers(10),
 			FrontendService.RSS()
 					]
@@ -48,7 +48,7 @@ module.exports = {
 		return Promise.all([
 			ExchangeDataService.gdaxMarketData(),
 			ExchangeDataService.totalCryptosPrice(),
-			ExchangeDataService.topTotalCryptoPrices(),
+			ExchangeDataService.totalCryptoPricesUsd(10),
 			FrontendService.RSS()
 					]
 		).then(response => { 
@@ -69,6 +69,11 @@ module.exports = {
 			case 'totalcryptospricepairs':
 				return Promise.all([
 					ExchangeDataService.totalCryptoPricesPairs(count)
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
+			break;
+			case 'totalcryptosall':
+				return Promise.all([
+					ExchangeDataService.totalCryptoPricesPairs()
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'coin':

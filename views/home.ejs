@@ -11,6 +11,7 @@
 									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#bigGainers" aria-expanded="false" aria-controls="collapseExample"></i>
 								</div>
 								<div class="collapse show card-content" id="bigGainers">
+								
 									<div id="bigGainers-table_wrapper" class="dataTables_wrapper no-footer">
 										<table class="display table-custom dataTable no-footer bigGainers" style="width: 100%;" role="grid">
 											<thead>
@@ -70,9 +71,22 @@
 									<h5 class="card-title">TOTAL CRYPTOS PRICE</h5>
 									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#coins" aria-expanded="false" aria-controls="collapseExample"></i>
 								</div>
+								
+								<div class="dropdown custom-dropdown">
+									<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Cryptocurrencies
+									</button>
+									<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
+									  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
+									  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
+									  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
+									  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
+									</div>
+								</div>
+								
 								<div class="collapse show card-content" id="coins">
 									<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer">
-										<table class="display table-custom dataTable no-footer totalcryptospricepairs" style="width: 100%;" role="grid">
+										<table class="display table-custom dataTable no-footer totalcryptosprice" style="width: 100%;" role="grid">
 											<thead>
 												<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 10px;">#</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 100px;">Name</th>
@@ -85,11 +99,11 @@
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 112px;">24 Hour Volume</th>
 													<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Chart 1d</th></tr>
 											</thead>
-											<tbody  id="totalcryptospricepairs_market_summary"> 
+											<tbody  id="totalcryptosprice_market_summary"> 
 											</tbody>
 										</table>
 									</div>	
-									<div class="card-footer">
+									<div class="card-footer" id="crypto_footer">
 										<a href="/exchange_prices/totalcryptospricepairs/details" class="btn btn-primary btn-sm pull-right theme-btn">View All</a>
 									</div>
 								</div>
@@ -128,8 +142,8 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-				str+='&nbsp;<a href="/volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
+				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
 				str+=gainer.symbol;
 				str+='</a>';
 				str+'</td>';
@@ -148,8 +162,8 @@ $(document).ready(function(){
 				var str='<tr role="row" class="odd">';
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
-				str+='<img src="/images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-				str+='&nbsp;<a href="/volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
+				str+='<img src="/images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
 				str+=loser.symbol;
 				str+='</a>';
 				str+='</td>';
@@ -164,7 +178,7 @@ $(document).ready(function(){
 	});	
 
 	//PROCESS TO FETCH TOTAL CRYPTO DATA
-	show_tab_data('totalcryptospricepairs');
+	show_totalcrypto_price('totalcryptospriceusd');
 });
 
 function initialize_table(className){
@@ -175,96 +189,92 @@ function initialize_table(className){
     });
 }
 
-function draw_chart(){
-	$("#totalcryptospriceusd_market_summary").children('tr').each(function(){
-		var val=$("#hidden_"+this.id).val();
-		if(val){
-			$("#chart_"+this.id).html('');
-			$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+function show_totalcrypto_price(tab){ 
+	//PROCESS TO SHOW LOADER
+	var cols=$('#totalcryptosprice_market_summary').parent().children('thead').children('tr').children('th').length;
+	$('#totalcryptosprice_market_summary').html('<tr><td colspan="'+cols+'" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$.ajax({
+		type:'GET',
+		//url:'<%= socketURL %>/tabData/'+tab,
+		url:'/tabData/'+tab,
+		success:function(data){ 
+			var str='';
+			data.forEach(function(summary,index){
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+			
+				str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_pairs">';
+				str+='<td class="sorting_1">'+(index+1)+'</td>';
+				str+='<td class="text-bold">';
+				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+				str+=summary.base_currency.toUpperCase();
+				str+='</a>';
+				str+='</td>'; 
+				str+='<td>';
+				str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+				str+=summary.product.replace('_','').toUpperCase();
+				str+='</a>';
+				str+='</td>';
+				str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
+				if(summary.change_perc_1h>0){
+				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+				}else{
+				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+				}
+				str+='</td>';
+				str+='<td id="'+summary.product+'_vol_totalcryptos_pairs">'+Math.round(parseFloat(summary.volume))+'</td>';
+				str+='<td id="'+summary.product+'_high_totalcryptos_pairs">'+parseFloat(summary.high).toFixed(8)+'</td>';
+				str+='<td id="'+summary.product+'_low_totalcryptos_pairs">'+parseFloat(summary.low).toFixed(8)+'</td>';
+				str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_pairs">';
+				if(summary.change_perc_1h>0){
+				str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+				}else{
+				str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+				}
+				str+='</td>';
+				str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_pairs">';
+				if(summary.change_perc_24h>0){
+				str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+				}else{
+				str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+				}
+				str+='</td>';
+				str+='<td>';
+				str+='<div class="row">';
+				str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_pairs"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_pairs" value="'+summary.chart+'" /></div>';
+				str+='</div>';
+				str+='</td>';
+				str+='</tr>';
+			});
+			
+			$('#totalcryptosprice_market_summary').html(str);
+			draw_chart();
+			
+			//MANAGE DROPDOWN OPTION SELECTED
+			$("#total_cryptos_dropdown").children('a').removeClass('active');
+			$("#"+tab).addClass('active');
+			//MANAGE VIEW ALL OPTION ON FOOTER
+			if(tab=='totalcryptosall'){
+				$("#crypto_footer").css({'display':'none'});
+			}
+			else{
+				$("#crypto_footer").css({'display':'block'});
+				$("#crypto_footer").html('<a href="/exchange_prices/'+tab+'/details" class="btn btn-primary btn-sm pull-right theme-btn">View All</a>');
+			}
 		}
-	});
-
-	$("#totalcryptospricepairs_market_summary").children('tr').each(function(){
-		var val=$("#hidden_"+this.id).val();
-		if(val){
-			$("#chart_"+this.id).html('');
-			$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-		}
-	});
+	});	
 }
 
-
-function show_tab_data(tab){
-	if($('#'+tab+'_market_summary').children('tr').length==0){ 
-		//PROCESS TO SHOW LOADER
-		var cols=$('#'+tab+'_market_summary').parent().children('thead').children('tr').children('th').length;
-		$('#'+tab+'_market_summary').append('<tr><td colspan="'+cols+'" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
-		
-		$.ajax({
-			type:'GET',
-			//url:'<%= socketURL %>/tabData/'+tab,
-			url:'/tabData/'+tab,
-			success:function(data){ 
-				var str='';
-				switch(tab){
-					case 'totalcryptospricepairs':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_pairs">';
-						str+='<td class="sorting_1">'+(index+1)+'</td>';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
-						str+='</a>';
-						str+='</td>'; 
-						str+='<td>';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
-						if(summary.change_perc_1h>0){
-						str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_vol_totalcryptos_pairs">'+Math.round(parseFloat(summary.volume))+'</td>';
-						str+='<td id="'+summary.product+'_high_totalcryptos_pairs">'+parseFloat(summary.high).toFixed(8)+'</td>';
-						str+='<td id="'+summary.product+'_low_totalcryptos_pairs">'+parseFloat(summary.low).toFixed(8)+'</td>';
-						str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_pairs">';
-						if(summary.change_perc_1h>0){
-						str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
-						}else{
-						str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_pairs">';
-						if(summary.change_perc_24h>0){
-						str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}else{
-						str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_pairs"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_pairs" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-				}
-				$("#"+tab+'_market_summary').html(str);
-				initialize_table(tab);
-				draw_chart();
-			}
-		});
-	}	
+function draw_chart(){
+	$("#totalcryptosprice_market_summary").children('tr').each(function(){
+		var val=$("#hidden_"+this.id).val();
+		if(val){
+			$("#chart_"+this.id).html('');
+			$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+		}
+	});
 }
 </script>
