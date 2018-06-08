@@ -126,7 +126,10 @@ module.exports = {
   },
   TC_index:function(request,response){
 		return response.view('TCindex',{title: 'Total Cryptos',path:request.path}); 
+  },
+   pro:function(request,response){
+		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
   }
-
+ 
 };
 
