@@ -31,7 +31,7 @@ module.exports = {
 	  },10);
   },
   gainers:function(request,response){
-	  return response.view('gainers', {title: 'Total Cryptos',path:request.path});
+	  return response.view('gainers', {title: 'Total Cryptos - gainers',path:request.path});
   },
   gainers_data:function(request, response){
 	  FrontendService.gainers_data(function(data){
@@ -39,7 +39,7 @@ module.exports = {
 	  });
   },
   losers:function(request,response){
-	  return response.view('losers', {title: 'Total Cryptos',path:request.path});
+	  return response.view('losers', {title: 'Total Cryptos - losers',path:request.path});
   },
   losers_data:function(request, response){
 	  FrontendService.losers_data(function(data){
@@ -47,13 +47,13 @@ module.exports = {
 	  });
   },
   exchange_prices:function(request,response){
-	  return response.view('exchange_prices', {title: 'Total Cryptos',tab:request.param('tab'),path:request.path});
+	  return response.view('exchange_prices', {title: 'Total Cryptos - '+request.param('tab'),tab:request.param('tab'),path:request.path});
   },
   exchange_prices_details:function(request,response){
-	  return response.view('exchange_prices_details', {title: 'Total Cryptos',tab:request.param('tab'),path:request.path});
+	  return response.view('exchange_prices_details', {title: 'Total Cryptos - '+request.param('tab'),tab:request.param('tab'),path:request.path});
   },
   volume_24_hour_currency:function(request, response) {
-	  return response.view('volume_24_hour_currency', {title: 'Total Cryptos',path:request.path});
+	  return response.view('volume_24_hour_currency', {title: 'Total Cryptos - currency',path:request.path});
   },
   
   volume_24_hour_currency_data:function(request, response){
@@ -63,7 +63,7 @@ module.exports = {
   },
   
   volume_24_hour_currency_symbol:function(request,response){
-	  return response.view('volume_24_hour_currency_symbol',{title: 'Total Cryptos',currency: request.param('symbol'),path:request.path}); 
+	  return response.view('volume_24_hour_currency_symbol',{title: 'Total Cryptos - '+request.param('symbol'),currency: request.param('symbol'),path:request.path}); 
   },
   volume_24_hour_currency_symbol_data:function(request,response){
 	  FrontendService.volume_24_hour_currency_symbol_data(request.param('symbol'),function(data){
@@ -71,7 +71,7 @@ module.exports = {
 	  });
   },
   volume_24_hour_market:function(request,response){
-	  return response.view('volume_24_hour_market',{title: 'Total Cryptos',market:request.param('market'),path:request.path}); 
+	  return response.view('volume_24_hour_market',{title: 'Total Cryptos - '+request.param('market'),market:request.param('market'),path:request.path}); 
   },
   
   volume_24_hour_market_data:function(request,response){
@@ -80,7 +80,7 @@ module.exports = {
 	  });
   },
   volume_24_hour_exchange:function(request,response){
-	  return response.view('volume_24_hour_exchange',{title: 'Total Cryptos',path:request.path});
+	  return response.view('volume_24_hour_exchange',{title: 'Total Cryptos - exchange',path:request.path});
   },
   
   volume_24_hour_exchange_data:function(request,response){
@@ -90,7 +90,7 @@ module.exports = {
   },
   
   exchange:function(request,response){
-	return response.view('exchange',{title: 'Total Cryptos',exchangeName:request.param('exchangeName'),path:request.path}); 
+	return response.view('exchange',{title: 'Total Cryptos - '+request.param('exchangeName')+' exchange',exchangeName:request.param('exchangeName'),path:request.path}); 
   },
   
   exchange_data:function(request,response){
@@ -100,7 +100,7 @@ module.exports = {
   },
   
   tc_history:function(request,response){ 
-	  return response.view('tc_history',{title: 'Total Cryptos',path:request.path});
+	  return response.view('tc_history',{title: 'Total Cryptos - tc history',path:request.path});
   },
   tc_history_data:function(request,response){
 	   FrontendService.tc_history_data(function(data){ 
@@ -108,7 +108,7 @@ module.exports = {
 	  });
   },
   gainers_and_losers:function(request,response){
-		return response.view('gainers_and_losers',{title: 'Total Cryptos',path:request.path}); 
+		return response.view('gainers_and_losers',{title: 'Total Cryptos - gainers losers',path:request.path}); 
   },
   
   gainers_and_losers_data:function(request,response){
@@ -118,14 +118,14 @@ module.exports = {
   },
 
   documentation:function(request, response){
-	return response.view('documentation',{title: 'Total Cryptos',path:request.path}); 
+	return response.view('documentation',{title: 'Total Cryptos - documentation',path:request.path}); 
   },	
 
   about:function(request,response){
-	return response.view('about',{title: 'Total Cryptos',path:request.path}); 
+	return response.view('about',{title: 'Total Cryptos - about',path:request.path}); 
   },
   TC_index:function(request,response){
-		return response.view('TCindex',{title: 'Total Cryptos',path:request.path}); 
+		return response.view('TCindex',{title: 'Total Cryptos - tc index',path:request.path}); 
   },
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
