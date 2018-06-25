@@ -144,12 +144,12 @@ $(document).ready(function(){
 				if(index%2==0){
 					class_even_odd='odd';
 				}
-				str+='<tr role="row" id="'+data.product+'" class="'+class_even_odd+'">';
+				str+='<tr role="row" id="'+data.product+(index)+'" class="'+class_even_odd+'">';
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td>'+data.product.toUpperCase()+'</td>';
 				str+='<td>';
 				str+='<div class="row">';
-				str+='<div class="col-md-12" id="chart_'+data.product+'"><input type="hidden" id="hidden_'+data.product+'" value="'+data.chart+'" />';
+				str+='<div class="col-md-12" id="chart_'+data.product+(index)+'"><input type="hidden" id="hidden_'+data.product+(index)+'" value="'+data.chart+'" />';
 				str+='</div>';
 				str+='</div>';
 				str+='</td>';
