@@ -2,6 +2,7 @@ module.exports = {
 	createExchange:function(){
 		console.log('crone job for create exchange working');
 		var moment = require('moment');
+		var _ = require('lodash');
 		var math = require('mathjs');
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		var date_after = moment().subtract(24, 'hours').toDate();
@@ -11,15 +12,49 @@ module.exports = {
 		//PROCESS TO INSERT GDAX STATIC DATA
 		ExchangeList.count({name: 'gdax'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){ 
+			if(count>=0){ 
 				Promise.all([
 					ApiService.gdaxCurrencies(),
 					ApiService.gdaxProducts()
 				]).
-				then(response => { 
-					ExchangeList.create({name:'gdax',url:'https://www.gdax.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+				then(response => {
+					if(count==0){ 
+						ExchangeList.create({name:'gdax',url:'https://www.gdax.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else {
+						ExchangeList.findOne({name:'gdax'},function(err,data){
+							var prev_currencies=data.currencies;
+							var prev_products=data.products;
+							var new_currencies=_.differenceBy(JSON.parse(response[0]), prev_currencies, 'id');
+							var new_products=_.differenceBy(JSON.parse(response[1]), prev_products, 'id');
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'gdax'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('gdax','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product.id,'-',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'gdax',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'exchange_insert',curDateTime);}
+									});
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('gdax','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -28,15 +63,49 @@ module.exports = {
 		//PROCESS TO INSERT BITTREX STATIC DATA
 		ExchangeList.count({name: 'bittrex'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bittrex','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.bittrexCurrencies(),
 					ApiService.bittrexProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'bittrex',url:'https://bittrex.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'bittrex',url:'https://bittrex.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else {
+						ExchangeList.findOne({name:'bittrex'},function(err,data){
+							var prev_currencies=data.currencies.result;
+							var prev_products=data.products.result;
+							var new_currencies=_.differenceBy(JSON.parse(response[0]).result, prev_currencies, 'Currency');
+							var new_products=_.differenceBy(JSON.parse(response[1]).result, prev_products, 'MarketName');
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'bittrex'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('bittrex','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product.MarketName,'-',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'bittrex',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('bittrex','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -55,14 +124,47 @@ module.exports = {
 		//PROCESS TO INSERT BITFINEX STATIC DATA
 		ExchangeList.count({name: 'bitfinex'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitfinex','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.bitfinexProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'bitfinex',url:'https://www.bitfinex.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+					if(count==0){ 
+						ExchangeList.create({name:'bitfinex',url:'https://www.bitfinex.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'bitfinex'},function(err,data){
+							var prev_products=data.products;
+							var new_products=_.difference(JSON.parse(response[0]), prev_products);
+							if(new_products.length>0){
+								ExchangeList.update({name:'bitfinex'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('bitfinex','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:product});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'bitfinex',currencies:null,
+										products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('bitfinex','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -71,15 +173,49 @@ module.exports = {
 		//PROCESS TO INSERT HITBTC STATIC DATA
 		ExchangeList.count({name: 'hitbtc'},function(err,count){
 			if(err){ ApiService.exchangeErrors('hitbtc','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.hitbtcCurrencies(),
 					ApiService.hitbtcProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'hitbtc',url:'https://hitbtc.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'hitbtc',url:'https://hitbtc.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'hitbtc'},function(err,data){
+							var prev_currencies=data.currencies;
+							var prev_products=data.products;
+							var new_currencies=_.differenceBy(JSON.parse(response[0]), prev_currencies, 'id');
+							var new_products=_.differenceBy(JSON.parse(response[1]), prev_products, 'id');
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'hitbtc'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('hitbtc','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(product.id)});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'hitbtc',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('hitbtc','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -88,14 +224,47 @@ module.exports = {
 		//PRCOESS TO INSERT GATE STATIC DATA
 		ExchangeList.count({name: 'gate'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gate','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.gateProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'gate',url:'https://gate.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+					if(count==0){
+						ExchangeList.create({name:'gate',url:'https://gate.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gate','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'gate'},function(err,data){
+							var prev_products=data.products;
+							var new_products=_.difference(JSON.parse(response[0]), prev_products);
+							if(new_products.length>0){
+								ExchangeList.update({name:'gate'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('gate','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product,'_',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name: 'gate',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('gate','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('gate','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -125,14 +294,47 @@ module.exports = {
 		//PROCESS TO INSERT BINANCE STATIC DATA
 		ExchangeList.count({name:'binance'},function(err, count){
 			if(err){ ApiService.exchangeErrors('binance','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.binanceProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'binance',url:'https://www.binance.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+					if(count==0){
+						ExchangeList.create({name:'binance',url:'https://www.binance.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('binance','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'binance'},function(err,data){
+							var prev_products=data.products.symbols;
+							var new_products=_.differenceBy(JSON.parse(response[0]).symbols, prev_products, 'symbol');
+							if(new_products.length>0){
+								ExchangeList.update({name:'binance'},{currencies:null,products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('binance','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(product.symbol)});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'binance',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('binance','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('binance','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -141,15 +343,50 @@ module.exports = {
 		//PROCESS TO INSERT HUOBI STATIC DATA 
 		ExchangeList.count({name:'huobi'},function(err, count){ 
 			if(err){ ApiService.exchangeErrors('huobi','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){ 
+			if(count>=0){ 
 				Promise.all([
 					ApiService.huobiCurrencies(),
 					ApiService.huobiProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'huobi',url:'https://www.huobi.pro',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+					if(count==0){
+						ExchangeList.create({name:'huobi',url:'https://www.huobi.pro',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'huobi'},function(err,data){
+							var prev_currencies=data.currencies.data;
+							var prev_products=data.products.data;
+							var new_currencies=_.difference(JSON.parse(response[0]).data, prev_currencies);
+							var new_products=_.differenceBy(JSON.parse(response[1]).data, prev_products, 'base-currency');
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'huobi'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('huobi','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:(product['base-currency']+product['quote-currency'])});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'huobi',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'exchange_insert',curDateTime);}
+									});
+								});	
+							}
+						});
+						
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('huobi','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -158,14 +395,47 @@ module.exports = {
 		//PROCESS TO INSERT GEMINI STATIC DATA
 		ExchangeList.count({name:'gemini'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gemini','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.geminiProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'gemini',url:'https://gemini.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'gemini',url:'https://gemini.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'gemini'},function(err,data){
+							var prev_products=data.products;
+							var new_products=_.difference(JSON.parse(response[0]), prev_products);
+							if(new_products.length>0){
+								ExchangeList.update({name:'gemini'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('gemini','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(product)});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'gemini',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'exchange_insert',curDateTime);}
+									});
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('gemini','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -174,15 +444,49 @@ module.exports = {
 		//PROCESS TO INSERT KRAKEN STATIC DATA
 		ExchangeList.count({name:'kraken'},function(err,count){
 			if(err){ ApiService.exchangeErrors('kraken','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.krakenCurrencies(),
 					ApiService.krakenProducts()
 				]).
 				then(response => {
-					ExchangeList.create({name:'kraken',url:'https://www.kraken.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'kraken',url:'https://www.kraken.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'kraken'},function(err,data){
+							var prev_currencies=Object.keys(data.currencies.result);
+							var prev_products=Object.keys(data.products.result);
+							var new_currencies=_.difference(Object.keys(JSON.parse(response[0]).result), prev_currencies);
+							var new_products=_.difference(Object.keys(JSON.parse(response[1]).result), prev_products);
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'kraken'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('kraken','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(product)});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'kraken',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('kraken','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -191,7 +495,7 @@ module.exports = {
 		//PROCESS TO INSERT BIT FLYER STATIC DATA
 		ExchangeList.count({name:'bitflyer'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitflyer','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.bitflyerProducts()
 				]).
@@ -207,9 +511,48 @@ module.exports = {
 						products.push({product_code: "BTC_USD"});
 					}
 					
-					ExchangeList.create({name:'bitflyer',url:'https://bitflyer.jp',is_exchange:'yes',currencies:null,products:products,date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'bitflyer',url:'https://bitflyer.jp',is_exchange:'yes',currencies:null,products:products,date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'bitflyer'},function(err,data){
+							var prev_products=data.products;
+							var new_products=_.differenceBy(products, prev_products, 'product_code');
+							if(new_products.length>0){
+								ExchangeList.update({name:'bitflyer'},{products:products},function(err,data){
+								if(err){ ApiService.exchangeErrors('bitflyer','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											if(!_.isEmpty(product.alias)){
+												var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product.alias,'_',''))});
+											}
+											else{
+												var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product.product_code,'_',''))});
+											}
+											
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'bitflyer',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('bitflyer','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -229,14 +572,47 @@ module.exports = {
 		//PROCESS TO INSERT BITSTAMP STATIC DATA
 		ExchangeList.count({name:'bitstamp'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitstamp','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.bitstampProducts()
 				]).
-				then(response => {  
-					ExchangeList.create({name:'bitstamp',url:'https://www.bitstamp.net',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'exchange_insert',curDateTime);}
-					});
+				then(response => { 
+					if(count==0){
+						ExchangeList.create({name:'bitstamp',url:'https://www.bitstamp.net',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'bitstamp'},function(err,data){
+							var prev_products=data.products;
+							var new_products=_.differenceBy(JSON.parse(response[0]), prev_products, 'url_symbol');
+							if(new_products.length>0){
+								ExchangeList.update({name:'bitstamp'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('bitstamp','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product.name,'/',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'bitstamp',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'exchange_insert',curDateTime);}
+									});
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('bitstamp','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -255,14 +631,47 @@ module.exports = {
 		//PROCESS TO INSERT LBANK STATIC DATA
 		ExchangeList.count({name:'lbank'},function(err,count){
 			if(err){ ApiService.exchangeErrors('lbank','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.lbankProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'lbank',url:'https://www.lbank.info',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'lbank',url:'https://www.lbank.info',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'lbank'},function(err,data){
+							var prev_products=data.products;
+							var new_products=_.difference(JSON.parse(response[0]), prev_products);
+							if(new_products.length>0){
+								ExchangeList.update({name:'lbank'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('lbank','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product,'_',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'lbank',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('lbank','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -282,14 +691,47 @@ module.exports = {
 		//PROCESS TO INSERT WEX STATIC DATA
 		ExchangeList.count({name:'wex'},function(err,count){
 			if(err){ ApiService.exchangeErrors('wex','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.wexProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'wex',url:'https://wex.nz',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('wex','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'wex',url:'https://wex.nz',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('wex','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'wex'},function(err,data){
+							var prev_products=Object.keys(data.products.pairs);
+							var new_products=_.difference(Object.keys(JSON.parse(response[0]).pairs), prev_products);
+							if(new_products.length>0){
+								ExchangeList.update({name:'wex'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('wex','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product,'_',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'wex',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('wex','query_insert',err,'exchange_insert',curDateTime);}
+									});
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('wex','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -298,15 +740,49 @@ module.exports = {
 		//PROCESS TO INSERT EXMO STATIC DATA
 		ExchangeList.count({name:'exmo'},function(err,count){
 			if(err){ ApiService.exchangeErrors('exmo','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.exmoCurrencies(),
 					ApiService.exmoProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'exmo',url:'https://exmo.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+					if(count==0){
+						ExchangeList.create({name:'exmo',url:'https://exmo.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'exmo'},function(err,data){
+							var prev_currencies=data.currencies;
+							var prev_products=Object.keys(data.products);
+							var new_currencies=_.difference(JSON.parse(response[0]), prev_currencies);
+							var new_products=_.difference(Object.keys(JSON.parse(response[1])), prev_products);
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'exmo'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('exmo','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product,'_',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'exmo',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('exmo','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -315,14 +791,47 @@ module.exports = {
 		//PROCESS TO INSERT LIQUI STATIC DATA
 		ExchangeList.count({name:'liqui'},function(err,count){
 			if(err){ ApiService.exchangeErrors('liqui','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.liquiProducts()
 				]).
 				then(response => { 
-					ExchangeList.create({name:'liqui',url:'https://liqui.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'exchange_insert',curDateTime);}
-					});
+					if(count==0){
+						ExchangeList.create({name:'liqui',url:'https://liqui.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+							if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'liqui'},function(err,data){
+							var prev_products=Object.keys(data.products.pairs);
+							var new_products=_.difference(Object.keys(JSON.parse(response[0]).pairs), prev_products);
+							if(new_products.length>0){
+								ExchangeList.update({name:'liqui'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('liqui','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product,'_',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'liqui',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('liqui','api',err,'exchange_api_select',curDateTime);});
 			}
@@ -363,14 +872,47 @@ module.exports = {
 		//PROCESS TO INSERT CEX STATIC DATA
 		ExchangeList.count({name:'cex'},function(err,count){
 			if(err){ ApiService.exchangeErrors('cex','query_select',err,'exchange_select',curDateTime);}
-			if(count==0){
+			if(count>=0){
 				Promise.all([
 					ApiService.cexProducts()
 				]).
 				then(response => {  
-					ExchangeList.create({name:'cex',url:'https://cex.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+					if(count==0){
+						ExchangeList.create({name:'cex',url:'https://cex.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('cex','query_insert',err,'exchange_insert',curDateTime);}
-					});
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'cex'},function(err,data){
+							var prev_products=data.products.data.pairs;
+							var new_products=_.differenceBy(JSON.parse(response[0]).data.pairs, prev_products, 'symbol1');
+							if(new_products.length>0){
+								ExchangeList.update({name:'cex'},{products:JSON.parse(response[0])},function(err,data){
+								if(err){ ApiService.exchangeErrors('cex','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:(product['symbol1']+product['symbol2'])});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'cex',currencies:null,
+									products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('cex','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
 				}).
 				catch(err => { ApiService.exchangeErrors('cex','api',err,'exchange_api_select',curDateTime);});
 			}

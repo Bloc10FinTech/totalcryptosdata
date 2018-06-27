@@ -25,6 +25,9 @@ module.exports = {
 		  response.send(data);
 	  });
   },
+  new_listing:function(request, response){
+	  return response.view('new_listing', {title: 'Total Cryptos - new list',path:request.path});
+  },
   gainersLosers:function(request, response){
 	  FrontendService.gainersLosers(function(data){
 		  response.send(data);

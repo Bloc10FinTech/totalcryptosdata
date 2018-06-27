@@ -1,0 +1,131 @@
+<main class="main-content home">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10">
+				<!-- TOTAL CRYPTOS TABLE -->
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="card card-table-pane table-scrolling">
+							<div class="card-body">
+								<div class="card-header">
+									<h5 class="card-title">Recently Added</h5>
+									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#coins" aria-expanded="false" aria-controls="collapseExample"></i>
+								</div>
+								<div class="collapse show card-content" id="coins">
+									<div class="row">
+										<div class="col-lg-12 card card-table-pane">
+											<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
+												<table class="display table-custom dataTable no-footer totalcryptosprice" style="width: 100%;overflow:auto;" role="grid">
+													<thead>
+														<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 10px;">#</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 100px;">Name</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 59px;">Pair</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 140px;">Price</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 112px;">24 Hour Volume</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(1h): activate to sort column ascending" style="width: 103px;">Change %(1h)</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 112px;">Change %(24h)</th>
+															<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Chart 1d</th>
+															<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Added</th></tr>
+													</thead>
+													<tbody  id="totalcryptosprice_new_listing"> 
+													</tbody>
+												</table>
+											</div>	
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> 
+					</div>
+				</div> 
+			</div>
+			<div class="col-lg-2 text-center mt-5">
+				<%- partial('./partials/ads.ejs') %>
+			</div>
+		</div> 
+	</div>
+</main>
+
+<script>
+$(document).ready(function(){
+	var cols=$('#totalcryptosprice_new_listing').parent().children('thead').children('tr').children('th').length;
+	$('#totalcryptosprice_new_listing').html('<tr><td colspan="'+cols+'" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$.ajax({
+		type:'GET',
+		url:'/tabData/totalcryptonewlisting',
+		success:function(data){ 
+			var str='';
+			data.forEach(function(summary,index){
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+			
+				str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos">';
+				str+='<td class="sorting_1">'+(index+1)+'</td>';
+				str+='<td class="text-bold">';
+				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+				str+=summary.base_currency.toUpperCase();
+				str+='</a>';
+				str+='</td>'; 
+				str+='<td>';
+				str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+				str+=summary.product.replace('_','').toUpperCase();
+				str+='</a>';
+				str+='</td>';
+				str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos">';
+				if(summary.change_perc_1h>0){
+				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+				}else{
+				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+				}
+				str+='</td>';
+				str+='<td id="'+summary.product+'_volume_totalcryptos">'+parseFloat(summary.volume).toFixed(0)+'</td>';
+				str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos">';
+				if(summary.change_perc_1h>0){
+				str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+				}else{
+				str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+				}
+				str+='</td>';
+				str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos">';
+				if(summary.change_perc_24h>0){
+				str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+				}else{	
+				str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+				}
+				str+='</td>';
+				str+='<td>';
+				str+='<div class="row">';
+				str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos" value="'+summary.chart+'" /></div>';
+				str+='</div>';
+				str+='</td>';
+				str+='<td>';
+				if(summary.added>1){
+					str+=summary.added+' days ago';
+				}
+				else{
+					str+='1 day ago';
+				}
+				str+='</td>';
+				str+='</tr>';
+			});
+			$('#totalcryptosprice_new_listing').html(str);
+			$("#totalcryptosprice_new_listing").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+				}
+			});
+
+			$('.totalcryptosprice').DataTable({
+				"paging":   false, 
+				"info":     false,
+				"searching": false
+			});
+		}
+	});	
+});
+</script>

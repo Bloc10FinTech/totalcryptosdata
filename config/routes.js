@@ -49,6 +49,7 @@ module.exports.routes = {
   '/exchange_data/:exchangeName':'HomeController.exchange_data',
   '/tc-history':'HomeController.tc_history',
   '/tc_history_data':'HomeController.tc_history_data',
+  '/new_listing':'HomeController.new_listing',
   '/gainers-and-losers':'HomeController.gainers_and_losers',
   '/gainers_and_losers_data':'HomeController.gainers_and_losers_data',
   '/gainers':'HomeController.gainers',

@@ -76,6 +76,11 @@ module.exports = {
 					ExchangeDataService.totalCryptoPricesPairs()
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
+			case 'totalcryptonewlisting':
+				return Promise.all([
+					ExchangeDataService.totalcryptonewlisting()
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
+			break;
 			case 'coin':
 				return Promise.all([
 					ExchangeDataService.coinmarketcapMarketData(count)

@@ -824,6 +824,95 @@ module.exports = {
 		});
 	},
 	
+	totalcryptonewlisting:function(count=0){
+		var _ = require('lodash');
+		var moment = require('moment');
+		var date_after = moment().subtract(24*30, 'hours').toDate();
+		
+		return new Promise(function(resolve,reject){
+			ExchangeNewCoins.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, products){
+				if(err){ 
+					ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);
+				}
+			
+				TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
+					if(!_.isEmpty(totalCryptoPrices)){ 
+						totalCryptoPrices=_.head(totalCryptoPrices);
+						totalCryptoPrices=totalCryptoPrices.prices;
+						totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+						
+						var new_products=[];
+						_.forEach(products,function(row){
+							product_list=row.products_new;
+							var added_days=moment().diff(moment(row.date_created),'days');
+							_.forEach(product_list,function(product){
+								switch(row.name){
+									case 'gdax':
+										new_products.push({product:_.toLower(_.replace(product,'_','')),added:added_days});
+									break;
+									case 'bittrex':
+										new_products.push({product:_.toLower(_.replace(product.MarketName,'-','')),added:added_days});
+									break;
+									case 'bitfinex':
+										new_products.push({product:product,added:added_days});
+									break;
+									case 'hitbtc':
+										new_products.push({product:_.toLower(product.id),added:added_days});
+									break;
+									case 'gate':
+										new_products.push({product:_.toLower(_.replace(product,'_','')),added:added_days});
+									break;
+									case 'binance':
+										new_products.push({product:_.toLower(product.symbol),added:added_days});
+									break;
+									case 'huobi':
+										new_products.push({product:product['base-currency']+product['quote-currency'],added:added_days});
+									break;
+									case 'gemini':
+										new_products.push({product:product,added:added_days});
+									break;
+									case 'bitflyer':
+										if(!_.isEmpty(product.alias)){
+											new_products.push({product:_.toLower(_.replace(product.alias,'_','')),added:added_days});
+										}
+										else{
+											new_products.push({product:_.toLower(_.replace(product.product_code,'_','')),added:added_days});
+										}
+									break;
+									case 'lbank':
+										new_products.push({product:_.replace(product,'_',''),added:added_days});
+									break;
+									case 'exmo':
+										new_products.push({product:_.toLower(_.replace(product,'_','')),added:added_days});
+									break;
+									case 'liqui':
+										new_products.push({product:_.toLower(_.replace(product,'_','')),added:added_days});
+									break;
+								}
+							});
+						});
+		
+						new_products=_.uniqBy(new_products,'product');
+						totalCryptoPrices=_.intersectionBy(totalCryptoPrices, new_products, 'product');
+						_.forEach(totalCryptoPrices,function(prices){
+							var product=_.filter(new_products,{product:prices.product});
+							product=_.head(product);
+							prices.added=product.added
+						});
+						if(count>0){
+							totalCryptoPrices=_.slice(totalCryptoPrices,0,count);
+						}
+						return resolve({name:'total cryptos pair price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+					}
+					else{
+						return resolve({name:'',url:'',is_exchange:'',data:[]});
+					}
+				});
+			
+			});	
+		});
+	},
+	
 	totalCryptosPriceHistory:function(time,period){
 		var _ = require('lodash');
 		var moment = require('moment');
