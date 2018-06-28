@@ -26,7 +26,7 @@ module.exports = {
 	  });
   },
   new_listing:function(request, response){
-	  return response.view('new_listing', {title: 'Total Cryptos - new list',path:request.path});
+	  return response.view('new_listing', {title: 'Total Cryptos - New List',path:request.path});
   },
   gainersLosers:function(request, response){
 	  FrontendService.gainersLosers(function(data){
@@ -34,7 +34,7 @@ module.exports = {
 	  },10);
   },
   gainers:function(request,response){
-	  return response.view('gainers', {title: 'Total Cryptos - gainers',path:request.path});
+	  return response.view('gainers', {title: 'Total Cryptos - Gainers',path:request.path});
   },
   gainers_data:function(request, response){
 	  FrontendService.gainers_data(function(data){
@@ -42,7 +42,7 @@ module.exports = {
 	  });
   },
   losers:function(request,response){
-	  return response.view('losers', {title: 'Total Cryptos - losers',path:request.path});
+	  return response.view('losers', {title: 'Total Cryptos - Losers',path:request.path});
   },
   losers_data:function(request, response){
 	  FrontendService.losers_data(function(data){
@@ -50,13 +50,17 @@ module.exports = {
 	  });
   },
   exchange_prices:function(request,response){
-	  return response.view('exchange_prices', {title: 'Total Cryptos - '+request.param('tab'),tab:request.param('tab'),path:request.path});
+	  var lower=request.param('tab');
+	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1);
+	  return response.view('exchange_prices', {title: title,tab:request.param('tab'),path:request.path});
   },
   exchange_prices_details:function(request,response){
-	  return response.view('exchange_prices_details', {title: 'Total Cryptos - '+request.param('tab'),tab:request.param('tab'),path:request.path});
+	  var lower=request.param('tab');
+	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1);
+	  return response.view('exchange_prices_details', {title: title,tab:request.param('tab'),path:request.path});
   },
   volume_24_hour_currency:function(request, response) {
-	  return response.view('volume_24_hour_currency', {title: 'Total Cryptos - currency',path:request.path});
+	  return response.view('volume_24_hour_currency', {title: 'Total Cryptos - Currency',path:request.path});
   },
   
   volume_24_hour_currency_data:function(request, response){
@@ -66,7 +70,9 @@ module.exports = {
   },
   
   volume_24_hour_currency_symbol:function(request,response){
-	  return response.view('volume_24_hour_currency_symbol',{title: 'Total Cryptos - '+request.param('symbol'),currency: request.param('symbol'),path:request.path}); 
+	  var lower=request.param('symbol');
+	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1);
+	  return response.view('volume_24_hour_currency_symbol',{title: title,currency: request.param('symbol'),path:request.path}); 
   },
   volume_24_hour_currency_symbol_data:function(request,response){
 	  FrontendService.volume_24_hour_currency_symbol_data(request.param('symbol'),function(data){
@@ -74,7 +80,9 @@ module.exports = {
 	  });
   },
   volume_24_hour_market:function(request,response){
-	  return response.view('volume_24_hour_market',{title: 'Total Cryptos - '+request.param('market'),market:request.param('market'),path:request.path}); 
+	  var lower=request.param('market');
+	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1);
+	  return response.view('volume_24_hour_market',{title: title,market:request.param('market'),path:request.path}); 
   },
   
   volume_24_hour_market_data:function(request,response){
@@ -83,7 +91,7 @@ module.exports = {
 	  });
   },
   volume_24_hour_exchange:function(request,response){
-	  return response.view('volume_24_hour_exchange',{title: 'Total Cryptos - exchange',path:request.path});
+	  return response.view('volume_24_hour_exchange',{title: 'Total Cryptos - Exchange',path:request.path});
   },
   
   volume_24_hour_exchange_data:function(request,response){
@@ -93,7 +101,9 @@ module.exports = {
   },
   
   exchange:function(request,response){
-	return response.view('exchange',{title: 'Total Cryptos - '+request.param('exchangeName')+' exchange',exchangeName:request.param('exchangeName'),path:request.path}); 
+	  var lower=request.param('exchangeName');
+	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1)+' Exchange';
+	return response.view('exchange',{title: title,exchangeName:request.param('exchangeName'),path:request.path}); 
   },
   
   exchange_data:function(request,response){
@@ -103,7 +113,7 @@ module.exports = {
   },
   
   tc_history:function(request,response){ 
-	  return response.view('tc_history',{title: 'Total Cryptos - tc history',path:request.path});
+	  return response.view('tc_history',{title: 'Total Cryptos - TC History',path:request.path});
   },
   tc_history_data:function(request,response){
 	   FrontendService.tc_history_data(function(data){ 
@@ -111,7 +121,7 @@ module.exports = {
 	  });
   },
   gainers_and_losers:function(request,response){
-		return response.view('gainers_and_losers',{title: 'Total Cryptos - gainers losers',path:request.path}); 
+		return response.view('gainers_and_losers',{title: 'Total Cryptos - Gainers Losers',path:request.path}); 
   },
   
   gainers_and_losers_data:function(request,response){
@@ -121,14 +131,14 @@ module.exports = {
   },
 
   documentation:function(request, response){
-	return response.view('documentation',{title: 'Total Cryptos - documentation',path:request.path}); 
+	return response.view('documentation',{title: 'Total Cryptos - Documentation',path:request.path}); 
   },	
 
   about:function(request,response){
-	return response.view('about',{title: 'Total Cryptos - about',path:request.path}); 
+	return response.view('about',{title: 'Total Cryptos - About',path:request.path}); 
   },
   TC_index:function(request,response){
-		return response.view('TCindex',{title: 'Total Cryptos - tc index',path:request.path}); 
+		return response.view('TCindex',{title: 'Total Cryptos - TC Index',path:request.path}); 
   },
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');

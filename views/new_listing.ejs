@@ -27,7 +27,7 @@
 															<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Chart 1d</th>
 															<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Added</th></tr>
 													</thead>
-													<tbody  id="totalcryptosprice_new_listing"> 
+													<tbody id="totalcryptosprice_new_listing"> 
 													</tbody>
 												</table>
 											</div>	
@@ -105,8 +105,11 @@ $(document).ready(function(){
 				if(summary.added>1){
 					str+=summary.added+' days ago';
 				}
-				else{
+				else if(summary.added==1){
 					str+='1 day ago';
+				}
+				else{
+					str+='Today';
 				}
 				str+='</td>';
 				str+='</tr>';
