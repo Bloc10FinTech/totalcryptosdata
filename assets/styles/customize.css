@@ -5,3 +5,16 @@
 .home .card-table-pane .card-header{
 	border-bottom:0!important;
 }
+
+.dataTable {
+	font-size: 0.9em;
+	min-width:800px;
+}
+
+.bigGainers,.bigLoosers{
+	min-width:auto;
+}
+
+table.dataTable tbody td {
+    padding: 8px 5px;
+}

@@ -60,9 +60,8 @@
 																	<table class="display table-custom dataTable no-footer bigGainers" style="width: 100%;overflow:auto;" role="grid">
 																		<thead>
 																			<tr role="row">
-																				<th class="sorting_asc" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 45px;">#</th>
-																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width: 176px;">Symbol</th>
-																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width: 209px;">%24h</th>
+																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width:50%;">Symbol</th>
+																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width:50%;">%24h</th>
 																			</tr>
 																		</thead>
 																		<tbody id="gainers_24_h"> 
@@ -87,9 +86,8 @@
 																	<table class="display table-custom dataTable no-footer bigLoosers" style="width: 100%;overflow:auto;" role="grid">
 																		<thead>
 																			<tr role="row">
-																				<th class="sorting_asc" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 45px;">#</th>
-																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width: 184px;">Symbol</th>
-																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width: 201px;">%24h</th>
+																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width:50%;">Symbol</th>
+																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width:50%;">%24h</th>
 																			</tr>
 																		</thead>
 																		<tbody id="losers_24_h"> 	
@@ -141,7 +139,6 @@ $(document).ready(function(){
 					even_odd_class='odd';
 				}
 				var str='<tr role="row" class="'+even_odd_class+'">';
-				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
 				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
@@ -161,8 +158,7 @@ $(document).ready(function(){
 				if(index%2==0){
 					even_odd_class='odd';
 				}
-				var str='<tr role="row" class="odd">';
-				str+='<td class="sorting_1">'+(index+1)+'</td>';
+				var str='<tr role="row" class="'+even_odd_class+'">';
 				str+='<td class="text-bold">';
 				str+='<img src="/images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
@@ -174,8 +170,17 @@ $(document).ready(function(){
 				str+='</tr>';
 				$("#losers_24_h").append(str);
 			});
-			initialize_table('bigLoosers');
-			initialize_table('bigGainers');
+			//initialize_table('bigLoosers');
+			//initialize_table('bigGainers');
+			
+			$('.bigGainers,.bigLoosers').DataTable({
+				"paging":   false, 
+				"info":     false,
+				"searching": false,
+				"aaSorting": []
+			});
+			
+			
 		}
 	});	
 
