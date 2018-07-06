@@ -2,13 +2,18 @@
 	margin-top:0!important;
 }
 
+.card-table-pane{
+	overflow-y:auto;
+}
+
 .home .card-table-pane .card-header{
 	border-bottom:0!important;
 }
 
 .dataTable {
 	font-size: 0.9em;
-	min-width:900px;
+	min-width:800px;
+	overflow-y:auto;
 }
 
 .bigGainers,.bigLoosers{
