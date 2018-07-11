@@ -275,7 +275,11 @@ function initialize_table(){
 	$('.exchange').DataTable({
         "paging":   false, 
         "info":     false,
-        "searching": false
+        "searching": false,
+		dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf', 'print'
+        ]
     });
 }
 

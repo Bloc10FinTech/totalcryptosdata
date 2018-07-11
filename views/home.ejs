@@ -14,17 +14,19 @@
 								<div class="collapse show card-content" id="coins">
 									<div class="row">
 										<div class="col-lg-9 card card-table-pane">
-											<div class="dropdown custom-dropdown">
-												<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-													Cryptocurrencies
-												</button>
-												<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
-												  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
-												  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
-												  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
-												  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
+											
+												<div class="dropdown custom-dropdown">
+													<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+														Cryptocurrencies
+													</button>
+													<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
+													  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
+													  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
+													  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
+													  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
+													</div>
 												</div>
-											</div>
+											
 									
 											<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
 												<table class="display table-custom dataTable no-footer totalcryptosprice" style="width: 100%;overflow:auto;" role="grid">
@@ -192,7 +194,11 @@ function initialize_table(className){
 	$('.'+className).DataTable({
         "paging":   false, 
         "info":     false,
-        "searching": false
+        "searching": false,
+		dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf', 'print'
+        ]
     });
 }
 
