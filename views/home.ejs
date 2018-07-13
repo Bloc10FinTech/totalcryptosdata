@@ -31,7 +31,7 @@
 											<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
 												<table class="display table-custom dataTable no-footer totalcryptosprice" style="width: 100%;overflow:auto;" role="grid">
 													<thead>
-														<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 10px;">#</th>
+														<tr role="row">
 															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 100px;">Name</th>
 															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 59px;">Pair</th>
 															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 140px;">Price</th>
@@ -195,6 +195,7 @@ function initialize_table(className){
         "paging":   false, 
         "info":     false,
         //"searching": false,
+		"aaSorting": [],
 		dom: 'Bfrtip',
         buttons: [
             'csv', 'excel', 'pdf', 'print'
@@ -202,7 +203,17 @@ function initialize_table(className){
     });
 }
 
-function show_totalcrypto_price(tab){  
+function show_totalcrypto_price(tab){ 
+	if(tab=='totalcryptospriceusd'){
+		$("#dropdownMenuButton").html('USD Based');
+	}
+	else if(tab=='totalcryptospricepairs'){
+		$("#dropdownMenuButton").html('Crypto Based');
+	}
+	else if(tab=='totalcryptosall'){
+		$("#dropdownMenuButton").html('Full List');
+	}
+ 
 	//PROCESS TO SHOW LOADER
 	if(whether_total_crypto_table_initialized){
 		$(".totalcryptosprice").dataTable().fnDestroy();
@@ -222,7 +233,6 @@ function show_totalcrypto_price(tab){
 				}
 			
 				str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos">';
-				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
@@ -236,12 +246,14 @@ function show_totalcrypto_price(tab){
 				str+='</td>';
 				str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos">';
 				if(summary.change_perc_1h>0){
-				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+				str+=format_numbers(parseFloat(summary.price).toFixed(8))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
 				}else{
-				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+				str+=format_numbers(parseFloat(summary.price).toFixed(8))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
 				}
 				str+='</td>';
-				str+='<td id="'+summary.product+'_volume_totalcryptos">'+parseFloat(summary.volume).toFixed(0)+'</td>';
+				str+='<td id="'+summary.product+'_volume_totalcryptos">';
+				str+=format_numbers(parseFloat(summary.volume).toFixed(2));
+				str+='</td>';
 				str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos">';
 				if(summary.change_perc_1h>0){
 				str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
@@ -280,6 +292,10 @@ function show_totalcrypto_price(tab){
 			}
 		}
 	});	
+}
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
 }
 
 function draw_chart(){

@@ -46,8 +46,8 @@ $(document).ready(function(){
 				markets.data.forEach(function(volume,index){
 				str+='<tr>';
 				str+='<td>'+(index+1)+'</td>';
-				str+='<td>'+Math.round(volume.volume)+'</td>';
-				str+='<td>'+parseFloat(volume.price).toFixed(5)+'</td>';
+				str+='<td>'+format_numbers(parseFloat(volume.volume).toFixed(2))+'</td>';
+				str+='<td>'+format_numbers(parseFloat(volume.price).toFixed(5))+'</td>';
 				str+='<td><a href="/exchange/'+volume.src.toLowerCase()+'">'+volume.src+'</a></td>';
 				str+='</tr>';
 				});
@@ -84,5 +84,9 @@ $(document).ready(function(){
 		}
 	});	
 });
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
 </script>
 

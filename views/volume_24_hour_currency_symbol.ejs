@@ -109,9 +109,9 @@ $(document).ready(function(){
 					}
 					str+='<tr role="row" class="'+class_even_odd+'">';
 					str+='<td class="sorting_1">'+(index+1)+'</td>';
-					str+='<td>'+Math.round(volume.volume)+'</td>';
+					str+='<td>'+format_numbers(parseFloat(volume.volume).toFixed(2))+'</td>';
 					str+='<td>'+volume.currency+'</td>';
-					str+='<td>'+parseFloat(volume.price).toFixed(5)+'</td>';
+					str+='<td>'+format_numbers(parseFloat(volume.price).toFixed(5))+'</td>';
 					str+='<td><a href="/exchange/'+volume.src.toLowerCase()+'">'+volume.src+'</a></td>';
 					str+='</tr>';
 				});
@@ -195,6 +195,10 @@ $(document).ready(function(){
 		}
 	});	
 });
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
 
 function draw_chart(){
 	$("#history_chart").children('tr').each(function(){ 

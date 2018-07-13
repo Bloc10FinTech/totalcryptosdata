@@ -50,8 +50,8 @@ $(document).ready(function(){
 				str+='<tr role="row" class="'+even_odd_class+'">';
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td><b>'+volume.currency+'</b></td>';
-				str+='<td>'+Math.round(parseFloat(volume.volume))+'</td>';
-				str+='<td>'+parseFloat(volume.price).toFixed(5)+'</td>';
+				str+='<td>'+format_numbers(parseFloat(volume.volume).toFixed(2))+'</td>';
+				str+='<td>'+format_numbers(parseFloat(volume.price).toFixed(5))+'</td>';
 				str+='<td>';
 				str+='<a href="volume-24-hour-market/'+volume.pair+'">';
 				str+=volume.pair;
@@ -92,5 +92,9 @@ $(document).ready(function(){
 		}
 	});	
 });
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
 </script>
 

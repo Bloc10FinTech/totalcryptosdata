@@ -68,8 +68,8 @@ $(document).ready(function(){
 				str+=summary.pair;
 				str+='</a>';
 				str+='</td>';
-				str+='<td>'+summary.volume+'</td>';
-				str+='<td>'+summary.price+'</td>';
+				str+='<td>'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+				str+='<td>'+format_numbers(parseFloat(summary.price).toFixed(5))+'</td>';
 				str+='<td>'+summary.variation+'</td>';
 				str+='</tr>';
 			
@@ -107,5 +107,8 @@ $(document).ready(function(){
 	});
 });
 
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
 </script>
 

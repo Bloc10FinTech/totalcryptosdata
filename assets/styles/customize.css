@@ -23,3 +23,10 @@
 table.dataTable tbody td {
     padding: 8px 5px;
 }
+
+@media (max-width: 992px) {
+	#mainNavBar {
+	   background: #2175b3;
+	}
+	.home { margin-top: 3rem !important; }
+}
