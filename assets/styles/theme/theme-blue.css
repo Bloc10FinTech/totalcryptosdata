@@ -21,7 +21,7 @@ a {
 
 .header-bg {
   background: #136096;
-  padding: 13px 8px; }
+  padding: 13px 0 4px 8px }
 
 .header-crypto-item {
   padding: 0 8px; }
@@ -62,8 +62,8 @@ a {
   padding: 0 1rem !important;
   background: #2076b3; }
   .main-nav .navbar-nav .nav-link {
-    font-size: 15px;
-    font-weight: 300;
+    font-size: 16px;
+    font-weight: 500;
     color: #ffffff;
     padding: 15px 25px; }
     .main-nav .navbar-nav .nav-link .fa-cog {
@@ -276,10 +276,17 @@ a {
     padding: 10px;
     margin: 0px !important;
   }
+  .ads-img {
+    border-radius: 4px;
+  } 
+  .ads-container {
+    padding-left: 0px;
+  }
 
 /* ===========================================
 	DATA TABLE CUSTOMISATION START
 ============================================ */
+table.dataTable a { font-size: 15px; font-weight: 500; }
 table.dataTable thead th, table.dataTable thead td, table.dataTable.no-footer {
   border-bottom: 1px solid #ccd6db; }
 
@@ -306,7 +313,7 @@ table.dataTable thead th, table.dataTable thead td {
   padding: 10px 10px; }
 
 .card-table-pane {
-  margin-top: 3rem !important; }
+  margin-top: 1.5rem !important; }
 
 .dataTables_length, .dataTables_filter {
   margin-top: 15px; }
@@ -357,4 +364,8 @@ button.dt-button, div.dt-button, a.dt-button {
   .social-media-icons {
     float: left; }
   .footer a, .copyright {
-    font-size: 12px; } }
+    font-size: 12px; } 
+  .ads-container {
+    padding-left: 15px;
+  }
+} 

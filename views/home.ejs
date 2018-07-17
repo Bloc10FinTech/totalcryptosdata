@@ -1,44 +1,37 @@
-<main class="main-content home">
-	<div class="container-fluid">
+<main class="main-content ">
+	<div class="container">
 		<div class="row">
-			<div class="col-lg-10">
+			<div class="col-lg-10 mt-4">
 				<!-- TOTAL CRYPTOS TABLE -->
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="card card-table-pane table-scrolling">
-							<div class="card-body">
-								<div class="card-header">
-									<h5 class="card-title">TOTAL CRYPTOS PRICE</h5>
-									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#coins" aria-expanded="false" aria-controls="collapseExample"></i>
-								</div>
-								<div class="collapse show card-content" id="coins">
-									<div class="row">
-										<div class="col-lg-9 card card-table-pane">
-											
-												<div class="dropdown custom-dropdown">
-													<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-														Cryptocurrencies
-													</button>
-													<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
-													  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
-													  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
-													  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
-													  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
-													</div>
+				<div class="row" id="coins">
+										<div class="col-lg-9 card card-table-pane" style="margin-top:0 !important; padding: 0;">
+											<div class="card-body">
+											<div class="card-header">
+												<h5 class="card-title">TOTAL CRYPTOS PRICE</h5>  
+											</div>
+											<div class="dropdown custom-dropdown">
+												<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													Cryptocurrencies
+												</button>
+												<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
+												  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
+												  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
+												  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
+												  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
 												</div>
-											
-									
+											</div> 
+
 											<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
 												<table class="display table-custom dataTable no-footer totalcryptosprice" style="width: 100%;overflow:auto;" role="grid">
 													<thead>
 														<tr role="row">
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 100px;">Name</th>
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 59px;">Pair</th>
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 140px;">Price</th>
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 112px;">24 Hour Volume</th>
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(1h): activate to sort column ascending" style="width: 103px;">Change %(1h)</th>
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 112px;">Change %(24h)</th>
-															<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 118px;">Chart 1d</th></tr>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 90px;">Name</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 70px;">Pair</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 120px;">Price</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 100px;">24 Hour Volume</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(1h): activate to sort column ascending" style="width: 50px;">Change %(1h)</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 50px;">Change %(24h)</th>
+															<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Chart 1d</th></tr>
 													</thead>
 													<tbody  id="totalcryptosprice_market_summary"> 
 													</tbody>
@@ -47,12 +40,13 @@
 											<div class="card-footer" id="crypto_footer">
 												<a href="/exchange_prices/totalcryptospricepairs/details" class="btn btn-primary btn-sm pull-right theme-btn">View All</a>
 											</div>
+											</div>
 										</div>
 									
 										<div class="col-lg-3">
 											<div class="row">
 												<div class="col-lg-12">
-													<div class="card card-table-pane">
+													<div class="card card-table-pane" style="margin-top:0 !important;">
 														<div class="card-body">
 															<div class="card-header">
 																<h5 class="card-title">BIG GAINERS</h5>
@@ -62,7 +56,7 @@
 																	<table class="display table-custom dataTable no-footer bigGainers" style="width: 100%;overflow:auto;" role="grid">
 																		<thead>
 																			<tr role="row">
-																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width:50%;">Symbol</th>
+																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width:80px;">Symbol</th>
 																				<th class="sorting" tabindex="0" aria-controls="bigGainers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width:50%;">%24h</th>
 																			</tr>
 																		</thead>
@@ -78,7 +72,7 @@
 													</div>
 												</div>
 												<div class="col-lg-12">
-													<div class="card card-table-pane">
+													<div class="card card-table-pane" style="margin-top:1rem !important;">
 														<div class="card-body">
 															<div class="card-header">
 																<h5 class="card-title">BIG LOSERS</h5>
@@ -88,7 +82,7 @@
 																	<table class="display table-custom dataTable no-footer bigLoosers" style="width: 100%;overflow:auto;" role="grid">
 																		<thead>
 																			<tr role="row">
-																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width:50%;">Symbol</th>
+																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending" style="width:80px;">Symbol</th>
 																				<th class="sorting" tabindex="0" aria-controls="bigLoosers-table" rowspan="1" colspan="1" aria-label="%24h: activate to sort column ascending" style="width:50%;">%24h</th>
 																			</tr>
 																		</thead>
@@ -106,13 +100,8 @@
 											</div>
 										</div>
 									</div>
-								</div>
-							</div>
-						</div> 
-					</div>
-				</div> 
 			</div>
-			<div class="col-lg-2 text-center mt-5">
+			<div class="col-lg-2 text-center mt-4 pl-0 pr-0">
 				<%- partial('./partials/ads.ejs') %>
 			</div>
 		</div> 
@@ -141,7 +130,7 @@ $(document).ready(function(){
 					even_odd_class='odd';
 				}
 				var str='<tr role="row" class="'+even_odd_class+'">';
-				str+='<td class="text-bold">';
+				str+='<td class="text-bold" style="width:100px">';
 				
 				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
@@ -161,7 +150,7 @@ $(document).ready(function(){
 					even_odd_class='odd';
 				}
 				var str='<tr role="row" class="'+even_odd_class+'">';
-				str+='<td class="text-bold">';
+				str+='<td class="text-bold" style="width:100px">';
 				str+='<img src="/images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
 				str+=loser.symbol;

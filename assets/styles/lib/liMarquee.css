@@ -12,10 +12,7 @@
 	background:none;
 	white-space:nowrap;
 }
-
-.str_wrap.str_active {
-	background:#ffffff;
-}
+ 
 .str_move { 
 	white-space:nowrap;
 	position:absolute; 

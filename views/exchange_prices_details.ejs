@@ -1,11 +1,8 @@
 <main class="main-content">
-	<div class="container-fluid">
+	<div class="container">
 		<div class="row">
-			<div class="col-lg-10">
-				<!-- TOTAL CRYPTOS TABLE -->
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="card card-table-pane table-scrolling">
+			<div class="col-lg-10 pl-0">
+				<div class="card card-table-pane table-scrolling">
 							<div class="card-body">
 								<div class="card-header">
 									<h5 class="card-title">
@@ -62,8 +59,7 @@
 									<%}else if(tab=='cex') {%>
 									cex
 									<%}%>
-									</h5>
-									<i class="fa fa-window-minimize minimize" data-toggle="collapse" data-target="#coins" aria-expanded="false" aria-controls="collapseExample"></i>
+									</h5> 
 								</div>
 								<div class="collapse show card-content" id="coins">
 									<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer">
@@ -71,7 +67,7 @@
 											<thead>
 												<tr role="row">
 													<%if(tab=='totalcryptospriceusd'){%>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">COIN</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width: 90px;">COIN</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price USD</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
@@ -247,10 +243,8 @@
 								</div>
 							</div>
 						</div> 
-					</div>
-				</div> 
 			</div>
-			<div class="col-lg-2 text-center mt-5">
+			<div class="col-lg-2 text-center mt-4 pl-0 pr-0">
 				<%- partial('./partials/ads.ejs') %>
 			</div>  
 		</div> 
