@@ -188,7 +188,7 @@ a {
 
 .brand {
   text-align: center;
-  padding-top: 9px; }
+  padding-top: 6px; }
   .brand h1 {
     margin: 0px;
     height: 65px; }
@@ -196,6 +196,7 @@ a {
     width: 70px;
     height: 70px;
     background: url(img/logo-blue-theme.png) center no-repeat;
+    background-size: cover;
     display: inline-block;
     overflow: hidden;
     text-indent: -9999px; }
@@ -336,7 +337,7 @@ button.dt-button, div.dt-button, a.dt-button {
   padding: 0.1em .5em;
   margin-top: 5px; }
 
-.marquee_div { margin-top: 5px !important; }
+.marquee_div { margin-top: 5px !important; } 
 
 /* ===========================================
 	DATA TABLE CUSTOMISATION END	
