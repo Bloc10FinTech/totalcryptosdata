@@ -110,7 +110,7 @@ a {
     text-align: right; }
 
 .main-content {
-  min-height: 260px; }
+  min-height: 260px; padding: 0 15px; }
 
 .footer {
   background: #29323b;
