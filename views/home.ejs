@@ -1,24 +1,32 @@
-<main class="main-content ">
+
+<main class="main-content">
+<%- partial('./partials/banner-ads.ejs') %>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-lg-10 mt-4">
+			<div class="col-lg-10">
 				<!-- TOTAL CRYPTOS TABLE -->
 				<div class="row" id="coins">
 										<div class="col-lg-9 card card-table-pane" style="margin-top:0 !important; padding: 0;">
 											<div class="card-body">
 											<div class="card-header">
-												<h5 class="card-title">TOTAL CRYPTOS PRICE</h5>  
-											</div>
-											<div class="dropdown custom-dropdown">
-												<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-													Cryptocurrencies
-												</button>
-												<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
-												  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
-												  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
-												  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
-												  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
-												</div>
+											<div class="row">
+											  <div class="col-md-6">
+                                                  <h5 class="card-title">TOTAL CRYPTOS PRICE</h5>
+											  </div>
+											  <div class="col-md-6">
+											  	 <div class="dropdown custom-dropdown">
+													<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+														Cryptocurrencies
+													</button>
+													<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
+													  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
+													  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
+													  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
+													  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
+													</div>
+											      </div> 
+											  </div>  
+											  </div>
 											</div> 
 
 											<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
@@ -47,6 +55,29 @@
 											<div class="row">
 												<div class="col-lg-12">
 													<div class="card card-table-pane" style="margin-top:0 !important;">
+														<div class="card-body">
+															<div class="card-header">
+																<h5 class="card-title">FX DATA</h5>
+															</div>
+															<div class="card-content">
+																<div id="fx_data-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;width:100%;">
+																	<table class="display table-custom dataTable no-footer fx_data" style="width: 100%;overflow:auto;" role="grid">
+																		<thead>
+																			<tr role="row">
+																				<th class="sorting" tabindex="0" aria-controls="fx_data-table" rowspan="1" colspan="1" aria-label="Symbol: activate to sort column ascending">Symbol</th>
+																				<th class="sorting" tabindex="0" aria-controls="fx_data-table" rowspan="1" colspan="1" aria-label="Price: activate to sort column ascending">Price</th>
+																			</tr>
+																		</thead>
+																		<tbody id="fx_data"> 
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-lg-12">
+													<div class="card card-table-pane" style="margin-top:1rem !important;">
 														<div class="card-body">
 															<div class="card-header">
 																<h5 class="card-title">BIG GAINERS</h5>
@@ -101,7 +132,7 @@
 										</div>
 									</div>
 			</div>
-			<div class="col-lg-2 text-center mt-4 pl-0 pr-0">
+			<div class="col-lg-2 text-center pl-0 pr-0">
 				<%- partial('./partials/ads.ejs') %>
 			</div>
 		</div> 
@@ -112,14 +143,16 @@
 var whether_total_crypto_table_initialized=false;
 $(document).ready(function(){
 	//PROCESS TO FETCH GAINERS AND LOSERS
-	$("#gainers_24_h").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
-	$("#losers_24_h").html('<tr><td colspan="3" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$("#fx_data").html('<tr><td colspan="2" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$("#gainers_24_h").html('<tr><td colspan="2" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$("#losers_24_h").html('<tr><td colspan="2" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
 	
 	$.ajax({
 		type:'GET',
 		url:'/gainersLosers',
 		success:function(data){
 		
+			$("#fx_data").html('');
 			$("#gainers_24_h").html('');
 			$("#losers_24_h").html('');
 		
@@ -161,10 +194,29 @@ $(document).ready(function(){
 				str+='</tr>';
 				$("#losers_24_h").append(str);
 			});
-			//initialize_table('bigLoosers');
-			//initialize_table('bigGainers');
 			
-			$('.bigGainers,.bigLoosers').DataTable({
+			data.fx_data.forEach(function(data,index){
+			
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+				var str='<tr role="row" class="'+even_odd_class+'">';
+				str+='<td class="text-bold" style="width:100px">';
+				str+=data.symbol;
+				str+='</a>';
+				str+='</td>';
+				str+='<td>';
+				str+=data.bid;
+				str+='</td>';
+				str+='</tr>';
+				$("#fx_data").append(str);
+			});
+			
+			//initialize_table('bigGainers');
+			//initialize_table('bigLoosers');
+			
+			$('.bigGainers,.bigLoosers,.fx_data').DataTable({
 				"paging":   false, 
 				"info":     false,
 				"searching": false,

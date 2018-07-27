@@ -252,9 +252,8 @@ a {
   margin-top: 1rem; }
 
   .custom-dropdown {
-    margin-top: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px; 
+    float: right;
   }
   .custom-dropdown-btn {
     background-color: #fff;
@@ -279,6 +278,7 @@ a {
   }
   .ads-img {
     border-radius: 4px;
+    box-shadow: 0 2px 0px 0px #dddddd;
   }
   .homepage-table {
     margin-top:0 !important; padding: 0;
@@ -315,13 +315,12 @@ table.dataTable.display thead th {
   color: #909090; }
 
 table.dataTable thead th, table.dataTable thead td {
-  padding: 10px 10px; }
-
-.card-table-pane {
-  margin-top: 3rem !important; }
+  padding: 10px 10px; } 
 
 .dataTables_length, .dataTables_filter {
-  margin-top: 15px; }
+  margin-top: 5px; }
+
+.dataTables_wrapper { padding-top: 10px; }
 
 .dataTables_wrapper .dataTables_filter input, .dataTables_length select {
   border: 1px solid #cdd6db; }

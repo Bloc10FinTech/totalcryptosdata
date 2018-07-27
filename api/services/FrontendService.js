@@ -210,7 +210,8 @@ module.exports = {
 	gainersLosers:function(callBack,count){
 		return Promise.all([
 			FrontendService.gainers_and_losers(count),
-		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h']});}).catch( err => {callBack({gainers:[],losers:[]});});
+			ExchangeDataService.fxMarketData(count)
+		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h'],fx_data:response[1].data});}).catch( err => {callBack({gainers:[],losers:[],fx_data:[]});});
 	},
 	
 	gainers_and_losers_data:function(callBack){

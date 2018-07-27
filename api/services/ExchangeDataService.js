@@ -782,6 +782,15 @@ module.exports = {
 		});
 	},
 	
+	fxMarketData:function(){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			FxTickers.find().exec(function(err,fxData){
+				return resolve({name:'',url:'',is_exchange:'',data:fxData});
+			});
+		});
+	},
+	
 	totalCryptoPricesUsd:function(count=0){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){

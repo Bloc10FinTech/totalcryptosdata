@@ -2,12 +2,22 @@ module.exports = {
 	
 	tcPrices:function(callBack,request){
 		var _ = require('lodash');
+		
+		
+		/*var crypto = require('crypto');
+		const secret = 'abcdefg';
+		const hash = crypto.createHmac('sha256', secret).update('I love cupcakes').digest('hex');*/
+		
 		MobileApisService.checkUpdateApiCalls(request.ip,'tcPrices').then(response => {
 			if(response){
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrice.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrice){ 
 						if(!_.isEmpty(totalCryptoPrice)){ 
 							totalCryptoPrice=_.head(totalCryptoPrice);
+							
+							
+							/*console.log(crypto.createHmac('sha256', secret).update("{errCode:1,message:'Request processed successfully.',data:"+{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}+"}").digest('hex'));*/
+							
 							callBack({errCode:1,message:'Request processed successfully.',data:{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}});
 						}
 						else{

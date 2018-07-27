@@ -16,7 +16,7 @@
 	overflow-y:auto;
 }
 
-.bigGainers,.bigLoosers{
+.bigGainers,.bigLoosers,.fx_data{
 	min-width:auto;
 }
 
