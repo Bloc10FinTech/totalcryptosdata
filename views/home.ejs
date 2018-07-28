@@ -195,7 +195,7 @@ $(document).ready(function(){
 				$("#losers_24_h").append(str);
 			});
 			
-			data.fx_data.forEach(function(data,index){
+			data.fx_data.forEach(function(fx,index){
 			
 				var even_odd_class='even';
 				if(index%2==0){
@@ -203,11 +203,11 @@ $(document).ready(function(){
 				}
 				var str='<tr role="row" class="'+even_odd_class+'">';
 				str+='<td class="text-bold" style="width:100px">';
-				str+=data.symbol;
-				str+='</a>';
+				str+='<img src="/images/currencies/'+fx.base_currency.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />&nbsp;&nbsp;';
+				str+=fx.symbol;
 				str+='</td>';
 				str+='<td>';
-				str+=data.bid;
+				str+=fx.bid;
 				str+='</td>';
 				str+='</tr>';
 				$("#fx_data").append(str);

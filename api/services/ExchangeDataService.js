@@ -785,8 +785,13 @@ module.exports = {
 	fxMarketData:function(){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
-			FxTickers.find().exec(function(err,fxData){
-				return resolve({name:'',url:'',is_exchange:'',data:fxData});
+			FxTickers.find().exec(function(err,tickers){
+				_.forEach(tickers,function(ticker){
+					ticker.base_currency=_.join(_.split(ticker.symbol,'/',1));
+					ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'/','');
+					ticker.product=_.replace(ticker.symbol,'/','');
+				});
+				return resolve({name:'',url:'',is_exchange:'',data:tickers});
 			});
 		});
 	},
