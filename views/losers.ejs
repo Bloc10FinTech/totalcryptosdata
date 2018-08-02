@@ -88,13 +88,13 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'images/currency.png\'" />';
+				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
 				str+=loser.symbol;
 				str+='</a>';
 				str+'</td>';
 				str+='<td><span class="market-down-text">'+loser.percent_change_1h+'</span>'; 
-				str+='<img src="/images/red-down-arrow.png" alt="red arrow"></td>';
+				str+=' <img src="/images/red-down-arrow.png" alt="red arrow"></td>';
 				str+='</tr>';
 				$("#losers_1h").append(str);
 			});
@@ -109,13 +109,13 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'images/currency.png\'" />';
+				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
 				str+=loser.symbol;
 				str+='</a>';
 				str+'</td>';
 				str+='<td><span class="market-down-text">'+loser.percent_change_24h+'</span>'; 
-				str+='<img src="/images/red-down-arrow.png" alt="red arrow"></td>';
+				str+=' <img src="/images/red-down-arrow.png" alt="red arrow"></td>';
 				str+='</tr>';
 				$("#losers_24h").append(str);
 			});	
@@ -130,7 +130,7 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'images/currency.png\'" />';
+				str+='<img src="images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
 				str+=loser.symbol;
 				str+='</a>';

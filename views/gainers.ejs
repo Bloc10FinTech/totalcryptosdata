@@ -89,7 +89,7 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
 				str+=gainer.symbol;
 				str+='</a>';
@@ -110,13 +110,13 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
 				str+=gainer.symbol;
 				str+='</a>';
 				str+'</td>';
 				str+='<td><span class="market-up-text">'+gainer.percent_change_24h+'</span>'; 
-				str+='<img src="/images/green-up-arrow.png" alt="green arrow"></td>';
+				str+=' <img src="/images/green-up-arrow.png" alt="green arrow"></td>';
 				str+='</tr>';
 				$("#gainers_24h").append(str);
 			});	
@@ -131,13 +131,13 @@ $(document).ready(function(){
 				str+='<td class="sorting_1">'+(index+1)+'</td>';
 				str+='<td class="text-bold">';
 				
-				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
 				str+=gainer.symbol;
 				str+='</a>';
 				str+'</td>';
 				str+='<td><span class="market-up-text">'+gainer.percent_change_7d+'</span>'; 
-				str+='<img src="/images/green-up-arrow.png" alt="green arrow"></td>';
+				str+=' <img src="/images/green-up-arrow.png" alt="green arrow"></td>';
 				str+='</tr>';
 				$("#gainers_7d").append(str);
 			});	

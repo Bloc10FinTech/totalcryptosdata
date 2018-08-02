@@ -3134,7 +3134,7 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO CREATE TOTAL CRYPTO PRICES
+		//PROCESS TO CREATE TOTAL CRYPTO PRICES/CURRENCIES PRICES
 		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
 			if(err){ 
 				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);
@@ -3165,11 +3165,20 @@ module.exports = {
 				ExchangeDataService.korbitMarketData(),
 				ExchangeDataService.bitmexMarketData(),
 				ExchangeDataService.livecoinMarketData(),
-				ExchangeDataService.cexMarketData()
+				ExchangeDataService.cexMarketData(),
+				ExchangeDataService.fxMarketData()
 			]
 			).then(response => { 
-				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data};
+				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data,fx:response[25].data};
 				var total_crypto_prices=[];
+				var currencies_prices=[];
+				var eur_usd_price=0;
+				
+				_.forEach(exchange_objects.fx,function(fx_data){
+					if(_.toLower(fx_data.symbol)=='eur/usd'){
+						eur_usd_price=fx_data.bid;
+					}
+				});
 				
 				_.forEach(Object.keys(exchange_objects),function(exchange){
 					_.forEach(exchange_objects[exchange],function(ticker){
@@ -3323,6 +3332,8 @@ module.exports = {
 								quote_currency=_.toLower(ticker.quote_currency);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
 							break;
+							default:
+							break;
 						}
 					});	
 				});
@@ -3392,11 +3403,27 @@ module.exports = {
 						data.chart=chart_data;
 						data.change_perc_1h=(chart_data[chart_data.length-1]-chart_data[chart_data.length-2])*100/chart_data[chart_data.length-2];
 						data.change_perc_24h=(chart_data[chart_data.length-1]-chart_data[0])*100/chart_data[0];
+					
+						//PROCESS TO PREPARE DATA FOR EUR BASED CURRENCIES
+						if(_.toLower(data.quote_currency)=='usd'){
+							currencies_prices.push({product:_.toLower(data.base_currency+'eur'),base_currency:data.base_currency,quote_currency:'eur',price:data.price*eur_usd_price});
+						}
+					
 					});
+					
 					TotalCryptoPrices.create({prices:insert_array,date_created:curDateTime},function(err,data){
-						if(err){
+						if(err){ 
 							ApiService.exchangeErrors('totalcryptoprices','query_insert',err,'tickers_insert',curDateTime);
 						}
+						
+						if(!_.isEmpty(currencies_prices)){
+							TotalCryptoPricesCurrencies.create({prices:currencies_prices,currency:'eur',date_created:curDateTime},function(err,data){
+								if(err){
+									ApiService.exchangeErrors('totalcryptopricescurrencies','query_insert',err,'tickers_insert',curDateTime);
+								}
+							});
+						}
+						
 					});
 				}
 			}).	

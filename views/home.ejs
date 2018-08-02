@@ -18,11 +18,10 @@
 													<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 														Cryptocurrencies
 													</button>
-													<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">
-													  <!--<h4 class="custom-dropdown-menu-title">All Cryptocurrencies</h4>-->
-													  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a>
-													  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a>
-													  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a>
+													<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="total_cryptos_dropdown">  
+													  <a class="dropdown-item" id="totalcryptospriceusd" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospriceusd');">USD Based</a> 
+													  <a class="dropdown-item" id="totalcryptospricepairs" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptospricepairs');">Crypto Based</a> 
+													  <a class="dropdown-item" id="totalcryptosall" href="javascript:void();" onclick="show_totalcrypto_price('totalcryptosall');">Full List</a> 
 													</div>
 											      </div> 
 											  </div>  
@@ -165,13 +164,13 @@ $(document).ready(function(){
 				var str='<tr role="row" class="'+even_odd_class+'">';
 				str+='<td class="text-bold" style="width:100px">';
 				
-				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='<img src="/images/currencies/'+gainer.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+gainer.symbol.toUpperCase()+'">';
 				str+=gainer.symbol;
 				str+='</a>';
 				str+'</td>';
 				str+='<td><span class="market-up-text">'+gainer.percent_change_24h+'</span>'; 
-				str+='<img src="/images/green-up-arrow.png" alt="green arrow"></td>';
+				str+=' <img src="/images/green-up-arrow.png" alt="green arrow"></td>';
 				str+='</tr>';
 				$("#gainers_24_h").append(str);
 			});	
@@ -184,13 +183,13 @@ $(document).ready(function(){
 				}
 				var str='<tr role="row" class="'+even_odd_class+'">';
 				str+='<td class="text-bold" style="width:100px">';
-				str+='<img src="/images/currencies/'+loser.symbol.toLowerCase()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='<img src="/images/currencies/'+loser.symbol.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+loser.symbol.toUpperCase()+'">';
 				str+=loser.symbol;
 				str+='</a>';
 				str+='</td>';
 				str+='<td><span class="market-down-text">'+loser.percent_change_24h+'</span>';
-				str+='<img src="/images/red-down-arrow.png" alt="red arrow"></td>';
+				str+=' <img src="/images/red-down-arrow.png" alt="red arrow"></td>';
 				str+='</tr>';
 				$("#losers_24_h").append(str);
 			});
@@ -208,6 +207,12 @@ $(document).ready(function(){
 				str+='</td>';
 				str+='<td>';
 				str+=fx.bid;
+				if(fx.is_higher==1){
+					str+='<img src="/images/green-up-arrow.png" alt="green arrow">';
+				}
+				else{
+					str+='<img src="/images/red-down-arrow.png" alt="red arrow">';
+				}
 				str+='</td>';
 				str+='</tr>';
 				$("#fx_data").append(str);
@@ -245,14 +250,14 @@ function initialize_table(className){
 }
 
 function show_totalcrypto_price(tab){ 
-	if(tab=='totalcryptospriceusd'){
-		$("#dropdownMenuButton").html('USD Based');
+	if(tab=='totalcryptosall'){
+	    $("#dropdownMenuButton").html('Full List'); 
+	}
+	else if(tab=='totalcryptospriceusd'){
+	    $("#dropdownMenuButton").html('USD Based'); 
 	}
 	else if(tab=='totalcryptospricepairs'){
 		$("#dropdownMenuButton").html('Crypto Based');
-	}
-	else if(tab=='totalcryptosall'){
-		$("#dropdownMenuButton").html('Full List');
 	}
  
 	//PROCESS TO SHOW LOADER
@@ -275,7 +280,7 @@ function show_totalcrypto_price(tab){
 			
 				str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos">';
 				str+='<td class="text-bold">';
-				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 				str+=summary.base_currency.toUpperCase();
 				str+='</a>';
@@ -287,9 +292,9 @@ function show_totalcrypto_price(tab){
 				str+='</td>';
 				str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos">';
 				if(summary.change_perc_1h>0){
-				str+=format_numbers(parseFloat(summary.price).toFixed(8))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+				str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 				}else{
-				str+=format_numbers(parseFloat(summary.price).toFixed(8))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+				str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 				}
 				str+='</td>';
 				str+='<td id="'+summary.product+'_volume_totalcryptos">';
@@ -297,9 +302,9 @@ function show_totalcrypto_price(tab){
 				str+='</td>';
 				str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos">';
 				if(summary.change_perc_1h>0){
-				str+='<span style="color:green;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+				str+='<span style="color:#2fa744; font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
 				}else{
-				str+='<span style="color:red;font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+				str+='<span style="color:#f9494b; font-weight:bold;">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
 				}
 				str+='</td>';
 				str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos">';

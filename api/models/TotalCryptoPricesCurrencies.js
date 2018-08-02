@@ -6,16 +6,14 @@
  */
 
 module.exports = {
-	tableName: 'fx_data_table_latest_view',
+	tableName: 'total_crypto_prices_currencies',
 	autoCreatedAt: false,
 	autoUpdatedAt: false,
 	attributes  : {
 	id: {type: 'integer', primaryKey: true},	
-	symbol: {type : 'string', required: true},
-	bid: {type: 'string', required: true},
-	ask: {type: 'string', required: true},
-	timestamp: {type: 'datetime', required: true},
-	is_higher: {type: 'integer', required: true}
+	prices: {type: 'json', required: true},
+	currency: {type: 'string', required: true},
+	date_created: {type: 'datetime', required: true}
   }
 };
 

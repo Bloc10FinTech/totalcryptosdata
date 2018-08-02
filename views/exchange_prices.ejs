@@ -5,7 +5,7 @@
 			<div class="col-lg-10 pl-0">
 				<div class="card card-table-pane table-scrolling">
 							<div class="card-body">
-								<div class="card-header">
+								<div class="card-header" style="padding-bottom:10px;">
 									<h5 class="card-title">
 									<%if(tab=='totalcryptospriceusd'){%>
 									USD BASED PRICE
@@ -311,16 +311,16 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_usd">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
 						if(summary.change_perc_1h>0){
-						str+='<span class="market-up-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span>';
+						str+='<span class="text-bold green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span>  <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+='<span class="market-down-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span>';
+						str+='<span class="text-bold red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.product+'_vol_totalcryptos_usd">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
@@ -328,9 +328,9 @@ function show_tab_data(tab){
 						str+='<td id="'+summary.product+'_low_totalcryptos_usd">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
 						str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_usd">';
 						if(summary.change_perc_1h>0){
-						str+=parseFloat(summary.change_perc_1h).toFixed(2)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+						str+='<span class="text-bold green-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
 						}else{
-						str+=parseFloat(summary.change_perc_1h).toFixed(2)+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="text-bold red-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span> ';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_usd">';
@@ -357,7 +357,7 @@ function show_tab_data(tab){
 						
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_pairs">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -369,9 +369,9 @@ function show_tab_data(tab){
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
 						if(summary.change_perc_1h>0){
-						str+=format_numbers(parseFloat(summary.price).toFixed(8))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+=format_numbers(parseFloat(summary.price).toFixed(8))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_pairs">';
@@ -405,13 +405,13 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+ticker.name+'_coinmarket">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+ticker.symbol+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+ticker.symbol+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+ticker.symbol+'">'+ticker.symbol+'</a></td>';
 						str+='<td id="'+ticker.name+'_price_coinmarket">';
 						if(ticker.percent_change_1h>0){
-						str+=format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+						str+='<span class="green-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+=format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="red-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						
@@ -454,7 +454,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.MarketName+'_bittrex">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.BaseCurrency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.BaseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.BaseCurrency+'">';
 						str+=summary.BaseCurrency;
 						str+='</a>';
@@ -466,9 +466,9 @@ function show_tab_data(tab){
 						str+='</td>';
 						str+='<td id="'+summary.MarketName+'_bid_bittrex">';
 						if(summary.Bid>summary.Last){
-						str+=format_numbers(parseFloat(summary.Bid).toFixed(8))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.Bid).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+=format_numbers(parseFloat(summary.Bid).toFixed(8))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.Bid).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.MarketName+'_high_bittrex">'+format_numbers(parseFloat(summary.High).toFixed(8))+'</td>';
@@ -492,7 +492,7 @@ function show_tab_data(tab){
 							}
 							str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product_id+'_bitfinex">';
 							str+='<td class="text-bold">';
-							str+='<img src="/images/currencies/'+summary.product_id.substr(0,3)+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+							str+='<img src="/images/currencies/'+summary.product_id.substr(0,3)+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 							str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
 							str+=summary.product_id.substr(0,3).toUpperCase();
 							str+='</a>';
@@ -504,9 +504,9 @@ function show_tab_data(tab){
 							str+='</td>';
 							str+='<td id="'+summary.product_id+'_price_bitfinex">';
 							if(summary.bid>summary.last_price){
-							str+=format_numbers(parseFloat(summary.bid).toFixed(8))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+							str+='<span class="green-text">'+format_numbers(parseFloat(summary.bid).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 							}else{
-							str+=format_numbers(parseFloat(summary.bid).toFixed(8))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+							str+='<span class="red-text">'+format_numbers(parseFloat(summary.bid).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 							}
 							str+='</td>';
 							str+='<td id="'+summary.product_id+'_high_bitfinex">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
@@ -528,7 +528,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_hitbtc">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.baseCurrency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.baseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseCurrency+'">';
 						str+=summary.baseCurrency;
 						str+='</a>';
@@ -540,9 +540,9 @@ function show_tab_data(tab){
 						str+='</td>';
 						str+='<td id="'+summary.symbol+'_bid_hitbtc">';
 						if(summary.bid>summary.last){
-						str+=format_numbers(parseFloat(summary.bid).toFixed(10))+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.bid).toFixed(10))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+=format_numbers(parseFloat(summary.bid).toFixed(10))+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.bid).toFixed(10))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.symbol+'_high_hitbtc">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
@@ -565,7 +565,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_gate">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
 						str+=summary.product.split('_',1).join().toUpperCase();
 						str+='</a>';
@@ -633,7 +633,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_okex">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
 						str+=summary.product.split('_',1).join().toUpperCase();
 						str+='</a>';
@@ -663,7 +663,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_binance">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.baseAsset+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.baseAsset+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseAsset+'">';
 						str+=summary.baseAsset;
 						str+='</a>';
@@ -693,7 +693,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_huobi">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -723,7 +723,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_gemini">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.currency+'">';
 						str+=summary.currency;
 						str+='</a>';
@@ -751,7 +751,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_kraken">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency;
 						str+='</a>';
@@ -781,7 +781,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitflyer">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency;
 						str+='</a>';
@@ -809,7 +809,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bithumb">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency
 						str+='</a>';
@@ -837,7 +837,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitstamp">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
 						str+=summary.base_currency;
 						str+='</a>';
@@ -866,7 +866,7 @@ function show_tab_data(tab){
 						if(summary.base_currency && summary.product){
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitz">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -895,7 +895,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_lbank">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -923,7 +923,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_coinone">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -951,7 +951,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_wex">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -980,7 +980,7 @@ function show_tab_data(tab){
 						if(summary.base_currency && summary.product){
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_exmo">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -1010,7 +1010,7 @@ function show_tab_data(tab){
 						if(summary.base_currency && summary.product){
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_liqui">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -1039,7 +1039,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_korbit">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -1067,7 +1067,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_bitmex">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -1095,7 +1095,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_livecoin">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
@@ -1125,7 +1125,7 @@ function show_tab_data(tab){
 						}
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_cex">';
 						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
+						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
 						str+=summary.base_currency.toUpperCase();
 						str+='</a>';
