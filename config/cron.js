@@ -23,8 +23,15 @@ module.exports.cron = {
       CronService.createExchangeTickers2();
     }
   },
-  //SEND SOCKET UPDATES ON PAGE
   myFourthJob: {
+	//schedule: '00 */7 * * * *',
+	schedule: '00 00 16 * * *',
+    onTick: function () {
+      CronService.createExchangeTickers3();
+    } 
+  },
+  //SEND SOCKET UPDATES ON PAGE
+  myFifthJob: {
 	//schedule: '00 */5 * * * *',
 	schedule: '00 59 * * * *',
     onTick: function () {
