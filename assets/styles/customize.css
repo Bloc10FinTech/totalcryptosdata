@@ -30,3 +30,11 @@ table.dataTable tbody td {
 	}
 	.home { margin-top: 3rem !important; }
 }
+
+body .sumome-share-client-wrapper.sumome-share-client-wrapper-desktop-bottom-bar, body .sumome-share-client-wrapper.sumome-share-client-wrapper-mobile-top-bar, body .sumome-share-client-wrapper.sumome-share-client-wrapper-mobile-bottom-bar{
+	position: static !important;
+}
+
+body .sumome-stylebufferbottom-shim{
+	height: 0px !important;
+}
