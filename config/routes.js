@@ -85,6 +85,7 @@ module.exports.routes = {
   '/login':{view: 'login'},
   '/about':'HomeController.about',
   '/TCindex':'HomeController.TC_index',
+  '/page': { view: 'page',locals: {layout: false}},
   'post /doLogin':'AuthController.doLogin'
 
   /***************************************************************************
