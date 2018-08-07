@@ -69,9 +69,15 @@ module.exports.routes = {
   '/api/tcHistory24H':'ApiController.tcHistory24H',
   '/api/tcHistory7D':'ApiController.tcHistory7D',
   '/api/topGainersLosers/:time':'ApiController.topGainersLosers',
+  '/api/fixPrice/:symbol':'ApiController.fixPrice',
+  '/api/fixPrices':'ApiController.fixPrices',
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
+  
+  '/fix':'HomeController.fix',
+  '/fix_data/databysymbol/:symbol':'HomeController.fix_data_by_symbol',
+  
   '/pro':'HomeController.pro',
   'GET /widget/gainers': { view: 'widget/gainers_widget',locals: {layout: false}},
   'GET /widget/losers': { view: 'widget/losers_widget',locals: {layout: false}},
@@ -85,7 +91,7 @@ module.exports.routes = {
   '/login':{view: 'login'},
   '/about':'HomeController.about',
   '/TCindex':'HomeController.TC_index',
-  '/page': { view: 'page',locals: {layout: false}},
+  '/ninjatrader': { view: 'ninjatrader',locals: {layout: false}},
   'post /doLogin':'AuthController.doLogin'
 
   /***************************************************************************

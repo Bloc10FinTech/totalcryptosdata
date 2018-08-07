@@ -411,6 +411,91 @@ module.exports = {
 		}
 	},
 	
+	fixPrice:function(callBack,request,symbol){
+		var _ = require('lodash');
+		var moment = require('moment');
+		MobileApisService.checkUpdateApiCalls(request.ip,'fixPrice').
+		then(response => {
+			if(response){
+				return new Promise(function(resolve,reject){
+					TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
+						if(err){
+							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+						}
+						if(!_.isEmpty(totalCryptofix)){ 
+							if(totalCryptofix.length==1){
+								totalCryptofix=_.head(totalCryptofix);
+							}
+							else{
+								totalCryptofix=totalCryptofix[1];
+							}
+						
+							totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
+							totalCryptofix.prices=_.filter(totalCryptofix.prices,{currency:_.toUpper(symbol)});
+							if(!_.isEmpty(totalCryptofix.prices)){
+								callBack({errCode:1,message:'Request processed successfully.',data:totalCryptofix});
+							}
+							else{
+								callBack({errCode:404,message:'Record not found.',data:[]});
+							}
+						}
+						else{
+							callBack({errCode:404,message:'Record not found.',data:[]});
+						}
+					});
+				});
+			}
+			else{
+				callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+			}
+		}).
+		catch(err => {
+			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+		});
+	},
+	
+	fixPrices:function(callBack,request){
+		var _ = require('lodash');
+		var moment = require('moment');
+		MobileApisService.checkUpdateApiCalls(request.ip,'fixPrice').
+		then(response => {
+			if(response){
+				return new Promise(function(resolve,reject){
+					TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
+						if(err){
+							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+						}
+						if(!_.isEmpty(totalCryptofix)){ 
+							if(totalCryptofix.length==1){
+								totalCryptofix=_.head(totalCryptofix);
+							}
+							else{
+								totalCryptofix=totalCryptofix[1];
+							}
+						
+							totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
+							if(!_.isEmpty(totalCryptofix.prices)){
+								callBack({errCode:1,message:'Request processed successfully.',data:totalCryptofix});
+							}
+							else{
+								callBack({errCode:404,message:'Record not found.',data:[]});
+							}
+						}
+						else{
+							callBack({errCode:404,message:'Record not found.',data:[]});
+						}
+					});
+				});
+			}
+			else{
+				callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+			}
+		}).
+		catch(err => {
+			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+		});
+	},
+
 	
 	sliderData:function(callBack,request){
 		var _=require('lodash');

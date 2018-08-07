@@ -1,0 +1,125 @@
+
+<main class="main-content">
+<%- partial('./partials/banner-ads.ejs') %>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10">
+				<!-- TOTAL CRYPTOS TABLE -->
+				<div class="row" id="coins">
+					<div class="col-lg-12 card card-table-pane" style="margin-top:0 !important; padding: 0;">
+						<div class="card-body">
+							<div class="card-header">
+								<div class="row">
+									<div class="col-md-12">
+										<h5 class="card-title">YESTERDAY'S BIT FIX PRICE</h5>
+									</div>
+								</div>
+							</div> 
+
+							<div id="fx-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
+								<table class="display table-custom dataTable no-footer fixprice" style="width: 100%;overflow:auto;" role="grid">
+									<thead>
+										<tr role="row">
+											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 60px;">Name</th>
+											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 60px;">Pair</th>
+											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 120px;">Price</th>
+											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 50px;">Change %(24h)</th>
+											<th class="sorting_disabled sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Chart</th>
+											<th class="sorting_disabled sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Date</th></tr>
+									</thead>
+									<tbody  id="fix_market_summary"> 
+									</tbody>
+								</table>
+							</div>	
+						</div>
+					</div>					
+				</div>
+			</div>
+			<div class="col-lg-2 text-center pl-0 pr-0">
+				<%- partial('./partials/ads.ejs') %>
+			</div>
+		</div> 
+	</div>
+</main>
+
+<script>
+
+$(document).ready(function(){
+	$('#fix_market_summary').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$.ajax({
+		type:'GET',
+		url:'/fix_data/databysymbol/BTC',
+		success:function(data){ 
+			console.log(data);
+			var str='';
+			var i=0;
+			data.prices.forEach(function(record,index){
+				record.prices.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(i%2==0){
+						even_odd_class='odd';
+					}
+					i++;
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+record.currency+summary.currency+'_fix">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+record.currency.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;';
+					str+=record.currency;
+					str+='</td>'; 
+					str+='<td>';
+					str+=record.currency+summary.currency;
+					str+='</td>';
+					str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
+					if(summary.change_perc_24h>0){
+					str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+					}else{
+					str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.product+'_change_perc_24h_fix">';
+					if(summary.change_perc_24h>0){
+					str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+					}else{	
+					str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+					}
+					str+='</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+record.currency+summary.currency+'_fix"><input type="hidden" id="hidden_'+record.currency+summary.currency+'_fix" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='<td>';
+					str+=data.date_created;
+					str+='</td>';
+					str+='</tr>';
+				});
+			});
+			$('#fix_market_summary').html(str);
+			
+			$("#fix_market_summary").children('tr').each(function(){
+				var val=$("#hidden_"+this.id).val();
+				if(val){
+					$("#chart_"+this.id).html('');
+					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+				}
+			});
+			
+			$('.fxprice').DataTable({
+				"paging":   false, 
+				"info":     false,
+				//"searching": false,
+				"aaSorting": [],
+				dom: 'Bfrtip',
+				buttons: [
+					'csv', 'excel', 'pdf', 'print'
+				]
+			});
+		}
+	});	
+});
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+</script>

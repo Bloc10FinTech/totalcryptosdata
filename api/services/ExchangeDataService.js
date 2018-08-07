@@ -796,6 +796,30 @@ module.exports = {
 		});
 	},
 	
+	fixDataBySymbol:function(symbol){
+		var _ = require('lodash');
+		var moment = require('moment');
+		return new Promise(function(resolve,reject){
+			TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
+				if(!_.isEmpty(totalCryptofix)){ 
+					if(totalCryptofix.length==1){
+						totalCryptofix=_.head(totalCryptofix);
+					}
+					else{
+						totalCryptofix=totalCryptofix[1];
+					}
+					
+					totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
+					totalCryptofix.prices=_.filter(totalCryptofix.prices,{currency:_.toUpper(symbol)});
+					return resolve({name:'total cryptos fix price',url:'http://totalcryptos.com',is_exchange:'no',data:totalCryptofix});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
 	totalCryptoPricesUsd:function(count=0){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){

@@ -207,6 +207,19 @@ module.exports = {
 		}
 	},
 	
+	fixData:function(type,symbol,callBack){
+		switch(type){
+			case 'databysymbol':
+				return Promise.all([
+					ExchangeDataService.fixDataBySymbol(symbol)
+				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
+			break;
+			default:
+				callBack([]);
+			break;	
+		}
+	},
+	
 	gainersLosers:function(callBack,count){
 		return Promise.all([
 			FrontendService.gainers_and_losers(count),

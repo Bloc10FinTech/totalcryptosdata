@@ -24,8 +24,8 @@ module.exports.cron = {
     }
   },
   myFourthJob: {
-	//schedule: '00 */7 * * * *',
-	schedule: '00 00 16 * * *',
+	schedule: '00 */1 * * * *',
+	//schedule: '00 00 16 * * *',
     onTick: function () {
       CronService.createExchangeTickers3();
     } 

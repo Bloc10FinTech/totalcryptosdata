@@ -140,6 +140,17 @@ module.exports = {
   TC_index:function(request,response){
 		return response.view('TCindex',{title: 'Total Cryptos - TC Index',path:request.path}); 
   },
+  
+  fix:function(request,response){
+	return response.view('fix',{title: 'Total Cryptos - FIX',path:request.path}); 
+  },
+  
+  fix_data_by_symbol:function(request,response){
+	  FrontendService.fixData('databysymbol',request.param('symbol'),function(data){
+		  response.send(data);
+	  });
+  },
+  
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
   }

@@ -52,6 +52,16 @@ module.exports = {
 		return response.send(data);
 	},request,request.param('time'));
   },
+  fixPrice:function(request, response){
+	  MobileApisService.fixPrice(function(data){
+		return response.send(data);
+	},request,request.param('symbol'));
+  },
+  fixPrices:function(request, response){
+	  MobileApisService.fixPrices(function(data){
+		return response.send(data);
+	},request);
+  },
   sliderData:function(request,response) {
 	  MobileApisService.sliderData(function(data){
 		return response.send(data);
