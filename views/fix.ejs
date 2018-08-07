@@ -11,7 +11,7 @@
 							<div class="card-header">
 								<div class="row">
 									<div class="col-md-12">
-										<h5 class="card-title">YESTERDAY'S BIT FIX PRICE</h5>
+										<h5 class="card-title">THE BIT FIX</h5>
 									</div>
 								</div>
 							</div> 
@@ -23,8 +23,6 @@
 											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 60px;">Name</th>
 											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 60px;">Pair</th>
 											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 120px;">Price</th>
-											<th class="sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 50px;">Change %(24h)</th>
-											<th class="sorting_disabled sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Chart</th>
 											<th class="sorting_disabled sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Date</th></tr>
 									</thead>
 									<tbody  id="fix_market_summary"> 
@@ -70,23 +68,7 @@ $(document).ready(function(){
 						str+=record.currency+summary.currency;
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
-						if(summary.change_perc_24h>0){
-						str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_change_perc_24h_fix">';
-						if(summary.change_perc_24h>0){
-						str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}else{	
-						str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+record.currency+summary.currency+'_fix"><input type="hidden" id="hidden_'+record.currency+summary.currency+'_fix" value="'+summary.chart+'" /></div>';
-						str+='</div>';
+						str+=format_numbers(parseFloat(summary.price).toFixed(8));
 						str+='</td>';
 						str+='<td>';
 						str+=data.date_created;
@@ -96,16 +78,6 @@ $(document).ready(function(){
 				});
 			}
 			$('#fix_market_summary').html(str);
-			
-			if($("#fix_market_summary").children('tr')){
-				$("#fix_market_summary").children('tr').each(function(){
-					var val=$("#hidden_"+this.id).val();
-					if(val){
-						$("#chart_"+this.id).html('');
-						$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-					}
-				});
-			}
 			
 			$('.fxprice').DataTable({
 				"paging":   false, 
