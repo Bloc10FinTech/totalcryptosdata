@@ -50,59 +50,62 @@ $(document).ready(function(){
 		type:'GET',
 		url:'/fix_data/databysymbol/BTC',
 		success:function(data){ 
-			console.log(data);
 			var str='';
 			var i=0;
-			data.prices.forEach(function(record,index){
-				record.prices.forEach(function(summary,index){
-					var even_odd_class='even';
-					if(i%2==0){
-						even_odd_class='odd';
-					}
-					i++;
-					str+='<tr role="row" class="'+even_odd_class+'" id="'+record.currency+summary.currency+'_fix">';
-					str+='<td class="text-bold">';
-					str+='<img src="/images/currencies/'+record.currency.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-					str+='&nbsp;&nbsp;';
-					str+=record.currency;
-					str+='</td>'; 
-					str+='<td>';
-					str+=record.currency+summary.currency;
-					str+='</td>';
-					str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
-					if(summary.change_perc_24h>0){
-					str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-					}else{
-					str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-					}
-					str+='</td>';
-					str+='<td id="'+summary.product+'_change_perc_24h_fix">';
-					if(summary.change_perc_24h>0){
-					str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-					}else{	
-					str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-					}
-					str+='</td>';
-					str+='<td>';
-					str+='<div class="row">';
-					str+='<div class="col-md-12" id="chart_'+record.currency+summary.currency+'_fix"><input type="hidden" id="hidden_'+record.currency+summary.currency+'_fix" value="'+summary.chart+'" /></div>';
-					str+='</div>';
-					str+='</td>';
-					str+='<td>';
-					str+=data.date_created;
-					str+='</td>';
-					str+='</tr>';
+			if(data.prices){
+				data.prices.forEach(function(record,index){
+					record.prices.forEach(function(summary,index){
+						var even_odd_class='even';
+						if(i%2==0){
+							even_odd_class='odd';
+						}
+						i++;
+						str+='<tr role="row" class="'+even_odd_class+'" id="'+record.currency+summary.currency+'_fix">';
+						str+='<td class="text-bold">';
+						str+='<img src="/images/currencies/'+record.currency.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+						str+='&nbsp;&nbsp;';
+						str+=record.currency;
+						str+='</td>'; 
+						str+='<td>';
+						str+=record.currency+summary.currency;
+						str+='</td>';
+						str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
+						if(summary.change_perc_24h>0){
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+						}else{
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+						}
+						str+='</td>';
+						str+='<td id="'+summary.product+'_change_perc_24h_fix">';
+						if(summary.change_perc_24h>0){
+						str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+						}else{	
+						str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+						}
+						str+='</td>';
+						str+='<td>';
+						str+='<div class="row">';
+						str+='<div class="col-md-12" id="chart_'+record.currency+summary.currency+'_fix"><input type="hidden" id="hidden_'+record.currency+summary.currency+'_fix" value="'+summary.chart+'" /></div>';
+						str+='</div>';
+						str+='</td>';
+						str+='<td>';
+						str+=data.date_created;
+						str+='</td>';
+						str+='</tr>';
+					});
 				});
-			});
+			}
 			$('#fix_market_summary').html(str);
 			
-			$("#fix_market_summary").children('tr').each(function(){
-				var val=$("#hidden_"+this.id).val();
-				if(val){
-					$("#chart_"+this.id).html('');
-					$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
-				}
-			});
+			if($("#fix_market_summary").children('tr')){
+				$("#fix_market_summary").children('tr').each(function(){
+					var val=$("#hidden_"+this.id).val();
+					if(val){
+						$("#chart_"+this.id).html('');
+						$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+					}
+				});
+			}
 			
 			$('.fxprice').DataTable({
 				"paging":   false, 
