@@ -12,7 +12,6 @@ module.exports = {
 	attributes  : {
 	id: {type: 'integer', primaryKey: true},	
 	prices: {type: 'json', required: true},
-	currency: {type: 'string', required: true},
 	date_created: {type: 'datetime', required: true}
   }
 };

@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/styles/lib/c3.min.css">
     <link rel="stylesheet" href="/styles/lib/vendor.css">
     <link rel="stylesheet" href="/styles/lib/liMarquee.css">
+    <link rel="stylesheet" href="/styles/jquery.countdownTimer.css">
 	
     <!--STYLES END-->
 	<link rel="stylesheet" href="/styles/theme/theme-blue.css">
@@ -143,6 +144,9 @@
 					<li class="nav-item dropdown <%if(path=='/fix'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/fix">BIT FIX</a> 
 					</li>
+					<li class="nav-item dropdown <%if(path=='/fx'){%>active <%}else{%> ''<%}%>">
+						<a class="nav-link" href="/fx">FX PRICE</a> 
+					</li>
 					<li class="nav-item <%if(path=='/about'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/about">About</a>
 					</li>
@@ -260,6 +264,7 @@
 	<!--<script src="/js/jquery.marquee.js"></script>-->
 	<script src="/js/jquery.liMarquee.js"></script>
 	<script src="/js/jquery.sparkline.min.js"></script> 
+	<script src="/js/jquery.countdownTimer.js"></script> 
 	<!--SCRIPTS END-->
 	<script>
 	$(window).load(function() {

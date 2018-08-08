@@ -3165,20 +3165,11 @@ module.exports = {
 				ExchangeDataService.korbitMarketData(),
 				ExchangeDataService.bitmexMarketData(),
 				ExchangeDataService.livecoinMarketData(),
-				ExchangeDataService.cexMarketData(),
-				ExchangeDataService.fxMarketData()
+				ExchangeDataService.cexMarketData()
 			]
 			).then(response => { 
-				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data,fx:response[25].data};
+				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data};
 				var total_crypto_prices=[];
-				var currencies_prices=[];
-				var eur_usd_price=0;
-				
-				_.forEach(exchange_objects.fx,function(fx_data){
-					if(_.toLower(fx_data.symbol)=='eur/usd'){
-						eur_usd_price=fx_data.bid;
-					}
-				});
 				
 				_.forEach(Object.keys(exchange_objects),function(exchange){
 					_.forEach(exchange_objects[exchange],function(ticker){
@@ -3403,12 +3394,6 @@ module.exports = {
 						data.chart=chart_data;
 						data.change_perc_1h=(chart_data[chart_data.length-1]-chart_data[chart_data.length-2])*100/chart_data[chart_data.length-2];
 						data.change_perc_24h=(chart_data[chart_data.length-1]-chart_data[0])*100/chart_data[0];
-					
-						//PROCESS TO PREPARE DATA FOR EUR BASED CURRENCIES
-						if(_.toLower(data.quote_currency)=='usd'){
-							currencies_prices.push({product:_.toLower(data.base_currency+'eur'),base_currency:data.base_currency,quote_currency:'eur',price:data.price*eur_usd_price});
-						}
-					
 					});
 					
 					TotalCryptoPrices.create({prices:insert_array,date_created:curDateTime},function(err,data){
@@ -3416,14 +3401,8 @@ module.exports = {
 							ApiService.exchangeErrors('totalcryptoprices','query_insert',err,'tickers_insert',curDateTime);
 						}
 						
-						if(!_.isEmpty(currencies_prices)){
-							TotalCryptoPricesCurrencies.create({prices:currencies_prices,currency:'eur',date_created:curDateTime},function(err,data){
-								if(err){
-									ApiService.exchangeErrors('totalcryptopricescurrencies','query_insert',err,'tickers_insert',curDateTime);
-								}
-							});
-						}
-						
+						//PROCESS TO CREATE TOTALCRYPTO PRICES FOR FX DATA
+						CronService.totalCryptoPricesCurrencies(insert_array, curDateTime, date_after);
 					});
 				}
 			}).	
@@ -3431,6 +3410,80 @@ module.exports = {
 				ApiService.exchangeErrors('totalcryptoprices','query_select',err,'tickers_select',curDateTime);
 			});
 		});	
+	},
+	
+	totalCryptoPricesCurrencies:function(tickers, curDateTime, date_after){
+		console.log('crone job for totalcrypto prices currency working');
+		var moment = require('moment');
+		var _ = require('lodash');
+		var math = require('mathjs');
+		
+		TotalCryptoPricesCurrencies.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, charts){
+			if(err){ 
+				ApiService.exchangeErrors('totalcryptopricescurrencies','query_select',err,'tickers_select',curDateTime);
+			}
+			
+			return Promise.all([
+				ExchangeDataService.fxMarketDataRelativePrices()
+			]
+			).then(response => { 
+				var fx_currencies_prices=response[0].data;
+				var temp_price_array=[];
+		
+				if(!_.isEmpty(fx_currencies_prices)){
+					var temp_tc_currency_array=[];
+					_.forEach(tickers,function(ticker){
+						if(_.indexOf(temp_tc_currency_array,ticker.base_currency)<0)
+						{
+							var fx_currency_price=_.filter(fx_currencies_prices,{currency:_.toUpper(ticker.quote_currency)});
+							if(!_.isEmpty(fx_currency_price)){
+								temp_tc_currency_array.push(ticker.base_currency);
+								temp_price_array.push({base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,price:ticker.price,chart:[]});
+								fx_currency_price=_.head(fx_currency_price);
+								_.forEach(fx_currency_price.prices,function(currency_price){
+									temp_price_array.push({base_currency:ticker.base_currency,quote_currency:_.toLower(currency_price.currency),price:ticker.price/currency_price.price,chart:[]});
+								});
+							}
+						}
+					});
+				}
+				
+				if(!_.isEmpty(temp_price_array)){
+					//PROCESS TO PREPARE CHART DATA/CHANGE AND CHANGE 24 HOURS
+					_.forEach(temp_price_array, function(data){
+						_.forEach(charts,function(chart){
+							chart=_.filter(chart.prices,{base_currency:data.base_currency,quote_currency:data.quote_currency});
+							if(!_.isEmpty(chart)){
+								chart=_.head(chart);	
+								data.chart.push(chart.price);
+							}
+						});
+						data.chart.push(data.price);
+						if(data.chart.length>=2){
+							data.change_perc_1h=(data.chart[data.chart.length-1]-data[data.chart.length-2])*100/data.chart[data.chart.length-2];
+							data.change_perc_24h=(data.chart[data.chart.length-1]-data.chart[0])*100/data.chart[0];
+						}
+						else{
+							data.change_perc_1h=0;
+							data.change_perc_24h=0;
+						}
+						
+						
+					});
+					
+					TotalCryptoPricesCurrencies.create({prices:temp_price_array,date_created:curDateTime},function(err,data){
+						if(err){ 
+							ApiService.exchangeErrors('totalcryptopricescurrencies','query_insert',err,'tickers_insert',curDateTime);
+						}
+					});
+				}
+			}).	
+			catch(err => {  
+				ApiService.exchangeErrors('totalcryptopricescurrencies','query_select',err,'tickers_select',curDateTime);
+			});
+			
+			
+		});
 	},
 	
 	createExchangeTickers3:function(){
@@ -3450,114 +3503,14 @@ module.exports = {
 			
 			return Promise.all([
 				ExchangeDataService.totalCryptoPricesPairs(),
-				ExchangeDataService.fxMarketData()
+				ExchangeDataService.fxMarketDataRelativePrices()
 			]
 			).then(response => { 
 				var exchange_objects={tc:response[0].data,fx:response[1].data};
-				var fx_currencies=[];
-				var fx_currencies_prices=[];
+				var fx_currencies_prices=exchange_objects.fx;
 				var temp=[];
 				var temp_price_array=[];
-				
-				_.forEach(exchange_objects.fx,function(fx_ticker){
-					fx_currencies.push(fx_ticker.base_currency);
-					fx_currencies.push(fx_ticker.quote_currency);
-				});
-				
-				fx_currencies=_.uniq(fx_currencies);
-				_.forEach(fx_currencies,function(currency){ 
-					var currency_objects=_.filter(exchange_objects.fx,{base_currency:currency});
-					if(!_.isEmpty(currency_objects)){
-						_.forEach(currency_objects,function(currency_object){
-							var quote_currency=currency_object.quote_currency;
-							var price=currency_object.bid;
-							
-							if(_.isEmpty(fx_currencies_prices)){
-								fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});	
-							}
-							else{
-								var inserted=false;
-								_.forEach(fx_currencies_prices,function(fx_currencies_price){
-									if(fx_currencies_price.currency==currency){
-										fx_currencies_price.prices.push({currency:quote_currency,price:price});
-										inserted=true;
-									}
-								});
-								if(!inserted){
-									fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});	
-								}
-							}
-						});	
-					}
-					
-					var currency_objects=_.filter(exchange_objects.fx,{quote_currency:currency});
-					if(!_.isEmpty(currency_objects)){
-						_.forEach(currency_objects,function(currency_object){
-							var quote_currency=currency_object.base_currency;
-							var price=1/currency_object.bid;
-							
-							if(_.isEmpty(fx_currencies_prices)){
-								fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});	
-							}
-							else{
-								var inserted=false;
-								_.forEach(fx_currencies_prices,function(fx_currencies_price){
-									if(fx_currencies_price.currency==currency){
-										fx_currencies_price.prices.push({currency:quote_currency,price:price});
-										inserted=true;
-									}
-								});
-								if(!inserted){
-									fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});
-								}
-							}
-						});	
-					}
-				});
-				
-				for(var i=0;i<fx_currencies.length;i++){  
-					_.forEach(fx_currencies,function(currency){
-						var related_currencies=_.difference(fx_currencies,[currency]);
-						var check_currency=_.filter(fx_currencies_prices,{currency:currency});
-						if(!_.isEmpty(check_currency)){
-							check_currency=_.head(check_currency);
-							var unrelated_currencies=[];
-							
-							_.forEach(related_currencies,function(related_currency){
-								if(_.isEmpty(_.filter(check_currency.prices,{currency:related_currency}))){
-									unrelated_currencies.push(related_currency);
-								}
-							});
-							
-							if(!_.isEmpty(unrelated_currencies)){
-								_.forEach(unrelated_currencies,function(unrelated_currency){
-									var is_assigned=false;
-									var temp_array=fx_currencies_prices;
-									_.forEach(temp_array,function(lookups){
-										if(!is_assigned)
-										{
-											if(!_.isEmpty(_.filter(lookups.prices,{currency:unrelated_currency}))){
-												if(!_.isEmpty(_.filter(check_currency.prices,{currency:lookups.currency}))){
-													var price_lookup=_.head(_.filter(lookups.prices,{currency:unrelated_currency}));
-													var price_self=_.head(_.filter(check_currency.prices,{currency:lookups.currency}));
-													
-													_.forEach(fx_currencies_prices,function(assignment){
-														if(assignment.currency==currency){
-															assignment.prices.push({currency:unrelated_currency,price:(price_self.price*price_lookup.price)});
-															is_assigned=true;
-														}
-													});
-												}
-											}
-										}
-									});
-									
-								});
-							}
-						}
-					});
-				}
-				
+		
 				if(!_.isEmpty(fx_currencies_prices)){
 					var temp_tc_currency_array=[];
 					_.forEach(exchange_objects.tc,function(ticker){

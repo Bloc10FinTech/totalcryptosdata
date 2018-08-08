@@ -1,0 +1,163 @@
+
+<main class="main-content">
+<%- partial('./partials/banner-ads.ejs') %>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10">
+				<!-- TOTAL CRYPTOS TABLE -->
+				<div class="row" id="coins">
+					<div class="col-lg-12 card card-table-pane" style="margin-top:0 !important; padding: 0;">
+						<div class="card-body">
+						<div class="card-header">
+						<div class="row">
+						  <div class="col-md-6">
+							  <h5 class="card-title">FX PRICE</h5>
+						  </div>
+						  <div class="col-md-6">
+							 <div class="dropdown custom-dropdown">
+								<button class="btn dropdown-toggle custom-dropdown-btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									Cryptocurrencies
+								</button>
+								<div class="dropdown-menu custom-dropdown-menu" aria-labelledby="dropdownMenuButton" id="fx_dropdown">  
+								  <a class="dropdown-item" id="fx_usd" href="javascript:void();" onclick="show_fx_price('usd');">USD Based</a> 
+								  <a class="dropdown-item" id="fx_eur" href="javascript:void();" onclick="show_fx_price('eur');">EURO Based</a> 
+								  <a class="dropdown-item" id="fx_chf" href="javascript:void();" onclick="show_fx_price('chf');">CHF Based</a>
+								  <a class="dropdown-item" id="fx_aud" href="javascript:void();" onclick="show_fx_price('aud');">AUD Based</a>
+								  <a class="dropdown-item" id="fx_nzd" href="javascript:void();" onclick="show_fx_price('nzd');">NZD Based</a>
+								  <a class="dropdown-item" id="fx_gbp" href="javascript:void();" onclick="show_fx_price('gbp');">GBP Based</a>
+								  <a class="dropdown-item" id="fx_jpy" href="javascript:void();" onclick="show_fx_price('jpy');">JPY Based</a>
+								  <a class="dropdown-item" id="fx_cad" href="javascript:void();" onclick="show_fx_price('cad');">CAD Based</a>
+								  <a class="dropdown-item" id="fx_sek" href="javascript:void();" onclick="show_fx_price('sek');">SEK Based</a>
+								  <a class="dropdown-item" id="fx_nok" href="javascript:void();" onclick="show_fx_price('nok');">NOK Based</a>
+								</div>
+							  </div> 
+						  </div>  
+						  </div>
+						</div> 
+
+						<div id="totalCryptos-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
+							<table class="display table-custom dataTable no-footer fxprice" style="width: 100%;overflow:auto;" role="grid">
+								<thead>
+									<tr role="row">
+										<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 90px;">Name</th>
+										<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 70px;">Pair</th>
+										<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 120px;">Price</th>
+										<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 50px;">Change %(24h)</th>
+										<th class="sorting_disabled sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Chart 1d</th></tr>
+								</thead>
+								<tbody id="fxprice_market_summary"> 
+								</tbody>
+							</table>
+						</div>	
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 text-center pl-0 pr-0">
+				<%- partial('./partials/ads.ejs') %>
+			</div>
+		</div> 
+	</div>
+</main>
+
+<script>
+var whether_total_crypto_table_initialized=false;
+$(document).ready(function(){
+	show_fx_price('usd');
+});
+
+function initialize_table(className){
+	$('.'+className).DataTable({
+        "paging":   false, 
+        "info":     false,
+        //"searching": false,
+		"aaSorting": [],
+		dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+}
+
+function show_fx_price(tab){ 
+	$("#dropdownMenuButton").html(tab.toUpperCase()+' BASED');
+ 
+	//PROCESS TO SHOW LOADER
+	if(whether_total_crypto_table_initialized){
+		$(".fxprice").dataTable().fnDestroy();
+	}
+	$('#fxprice_market_summary').html('<tr><td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	$.ajax({
+		type:'GET',
+		url:'/fx_data/databysymbol/'+tab,
+		success:function(data){ 
+			var str='';
+			data.forEach(function(summary,index){
+				var even_odd_class='even';
+				if(index%2==0){
+					even_odd_class='odd';
+				}
+			
+				str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.base_currency+summary.quote_currency+'_fx">';
+				str+='<td class="text-bold">';
+				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+				str+='&nbsp;&nbsp;';
+				str+=summary.base_currency.toUpperCase();
+				str+='</td>'; 
+				str+='<td>';
+				str+=summary.base_currency.toUpperCase()+summary.quote_currency.toUpperCase();
+				str+='</td>';
+				str+='<td class="text-bold" id="'+summary.base_currency+summary.quote_currency+'_price_fx">';
+				if(summary.change_perc_24h>0){
+				str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+				}else{
+				str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+				}
+				str+='</td>';
+				str+='<td id="'+summary.base_currency+summary.quote_currency+'_change_perc_24h_fx">';
+				if(summary.change_perc_24h>0){
+				str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+				}else{	
+				str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+				}
+				str+='</td>';
+				str+='<td>';
+				str+='<div class="row">';
+				str+='<div class="col-md-12" id="chart_'+summary.base_currency+summary.quote_currency+'_fx"><input type="hidden" id="hidden_'+summary.base_currency+summary.quote_currency+'_fx" value="'+summary.chart+'" /></div>';
+				str+='</div>';
+				str+='</td>';
+				str+='</tr>';
+			});
+			$('#fxprice_market_summary').html(str);
+			draw_chart();
+			initialize_table('fxprice');
+			whether_total_crypto_table_initialized=true;
+			//MANAGE DROPDOWN OPTION SELECTED
+			$("#fx_dropdown").children('a').removeClass('active');
+			$("#fx_"+tab).addClass('active');
+			//MANAGE VIEW ALL OPTION ON FOOTER
+			/*if(tab=='totalcryptosall'){
+				$("#crypto_footer").css({'display':'none'});
+			}
+			else{
+				$("#crypto_footer").css({'display':'block'});
+				$("#crypto_footer").html('<a href="/exchange_prices/'+tab+'/details" class="btn btn-primary btn-sm pull-right theme-btn">View All</a>');
+			}*/
+		}
+	});	
+}
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+function draw_chart(){
+	$("#fxprice_market_summary").children('tr').each(function(){
+		var val=$("#hidden_"+this.id).val();
+		if(val){
+			$("#chart_"+this.id).html('');
+			$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#ff6439',fillColor: "transparent"});
+		}
+	});
+}
+</script>

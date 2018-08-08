@@ -78,6 +78,9 @@ module.exports.routes = {
   '/fix':'HomeController.fix',
   '/fix_data/databysymbol/:symbol':'HomeController.fix_data_by_symbol',
   
+  '/fx':'HomeController.fx',
+  '/fx_data/databysymbol/:symbol':'HomeController.fx_data_by_symbol',
+  
   '/pro':'HomeController.pro',
   'GET /widget/gainers': { view: 'widget/gainers_widget',locals: {layout: false}},
   'GET /widget/losers': { view: 'widget/losers_widget',locals: {layout: false}},

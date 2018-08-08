@@ -796,6 +796,122 @@ module.exports = {
 		});
 	},
 	
+	fxMarketDataRelativePrices:function(){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			FxTickers.find().exec(function(err,tickers){
+				_.forEach(tickers,function(ticker){
+					ticker.base_currency=_.join(_.split(ticker.symbol,'/',1));
+					ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'/','');
+					ticker.product=_.replace(ticker.symbol,'/','');
+				});
+				
+				var fx_currencies=[];
+				var fx_currencies_prices=[];
+				
+				_.forEach(tickers,function(fx_ticker){
+					fx_currencies.push(fx_ticker.base_currency);
+					fx_currencies.push(fx_ticker.quote_currency);
+				});
+				
+				fx_currencies=_.uniq(fx_currencies);
+				_.forEach(fx_currencies,function(currency){ 
+					var currency_objects=_.filter(tickers,{base_currency:currency});
+					if(!_.isEmpty(currency_objects)){
+						_.forEach(currency_objects,function(currency_object){
+							var quote_currency=currency_object.quote_currency;
+							var price=currency_object.bid;
+							
+							if(_.isEmpty(fx_currencies_prices)){
+								fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});	
+							}
+							else{
+								var inserted=false;
+								_.forEach(fx_currencies_prices,function(fx_currencies_price){
+									if(fx_currencies_price.currency==currency){
+										fx_currencies_price.prices.push({currency:quote_currency,price:price});
+										inserted=true;
+									}
+								});
+								if(!inserted){
+									fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});	
+								}
+							}
+						});	
+					}
+					
+					var currency_objects=_.filter(tickers,{quote_currency:currency});
+					if(!_.isEmpty(currency_objects)){
+						_.forEach(currency_objects,function(currency_object){
+							var quote_currency=currency_object.base_currency;
+							var price=1/currency_object.bid;
+							
+							if(_.isEmpty(fx_currencies_prices)){
+								fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});	
+							}
+							else{
+								var inserted=false;
+								_.forEach(fx_currencies_prices,function(fx_currencies_price){
+									if(fx_currencies_price.currency==currency){
+										fx_currencies_price.prices.push({currency:quote_currency,price:price});
+										inserted=true;
+									}
+								});
+								if(!inserted){
+									fx_currencies_prices.push({currency:currency,prices:[{currency:quote_currency,price:price}]});
+								}
+							}
+						});	
+					}
+				});
+				
+				for(var i=0;i<fx_currencies.length;i++){  
+					_.forEach(fx_currencies,function(currency){
+						var related_currencies=_.difference(fx_currencies,[currency]);
+						var check_currency=_.filter(fx_currencies_prices,{currency:currency});
+						if(!_.isEmpty(check_currency)){
+							check_currency=_.head(check_currency);
+							var unrelated_currencies=[];
+							
+							_.forEach(related_currencies,function(related_currency){
+								if(_.isEmpty(_.filter(check_currency.prices,{currency:related_currency}))){
+									unrelated_currencies.push(related_currency);
+								}
+							});
+							
+							if(!_.isEmpty(unrelated_currencies)){
+								_.forEach(unrelated_currencies,function(unrelated_currency){
+									var is_assigned=false;
+									var temp_array=fx_currencies_prices;
+									_.forEach(temp_array,function(lookups){
+										if(!is_assigned)
+										{
+											if(!_.isEmpty(_.filter(lookups.prices,{currency:unrelated_currency}))){
+												if(!_.isEmpty(_.filter(check_currency.prices,{currency:lookups.currency}))){
+													var price_lookup=_.head(_.filter(lookups.prices,{currency:unrelated_currency}));
+													var price_self=_.head(_.filter(check_currency.prices,{currency:lookups.currency}));
+													
+													_.forEach(fx_currencies_prices,function(assignment){
+														if(assignment.currency==currency){
+															assignment.prices.push({currency:unrelated_currency,price:(price_self.price*price_lookup.price)});
+															is_assigned=true;
+														}
+													});
+												}
+											}
+										}
+									});
+									
+								});
+							}
+						}
+					});
+				}
+				return resolve({name:'',url:'',is_exchange:'',data:fx_currencies_prices});
+			});
+		});
+	},
+	
 	fixDataBySymbol:function(symbol){
 		var _ = require('lodash');
 		var moment = require('moment');
@@ -809,9 +925,48 @@ module.exports = {
 						totalCryptofix=totalCryptofix[1];
 					}
 					
+					var now=moment(totalCryptofix.date_created);
+					var end=moment();
+					var duration = moment.duration(end.diff(now));
+					if(parseInt(duration.asHours())==0){
+						var hours = 23;
+						var minutes = 60-parseInt(duration.asMinutes())%60;
+					}
+					else{
+						var hours = 24-parseInt(duration.asHours());
+						var minutes = 60-parseInt(duration.asMinutes())%60;
+					}
+					
+					//SINCE CRON JOB MAY TAKE FEW SECONS/MINUTES TO EXECUTE CODE
+					if(hours<10 && minutes<55){
+						minutes=minutes+5;
+					}
+					
 					totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
+					totalCryptofix.hours=hours;
+					totalCryptofix.minutes=minutes;
 					totalCryptofix.prices=_.filter(totalCryptofix.prices,{currency:_.toUpper(symbol)});
 					return resolve({name:'total cryptos fix price',url:'http://totalcryptos.com',is_exchange:'no',data:totalCryptofix});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
+	fxDataBySymbol:function(symbol){
+		var _ = require('lodash');
+		var moment = require('moment');
+		return new Promise(function(resolve,reject){
+			TotalCryptoPricesCurrencies.find().limit(1).sort({id:-1}).exec(function(err,totalCryptofx){ 
+				if(!_.isEmpty(totalCryptofx)){ 
+					
+					totalCryptofx=_.head(totalCryptofx);
+					totalCryptofx=totalCryptofx.prices;
+					
+					totalCryptofx=_.filter(totalCryptofx,{quote_currency:_.toLower(symbol)});
+					return resolve({name:'total cryptos fx price',url:'http://totalcryptos.com',is_exchange:'no',data:totalCryptofx});
 				}
 				else{
 					return resolve({name:'',url:'',is_exchange:'',data:[]});

@@ -151,6 +151,16 @@ module.exports = {
 	  });
   },
   
+  fx:function(request,response){
+	return response.view('fx',{title: 'Total Cryptos - FX',path:request.path}); 
+  },
+  
+  fx_data_by_symbol:function(request,response){
+	  FrontendService.fxData('databysymbol',request.param('symbol'),function(data){
+		  response.send(data);
+	  });
+  },
+  
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
   }

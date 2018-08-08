@@ -17,8 +17,8 @@ module.exports.cron = {
   },
   //STORE TICKERS OF EXCHANGES HAVING MORE THAN 100 PRODUCTS
   myThirdJob: {
-	//schedule: '00 */7 * * * *',
-	schedule: '00 55 * * * *',
+	schedule: '00 */3 * * * *',
+	//schedule: '00 55 * * * *',
     onTick: function () {
       CronService.createExchangeTickers2();
     }

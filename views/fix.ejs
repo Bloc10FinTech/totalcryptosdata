@@ -10,6 +10,15 @@
 						<div class="card-body">
 							<div class="card-header">
 								<div class="row">
+									<div class="col-md-12" style="text-align:center;">
+										<h5>
+											<span style="font-size:20px;font-weight:bold;">DATA REFRESH IN
+											</span>
+										</h5>
+										<span id="refresh_timer"></span>
+									</div>
+								</div>
+								<div class="row">
 									<div class="col-md-12">
 										<h5 class="card-title">THE BIT FIX</h5>
 									</div>
@@ -28,7 +37,12 @@
 									<tbody  id="fix_market_summary"> 
 									</tbody>
 								</table>
-							</div>	
+							</div>
+							<div class="row" style="margin-top:20px;">
+								<div class="col-md-12">
+									<img src="/images/bitfix.jpg" style="width:100%;"/>
+								</div>
+							</div>							
 						</div>
 					</div>					
 				</div>
@@ -44,13 +58,22 @@
 
 $(document).ready(function(){
 	$('#fix_market_summary').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	
 	$.ajax({
 		type:'GET',
 		url:'/fix_data/databysymbol/BTC',
 		success:function(data){ 
+			console.log(data);
 			var str='';
 			var i=0;
 			if(data.prices){
+			
+				$("#refresh_timer").countdowntimer({
+					hours:data.hours,
+					minutes:data.minutes,
+					expiryUrl:'/fix'
+				});
+			
 				data.prices.forEach(function(record,index){
 					record.prices.forEach(function(summary,index){
 						var even_odd_class='even';
@@ -68,7 +91,7 @@ $(document).ready(function(){
 						str+=record.currency+summary.currency;
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
-						str+=format_numbers(parseFloat(summary.price).toFixed(8));
+						str+=format_numbers(parseFloat(summary.price).toFixed(2));
 						str+='</td>';
 						str+='<td>';
 						str+=data.date_created;
