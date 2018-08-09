@@ -10,12 +10,22 @@
 						<div class="card-body">
 							<div class="card-header">
 								<div class="row">
-									<div class="col-md-12" style="text-align:center;">
+									<div class="col-md-4">
+									</div>
+									<div class="col-md-4" style="text-align:center;">
 										<h5>
 											<span style="font-size:20px;font-weight:bold;">DATA REFRESH IN
 											</span>
 										</h5>
-										<span id="refresh_timer"></span>
+										<h5>
+											<span style="font-size:16px;font-weight:bold;">Next Bit Fix in
+											</span>
+										</h5>
+										<span id="refresh_timer"><img src="/images/data-loader.gif"/></span>
+									</div>
+									<div class="col-md-4" style="font-size:23px;color:#000000;font-weight:bold;">
+										<span id="cur_time"><img src="/images/data-loader.gif"/></span><span>&nbsp;(EDT)</span><br/>
+										<span style="font-size:20px;font-weight:bold;color:#4f5f6f;">Time In New York, NY</span>
 									</div>
 								</div>
 								<div class="row">
@@ -40,6 +50,11 @@
 							</div>
 							<div class="row" style="margin-top:20px;">
 								<div class="col-md-12">
+									<p><strong>BIT FIX data provided by Total Cryptos zDATA engine. For real-time BIT FIX price updates at the close, historical BIT FIX data and more, see <a href="https://portal.totalcryptos.com/total-cryptos-professional-data-service">Total Cryptos zDATA product</a>.</strong></p>
+								</div>
+							</div>
+							<div class="row" style="margin-top:20px;">
+								<div class="col-md-12">
 									<img src="/images/bitfix.jpg" style="width:100%;"/>
 								</div>
 							</div>							
@@ -57,6 +72,7 @@
 <script>
 
 $(document).ready(function(){
+	
 	$('#fix_market_summary').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
 	
 	$.ajax({
@@ -71,7 +87,14 @@ $(document).ready(function(){
 				$("#refresh_timer").countdowntimer({
 					hours:data.hours,
 					minutes:data.minutes,
+					seconds:data.seconds,
 					expiryUrl:'/fix'
+				});
+				
+				$("#cur_time").remoteTime({
+					key: "AIzaSyBA92zhbKd9NFAembB-DLv5iv2GoVnhRn8",
+					location: "New York, NY",
+					format: "g:i A <br/> l, F jS Y"
 				});
 			
 				data.prices.forEach(function(record,index){

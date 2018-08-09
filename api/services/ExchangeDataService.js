@@ -928,23 +928,24 @@ module.exports = {
 					var now=moment(totalCryptofix.date_created);
 					var end=moment();
 					var duration = moment.duration(end.diff(now));
-					if(parseInt(duration.asHours())==0){
-						var hours = 23;
-						var minutes = 60-parseInt(duration.asMinutes())%60;
-					}
-					else{
-						var hours = 24-parseInt(duration.asHours());
+					
+					var hours=24;
+					var minutes=0;
+					var seconds=0;
+					if(duration.asHours()>0){
+						var hours = parseInt(24-duration.asHours());
 						var minutes = 60-parseInt(duration.asMinutes())%60;
 					}
 					
 					//SINCE CRON JOB MAY TAKE FEW SECONS/MINUTES TO EXECUTE CODE
-					if(hours<10 && minutes<55){
-						minutes=minutes+5;
+					if(hours<10){
+						seconds=30;
 					}
 					
 					totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
 					totalCryptofix.hours=hours;
 					totalCryptofix.minutes=minutes;
+					totalCryptofix.seconds=seconds;
 					totalCryptofix.prices=_.filter(totalCryptofix.prices,{currency:_.toUpper(symbol)});
 					return resolve({name:'total cryptos fix price',url:'http://totalcryptos.com',is_exchange:'no',data:totalCryptofix});
 				}
