@@ -933,11 +933,11 @@ module.exports = {
 					var hours=24;
 					var minutes=0;
 					var seconds=0;
-					if(duration.asHours()<24){
+					if(duration.asHours()<24 && duration.asHours()>0){
 						var hours = parseInt(24-duration.asHours());
 						var minutes = 60-parseInt(duration.asMinutes())%60;
 					}
-					
+					console.log(hours+"=="+minutes+"==="+totalCryptofix.id);
 					//SINCE CRON JOB MAY TAKE FEW SECONS/MINUTES TO EXECUTE CODE
 					if(hours<10){
 						seconds=30;
