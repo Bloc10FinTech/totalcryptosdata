@@ -928,7 +928,7 @@ module.exports = {
 					
 					var now=moment(totalCryptofix.date_created);
 					var end=moment();
-					console.log(now+"==="+end);
+					console.log(moment().format('YYYY-MM-DD HH:mm:ss'));
 					var duration = moment.duration(end.diff(now));
 					
 					var hours=24;
@@ -938,7 +938,7 @@ module.exports = {
 						var hours = parseInt(24-duration.asHours());
 						var minutes = 60-parseInt(duration.asMinutes())%60;
 					}
-					console.log(hours+"=="+minutes+"==="+totalCryptofix.id);
+					
 					//SINCE CRON JOB MAY TAKE FEW SECONS/MINUTES TO EXECUTE CODE
 					if(hours<10){
 						seconds=30;
