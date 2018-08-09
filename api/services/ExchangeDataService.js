@@ -928,6 +928,7 @@ module.exports = {
 					
 					var now=moment(totalCryptofix.date_created);
 					var end=moment();
+					console.log(now+"==="+end);
 					var duration = moment.duration(end.diff(now));
 					
 					var hours=24;
