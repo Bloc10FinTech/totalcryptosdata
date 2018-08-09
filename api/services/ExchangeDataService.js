@@ -932,7 +932,7 @@ module.exports = {
 					var hours=24;
 					var minutes=0;
 					var seconds=0;
-					if(duration.asHours()>0){
+					if(duration.asHours()<24){
 						var hours = parseInt(24-duration.asHours());
 						var minutes = 60-parseInt(duration.asMinutes())%60;
 					}
