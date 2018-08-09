@@ -916,7 +916,8 @@ module.exports = {
 		var _ = require('lodash');
 		var moment = require('moment');
 		return new Promise(function(resolve,reject){
-			TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
+			TotalCryptoFix.find().limit(1).sort({id:-1}).exec(function(err,totalCryptofix){ 
+			//TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
 				if(!_.isEmpty(totalCryptofix)){ 
 					if(totalCryptofix.length==1){
 						totalCryptofix=_.head(totalCryptofix);
