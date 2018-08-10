@@ -3441,7 +3441,7 @@ module.exports = {
 								temp_price_array.push({base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,price:ticker.price,chart:[]});
 								fx_currency_price=_.head(fx_currency_price);
 								_.forEach(fx_currency_price.prices,function(currency_price){
-									temp_price_array.push({base_currency:ticker.base_currency,quote_currency:_.toLower(currency_price.currency),price:ticker.price/currency_price.price,chart:[]});
+									temp_price_array.push({base_currency:ticker.base_currency,quote_currency:_.toLower(currency_price.currency),price:ticker.price*currency_price.price,chart:[]});
 								});
 							}
 						}
@@ -3523,7 +3523,7 @@ module.exports = {
 								temp_price_array.push({currency:_.toUpper(ticker.quote_currency),price:ticker.price,chart:[]});
 								fx_currency_price=_.head(fx_currency_price);
 								_.forEach(fx_currency_price.prices,function(currency_price){
-									temp_price_array.push({currency:currency_price.currency,price:ticker.price/currency_price.price,chart:[]});
+									temp_price_array.push({currency:currency_price.currency,price:ticker.price*currency_price.price,chart:[]});
 								});
 								temp.push({currency:_.toUpper(ticker.base_currency),prices:temp_price_array});
 							}
