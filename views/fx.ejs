@@ -108,11 +108,13 @@ function show_fx_price(tab){
 				str+=summary.base_currency.toUpperCase()+summary.quote_currency.toUpperCase();
 				str+='</td>';
 				str+='<td class="text-bold" id="'+summary.base_currency+summary.quote_currency+'_price_fx">';
-				if(summary.change_perc_24h>0){
-				str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+				str+='<img src="/images/currency_symbols/'+summary.quote_currency+'.png" width="12px" height="12px" onError="" />';
+				/*if(summary.change_perc_24h>0){
+				str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 				}else{
-				str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-				}
+				str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+				}*/
+				str+='<span style="color:#000;">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
 				str+='</td>';
 				str+='<td id="'+summary.base_currency+summary.quote_currency+'_change_perc_24h_fx">';
 				if(summary.change_perc_24h>0){
@@ -123,7 +125,15 @@ function show_fx_price(tab){
 				str+='</td>';
 				str+='<td>';
 				str+='<div class="row">';
-				str+='<div class="col-md-12" id="chart_'+summary.base_currency+summary.quote_currency+'_fx"><input type="hidden" id="hidden_'+summary.base_currency+summary.quote_currency+'_fx" value="'+summary.chart+'" /></div>';
+				str+='<div class="col-md-12" id="chart_'+summary.base_currency+summary.quote_currency+'_fx">';
+				str+='<input type="hidden" id="hidden_'+summary.base_currency+summary.quote_currency+'_fx" value="'+summary.chart+'" />';
+				if(summary.change_perc_24h>0){
+					str+='<input type="hidden" id="change_hidden_'+summary.base_currency+summary.quote_currency+'_fx" value="1" />';
+				}
+				else{
+					str+='<input type="hidden" id="change_hidden_'+summary.base_currency+summary.quote_currency+'_fx" value="0" />';
+				}
+				str+='</div>';
 				str+='</div>';
 				str+='</td>';
 				str+='</tr>';
@@ -154,9 +164,12 @@ function format_numbers(number){
 function draw_chart(){
 	$("#fxprice_market_summary").children('tr').each(function(){
 		var val=$("#hidden_"+this.id).val();
+		var is_inc=$("#change_hidden_"+this.id).val();
+		var color_code='#2fa744';
+		if(is_inc==0){color_code='#f9494b';}
 		if(val){
 			$("#chart_"+this.id).html('');
-			$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: '#FFA500',fillColor: "#FFA500"});
+			$("#chart_"+this.id).sparkline(val.split(","), {type: 'line',width: '100px',height: '20',lineColor: color_code,fillColor: color_code});
 		}
 	});
 }

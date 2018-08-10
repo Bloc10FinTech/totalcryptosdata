@@ -220,11 +220,11 @@ module.exports = {
 		}
 	},
 	
-	fxData:function(type,symbol,callBack){
+	fxData:function(type,symbol,count,callBack){
 		switch(type){
 			case 'databysymbol':
 				return Promise.all([
-					ExchangeDataService.fxDataBySymbol(symbol)
+					ExchangeDataService.fxDataBySymbol(symbol,count)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			default:

@@ -114,7 +114,8 @@ $(document).ready(function(){
 						str+=record.currency+summary.currency;
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
-						str+=format_numbers(parseFloat(summary.price).toFixed(2));
+						str+='<img src="/images/currency_symbols/'+summary.currency+'.png" width="12px" height="12px" onError="" />';
+						str+='<span style="color:#000;">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
 						str+='</td>';
 						str+='<td>';
 						str+=data.date_created;

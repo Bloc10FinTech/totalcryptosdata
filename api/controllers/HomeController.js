@@ -156,7 +156,7 @@ module.exports = {
   },
   
   fx_data_by_symbol:function(request,response){
-	  FrontendService.fxData('databysymbol',request.param('symbol'),function(data){
+	  FrontendService.fxData('databysymbol',request.param('symbol'),20,function(data){
 		  response.send(data);
 	  });
   },

@@ -956,7 +956,7 @@ module.exports = {
 		});
 	},
 	
-	fxDataBySymbol:function(symbol){
+	fxDataBySymbol:function(symbol,count){
 		var _ = require('lodash');
 		var moment = require('moment');
 		return new Promise(function(resolve,reject){
@@ -967,6 +967,11 @@ module.exports = {
 					totalCryptofx=totalCryptofx.prices;
 					
 					totalCryptofx=_.filter(totalCryptofx,{quote_currency:_.toLower(symbol)});
+					totalCryptofx.sort(function(a,b){ if(parseFloat(a.price)>parseFloat(b.price)){return -1;}else {return 1;}});
+					
+					if(count>0){
+						totalCryptofx=_.slice(totalCryptofx,0,count);
+					}
 					return resolve({name:'total cryptos fx price',url:'http://totalcryptos.com',is_exchange:'no',data:totalCryptofx});
 				}
 				else{
