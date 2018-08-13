@@ -35,7 +35,7 @@
 								</div>
 							</div> 
 
-							<div id="fx-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
+							<div id="fix-table_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
 								<table class="display table-custom dataTable no-footer fixprice" style="width: 100%;overflow:auto;" role="grid">
 									<thead>
 										<tr role="row">
@@ -51,6 +51,24 @@
 							<div class="row" style="margin-top:20px;">
 								<div class="col-md-12">
 									<p><strong>BIT FIX data provided by Total Cryptos zDATA engine. For real-time BIT FIX price updates at the close, historical BIT FIX data and more, see <a href="https://portal.totalcryptos.com/total-cryptos-professional-data-service">Total Cryptos zDATA product</a>.</strong></p>
+								</div>
+							</div>
+							<div id="fix-table2_wrapper" class="dataTables_wrapper no-footer" style="overflow:auto;">
+								<table class="display table-custom dataTable no-footer fixprice2" style="width: 100%;overflow:auto;" role="grid">
+									<thead>
+										<tr role="row">
+											<th class="sorting" tabindex="0" aria-controls="fix-table2" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 60px;">Name</th>
+											<th class="sorting" tabindex="0" aria-controls="fix-table2" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 60px;">Pair</th>
+											<th class="sorting" tabindex="0" aria-controls="fix-table2" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 120px;">Price</th>
+											<th class="sorting_disabled sorting" tabindex="0" aria-controls="fix-table" rowspan="1" colspan="1" aria-label="Chart 1d: activate to sort column ascending" style="width: 90px;">Date</th></tr>
+									</thead>
+									<tbody  id="fix_market_summary2"> 
+									</tbody>
+								</table>
+							</div>
+							<div class="row" style="margin-top:20px;">
+								<div class="col-md-12">
+									<p><strong>Get your token listed on BIT FIX with <a href="https://portal.totalcryptos.com/total-cryptos-professional-data-service">Total Cryptos zDATA</a>.</strong></p>
 								</div>
 							</div>
 							<div class="row" style="margin-top:20px;">
@@ -75,11 +93,12 @@ $(document).ready(function(){
 	
 	$('#fix_market_summary').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
 	
+	$('#fix_market_summary2').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	
 	$.ajax({
 		type:'GET',
 		url:'/fix_data/databysymbol/BTC',
 		success:function(data){ 
-			console.log(data);
 			var str='';
 			var i=0;
 			if(data.prices){
@@ -138,6 +157,64 @@ $(document).ready(function(){
 			});
 		}
 	});	
+	
+	var str='';
+	var temp_counter=0;
+	var other_currencies=['ETH','XRP','BCH','EOS','XLM','LTC','ADA'];
+		
+	other_currencies.forEach(function(currency_name,index){
+		$.ajax({
+			type:'GET',
+			url:'/fix_data/databysymbol/'+currency_name,
+			success:function(data){
+				var i=0;
+				temp_counter=temp_counter+1;
+				if(data.prices){
+					data.prices.forEach(function(record,index){
+						record.prices.forEach(function(summary,index){
+							var even_odd_class='even';
+							if(i%2==0){
+								even_odd_class='odd';
+							}
+							i++;
+							str+='<tr role="row" class="'+even_odd_class+'" id="'+record.currency+summary.currency+'_fix">';
+							str+='<td class="text-bold">';
+							str+='<img src="/images/currencies/'+record.currency.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+							str+='&nbsp;&nbsp;';
+							str+=record.currency;
+							str+='</td>'; 
+							str+='<td>';
+							str+=record.currency+summary.currency;
+							str+='</td>';
+							str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
+							str+='<img src="/images/currency_symbols/'+summary.currency.toLowerCase()+'.png" width="12px" height="12px" onError="" />';
+							str+='<span style="color:#000;">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
+							str+='</td>';
+							str+='<td>';
+							str+=data.date_created;
+							str+='</td>';
+							str+='</tr>';
+						});
+					});
+				}
+				
+				if(temp_counter==other_currencies.length){
+					$('#fix_market_summary2').html(str);
+					$('.fxprice2').DataTable({
+						"paging":   false, 
+						"info":     false,
+						//"searching": false,
+						"aaSorting": [],
+						dom: 'Bfrtip',
+						buttons: [
+							'csv', 'excel', 'pdf', 'print'
+						]
+					});
+				}
+				
+			}
+		});
+	});
 });
 
 function format_numbers(number){
