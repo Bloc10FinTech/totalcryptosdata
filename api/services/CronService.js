@@ -3224,7 +3224,7 @@ module.exports = {
 							case 'binance':
 								product=_.toLower(ticker.symbol);
 								base_currency=_.toLower(ticker.baseAsset);
-								quote_currency=_.toLower(ticker.QuoteAsset);	
+								quote_currency=_.toLower(ticker.quoteAsset);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastPrice,volume:ticker.volume,high:ticker.highPrice,low:ticker.lowPrice});
 							break;
 							case 'huobi':

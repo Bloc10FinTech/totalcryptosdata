@@ -161,6 +161,22 @@ module.exports = {
 	  });
   },
   
+  crypto_arbitrage:function(request,response){
+	  return response.view('crypto_arbitrage',{title: 'Total Cryptos - Crypto Arbitrage',path:request.path});
+  },
+  
+  exchanges_currencies:function(request,response){
+	  FrontendService.exchanges_currencies(function(data){
+		  response.send(data);
+	  });
+  },
+  
+  predator:function(request,response){
+	  FrontendService.predator(request.param('exchange_array'),request.param('currency_array'),function(data){
+		 response.send(data); 
+	  });
+  },
+  
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
   }

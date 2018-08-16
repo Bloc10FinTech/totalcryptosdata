@@ -81,6 +81,11 @@ module.exports.routes = {
   '/fx':'HomeController.fx',
   '/fx_data/databysymbol/:symbol':'HomeController.fx_data_by_symbol',
   
+  '/crypto-arbitrage':'HomeController.crypto_arbitrage',
+  '/exchanges_currencies':'HomeController.exchanges_currencies',
+  
+  'post /predator':'HomeController.predator',
+  
   '/pro':'HomeController.pro',
   'GET /widget/gainers': { view: 'widget/gainers_widget',locals: {layout: false}},
   'GET /widget/losers': { view: 'widget/losers_widget',locals: {layout: false}},

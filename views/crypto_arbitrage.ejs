@@ -1,0 +1,292 @@
+
+<main class="main-content">
+<%- partial('./partials/banner-ads.ejs') %>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10">
+				<!-- TOTAL CRYPTOS TABLE -->
+				<div class="row" id="coins">
+					<div class="col-lg-12 card card-table-pane" style="margin-top:0 !important; padding: 0;">
+						<div class="card-body" style="min-height:500px;">
+							<div class="card-header">
+								<div class="row">
+									<div class="col-md-12">
+										<h5 class="card-title">Predator</h5>
+									</div>
+								</div>
+								<div class="row" id="dropdown_list_container">	
+									<div class="col-md-4">
+										<div class="dropdown-container" id="dropdown-container">
+											<div class="dropdown-button noselect" id="dropdown-button">
+												<div class="dropdown-label">Exchange</div>
+												<div class="dropdown-quantity">(<span class="quantity"  id="quantity">Any</span>)</div>
+												<i class="fa fa-filter"></i>
+											</div>
+											<div class="dropdown-list" id="dropdown-list" style="display: none;">
+												<input type="search" placeholder="Search Exchange" class="dropdown-search" id="dropdown-search"/>
+												<ul id="exchange_list"></ul>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="dropdown-container" id="dropdown-container2">
+											<div class="dropdown-button noselect" id="dropdown-button2">
+												<div class="dropdown-label">Currency</div>
+												<div class="dropdown-quantity">(<span class="quantity" id="quantity2">Any</span>)</div>
+												<i class="fa fa-filter"></i>
+											</div>
+											<div class="dropdown-list" id="dropdown-list2" style="display: none;">
+												<input type="search" placeholder="Search Currency" class="dropdown-search" id="dropdown-search2"/>
+												<ul id="currency_list"></ul>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="dropdown-container">
+											<input type="button" name="search_predator" value="search" class="btn btn-success" onclick="show_predator();" />
+										</div>
+									</div>
+								</div>
+							</div> 
+							
+							<div class="row" id="predator_list">
+							</div>						
+						</div>
+					</div>					
+				</div>
+			</div>
+			<div class="col-lg-2 text-center pl-0 pr-0">
+				<%- partial('./partials/ads.ejs') %>
+			</div>
+		</div> 
+	</div>
+</main>
+
+<script>
+
+$(document).ready(function(){
+	
+	$('#dropdown-container').on('click', '#dropdown-button', function() {
+    	$('#dropdown-list').toggle();
+	})
+	.on('input', '#dropdown-search', function() {
+    	var target = $(this);
+    	var search = target.val().toLowerCase();
+    
+    	if (!search) {
+            $('li').show();
+            return false;
+        }
+    
+    	$('#dropdown-list ul li').each(function() {
+        	var text = $(this).text().toLowerCase();
+            var match = text.indexOf(search) > -1;
+            $(this).toggle(match);
+        });
+	})
+	.on('change', '[type="checkbox"]', function() {
+    	var numChecked = $("#exchange_list").children('li').children('label').children('[type="checkbox"]:checked').length;
+    	$('#quantity').text(numChecked || 'Any');
+	});
+	
+	$('#dropdown-container2').on('click', '#dropdown-button2', function() {
+    	$('#dropdown-list2').toggle();
+	})
+	.on('input', '#dropdown-search2', function() {
+    	var target = $(this);
+    	var search = target.val().toLowerCase();
+    
+    	if (!search) {
+            $('li').show();
+            return false;
+        }
+    
+    	$('#dropdown-list2 ul li').each(function() {
+        	var text = $(this).text().toLowerCase();
+            var match = text.indexOf(search) > -1;
+            $(this).toggle(match);
+        });
+	})
+	.on('change', '[type="checkbox"]', function() {
+    	var numChecked = $("#currency_list").children('li').children('label').children('[type="checkbox"]:checked').length;
+    	$('#quantity2').text(numChecked || 'Any');
+	});
+
+	$.ajax({
+		type:'GET',
+		url:'/exchanges_currencies',
+		success:function(data){ 
+			if(data.exchanges){ 
+				var exchange_checked_count=0;
+				data.exchanges.forEach(function(exchange,index){
+					var item='<li>';
+					item+='<label class="checkbox-inline">';
+					if(['gdax','bitfinex'].indexOf(exchange.name)==-1){
+						item+='<input value="'+exchange.name+'" type="checkbox">';
+					}
+					else{
+						item+='<input value="'+exchange.name+'" type="checkbox" checked="checked">';
+						exchange_checked_count++;
+					}
+					
+					item+='&nbsp;<b>'+exchange.name.toUpperCase()+'</b>';
+					item+='</label>';
+					item+='</li>';
+					$('#exchange_list').append('<li>'+item+'</li>');
+				});
+				$('#quantity').text(exchange_checked_count);
+			}
+			
+			if(data.currencies){
+				var currency_checked_count=0;
+				data.currencies.forEach(function(currency_name){
+					var item='<li>';
+					item+='<label class="checkbox-inline">';
+					if(['btc','usd'].indexOf(currency_name)==-1){
+						item+='<input value="'+currency_name+'" type="checkbox">';
+					}
+					else{
+						item+='<input value="'+currency_name+'" type="checkbox" checked="checked">';
+						currency_checked_count++;
+					}
+					
+					item+='&nbsp;<b>'+currency_name.toUpperCase()+'</b>';
+					item+='</label>';
+					item+='</li>';
+					$('#currency_list').append('<li>'+item+'</li>');
+				});
+				$('#quantity2').text(currency_checked_count);
+			}
+		}
+	});
+});
+
+//PROCESS TO SHOW INITIAL DATA
+show_predator(['gdax','bitfinex'],['btc','usd']);
+function show_predator(exchanges=null,currencies=null){
+
+	$('#dropdown-list').hide();
+	$('#dropdown-list2').hide();
+
+	var exchange_array=[];
+	var currency_array=[];
+	
+	if(exchanges && currencies){
+		exchange_array=exchanges;
+		currency_array=currencies;
+	}
+	else{
+		$("#exchange_list").children('li').children('label').children('[type="checkbox"]:checked').each(function(){
+			exchange_array.push($(this).val()); 
+		});
+		
+		$("#currency_list").children('li').children('label').children('[type="checkbox"]:checked').each(function(){
+			currency_array.push($(this).val()); 
+		});
+	}
+	$("#predator_list").html('<div class="col-md-12" style="text-align:center;"><img src="/images/data-loader.gif"></img></div>');
+	
+	$.ajax({
+		type:'POST',
+		url:'/predator',
+		data:{exchange_array:JSON.stringify(exchange_array),currency_array:JSON.stringify(currency_array)},
+		success:function(data){
+			var str='';
+			if(data.length>0){
+				data.forEach(function(product_exchanges){
+					var product=product_exchanges.product;
+					var exchanges=product_exchanges.records;
+					
+					var base_currency=(product.split('_'))[0];
+					product=product.replace('_','').toUpperCase();
+					
+					if(exchanges.length==1){
+						var exchange=exchanges[0];
+						str+='<div class="col-md-12" style="background-color:#f5f5f5;border-radius:5px;margin-top:20px;padding-top:10px ;padding-bottom:10px;font-size:15px;">';
+						str+='<div class="row">';
+						str+='<div class="col-md-9">';
+						str+='<img src="/images/currencies/'+base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />&nbsp;';
+						str+='<strong>'+product+'</strong>';
+						str+='</div>';
+						str+='<div class="col-md-3">';
+						str+='<strong>0.0%</strong>';
+						str+='</div>';
+						str+='</div>';
+						str+='<div class="col-md-12" style="border-top:3px solid green;padding-top:10px;text-transform:capitalize;">';
+						str+=exchange.exchange;
+						str+='<hr/>';
+						str
+						
+						+='</div>';
+						str+='<div class="col-md-12">';
+						str+='Price:&nbsp;'+exchange.price;
+						str+='</div>';
+						str+='<div class="col-md-12">';
+						str+='Volume:&nbsp;'+exchange.volume;
+						str+='</div>';
+						str+='</div>';
+					}
+					else{
+						var pairs=exchanges.length;
+						for(var i=0;i<pairs;i++){
+							var first=exchanges[0];
+							var exchanges=exchanges.slice(1);
+							
+							for(var j=0;j<exchanges.length;j++){
+								var second=exchanges[j];
+								str+='<div class="col-md-4 col-sm-4">';
+								str+='<div class="row" style="background-color:#f5f5f5;border-radius:5px;margin-top:20px;padding-top:10px ;padding-bottom:10px;width:98%;margin-left:1%;font-size:15px;">';
+								str+='<div class="col-md-12 col-sm-12">';
+								str+='<div class="row">';
+								str+='<div class="col-md-7 col-sm-7">';
+								str+='<img src="/images/currencies/'+base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />&nbsp;';
+								str+='<strong>'+product+'</strong>';
+								str+='</div>';
+								str+='<div class="col-md-5 col-sm-5" style="text-align:right;">';
+								str+='<strong>'+parseFloat(first.price*100/second.price-100).toFixed(1)+'%'+'</strong>';
+								str+='</div>';
+								str+='</div>';
+								str+='<div class="row">';
+								str+='<div class="col-md-6 col-sm-6" style="border-top:3px solid green;padding-top:10px;">';
+								str+='<div class="col-md-12 col-sm-12" style="text-transform:capitalize;">';
+								str+=first.exchange;
+								str+='<hr/>';
+								str+='</div>';
+								str+='<div class="col-md-12 col-sm-12">';
+								str+='Price:&nbsp;'+parseFloat(first.price).toFixed(2);
+								str+='</div>';
+								str+='<div class="col-md-12 col-sm-12">';
+								str+='Volume:&nbsp;'+parseFloat(first.volume).toFixed(0);
+								str+='</div>';
+								str+='</div>';
+								str+='<div class="col-md-6 col-sm-6" style="border-top:3px solid red;padding-top:10px;">';
+								str+='<div class="col-md-12 col-sm-12" style="text-transform:capitalize;">';
+								str+=second.exchange;
+								str+='<hr/>';
+								str+='</div>';
+								str+='<div class="col-md-12 col-sm-12">';
+								str+='Price:&nbsp;'+parseFloat(second.price).toFixed(2);
+								str+='</div>';
+								str+='<div class="col-md-12 col-sm-12">';
+								str+='Volume:&nbsp;'+parseFloat(second.volume).toFixed(0);
+								str+='</div>';
+								str+='</div>';
+								str+='</div>';
+								str+='</div>';
+								str+='</div>';
+								str+='</div>';
+							}
+						}
+					}
+				});
+			}
+			$("#predator_list").html(str);
+		}
+	});
+}
+
+function format_numbers(number){
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
+
+</script>

@@ -1205,5 +1205,26 @@ module.exports = {
 				}
 			});
 		});
+	},
+	
+	exchanges_currencies:function(){
+		var _ = require('lodash');
+		var moment = require('moment');
+	
+		return new Promise(function(resolve,reject){
+			ExchangeList.find({select :['name','is_exchange']},function(err, exchanges){
+				if(err){ 
+					return resolve({exchanges:[],currencies:[]});
+				}
+				
+				_.sortBy(exchanges,[function(exchange) { return exchange.name; }]);
+				ExchangeDataService.totalCryptoPricesPairs().then(pairs => {
+					var currencies=_.map(pairs.data,'base_currency');
+					currencies=_.uniq(currencies);
+					currencies.sort();
+					return resolve({exchanges:exchanges,currencies:currencies});
+				}).catch(err => {return resolve({exchanges:exchanges,currencies:[]});});
+			});
+		});
 	}
 };
