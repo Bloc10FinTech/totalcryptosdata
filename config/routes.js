@@ -31,7 +31,7 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
-
+  //SITE URLS AND DATA
   '/': {controller: 'home'},
   '/headerFooterData':'HomeController.headerFooterData',
   '/gainersLosers':'HomeController.gainersLosers',
@@ -58,6 +58,22 @@ module.exports.routes = {
   '/losers_data':'HomeController.losers_data',
   '/exchange_prices/:tab':'HomeController.exchange_prices',
   '/exchange_prices/:tab/details':'HomeController.exchange_prices_details',
+  '/fix':'HomeController.fix',
+  '/fix_data/databysymbol/:symbol':'HomeController.fix_data_by_symbol',
+  '/fx':'HomeController.fx',
+  '/fx_data/databysymbol/:symbol':'HomeController.fx_data_by_symbol',
+  '/crypto-arbitrage':'HomeController.crypto_arbitrage',
+  '/exchanges_currencies':'HomeController.exchanges_currencies',
+  'post /predator':'HomeController.predator',
+  '/pro':'HomeController.pro',
+  '/home': {view: 'homepage'},
+  '/login':{view: 'login'},
+  '/about':'HomeController.about',
+  '/TCindex':'HomeController.TC_index',
+  '/ninjatrader': { view: 'ninjatrader',locals: {layout: false}},
+  'post /doLogin':'AuthController.doLogin',
+  
+  //APIS SERVICES
   '/api':'HomeController.documentation',
   '/api/documentation':'HomeController.documentation',
   '/api/tcPrices':'ApiController.tcPrices',
@@ -74,19 +90,10 @@ module.exports.routes = {
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
+  'post /predator/currencies':'PredatorTradeController.predators_data',
   
-  '/fix':'HomeController.fix',
-  '/fix_data/databysymbol/:symbol':'HomeController.fix_data_by_symbol',
   
-  '/fx':'HomeController.fx',
-  '/fx_data/databysymbol/:symbol':'HomeController.fx_data_by_symbol',
-  
-  '/crypto-arbitrage':'HomeController.crypto_arbitrage',
-  '/exchanges_currencies':'HomeController.exchanges_currencies',
-  
-  'post /predator':'HomeController.predator',
-  
-  '/pro':'HomeController.pro',
+  //WIDGET URLS
   'GET /widget/gainers': { view: 'widget/gainers_widget',locals: {layout: false}},
   'GET /widget/losers': { view: 'widget/losers_widget',locals: {layout: false}},
   'GET /widget/gainers_losers': { view: 'widget/gainers_losers_widget',locals: {layout: false}},
@@ -95,12 +102,7 @@ module.exports.routes = {
   'GET /widget_sm/losers': { view: 'widget_sm/losers_widget',locals: {layout: false}},
   'GET /widget_sm/gainers_losers': { view: 'widget_sm/gainers_losers_widget',locals: {layout: false}},
  
-  '/home': {view: 'homepage'},
-  '/login':{view: 'login'},
-  '/about':'HomeController.about',
-  '/TCindex':'HomeController.TC_index',
-  '/ninjatrader': { view: 'ninjatrader',locals: {layout: false}},
-  'post /doLogin':'AuthController.doLogin'
+  
 
   /***************************************************************************
   *                                                                          *
