@@ -5,6 +5,8 @@
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<meta name="description" content="<%=typeof title == 'undefined' ? 'New Sails App' : title%>"/>
+	<meta name="description" content="<%=typeof meta_description == 'undefined' ? '' : meta_description%>"/>
+	<meta property="og:image" content="<%=typeof og_img == 'undefined' ? '' : og_img%>" />
     <!--STYLES data-->
 	<link rel="icon" href="/favicon.png?version=2" type="image/png">
     <link rel="stylesheet" href="/styles/lib/bootstrap.min.css">

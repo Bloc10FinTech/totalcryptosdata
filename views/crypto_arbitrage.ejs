@@ -121,7 +121,7 @@ $(document).ready(function(){
 				data.exchanges.forEach(function(exchange,index){
 					var item='<li>';
 					item+='<label class="checkbox-inline">';
-					if(['gdax','bitfinex'].indexOf(exchange.name)==-1){
+					if(['gdax','bitstamp','gemini','exmo'].indexOf(exchange.name)==-1){
 						item+='<input value="'+exchange.name+'" type="checkbox">';
 					}
 					else{
@@ -162,7 +162,7 @@ $(document).ready(function(){
 });
 
 //PROCESS TO SHOW INITIAL DATA
-show_predator(['gdax','bitfinex'],['btc','usd']);
+show_predator(['gdax','bitstamp','gemini','exmo'],['btc','usd']);
 function show_predator(exchanges=null,currencies=null){
 
 	$('#dropdown-list').hide();
@@ -215,9 +215,7 @@ function show_predator(exchanges=null,currencies=null){
 						str+='<div class="col-md-12" style="border-top:3px solid green;padding-top:10px;text-transform:capitalize;">';
 						str+=exchange.exchange;
 						str+='<hr/>';
-						str
-						
-						+='</div>';
+						str+='</div>';
 						str+='<div class="col-md-12">';
 						str+='Price:&nbsp;'+exchange.price;
 						str+='</div>';
@@ -238,16 +236,19 @@ function show_predator(exchanges=null,currencies=null){
 								str+='<div class="row" style="background-color:#f5f5f5;border-radius:5px;margin-top:20px;padding-top:10px ;padding-bottom:10px;width:98%;margin-left:1%;font-size:15px;">';
 								str+='<div class="col-md-12 col-sm-12">';
 								str+='<div class="row">';
-								str+='<div class="col-md-7 col-sm-7">';
+								str+='<div class="col-md-4 col-sm-4 predator">';
 								str+='<img src="/images/currencies/'+base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />&nbsp;';
 								str+='<strong>'+product+'</strong>';
 								str+='</div>';
-								str+='<div class="col-md-5 col-sm-5" style="text-align:right;">';
+								str+='<div class="col-md-4 col-sm-4 align_center predator">';
+								str+=parseFloat(first.price-second.price).toFixed(1);
+								str+='</div>';
+								str+='<div class="col-md-4 col-sm-4 align_right predator">';
 								str+='<strong>'+parseFloat(first.price*100/second.price-100).toFixed(1)+'%'+'</strong>';
 								str+='</div>';
 								str+='</div>';
 								str+='<div class="row">';
-								str+='<div class="col-md-6 col-sm-6" style="border-top:3px solid green;padding-top:10px;">';
+								str+='<div class="col-md-6 col-sm-6 predator" style="border-top:3px solid green;padding-top:10px;">';
 								str+='<div class="col-md-12 col-sm-12" style="text-transform:capitalize;">';
 								str+=first.exchange;
 								str+='<hr/>';
@@ -259,7 +260,7 @@ function show_predator(exchanges=null,currencies=null){
 								str+='Volume:&nbsp;'+parseFloat(first.volume).toFixed(0);
 								str+='</div>';
 								str+='</div>';
-								str+='<div class="col-md-6 col-sm-6" style="border-top:3px solid red;padding-top:10px;">';
+								str+='<div class="col-md-6 col-sm-6 predator" style="border-top:3px solid red;padding-top:10px;">';
 								str+='<div class="col-md-12 col-sm-12" style="text-transform:capitalize;">';
 								str+=second.exchange;
 								str+='<hr/>';

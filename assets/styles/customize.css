@@ -24,11 +24,16 @@ table.dataTable tbody td {
     padding: 8px 5px;
 }
 
+.align_center{text-align:center;}
+.align_right{text-align:right;}
 @media (max-width: 992px) {
 	#mainNavBar {
 	   background: #2175b3;
 	}
 	.home { margin-top: 3rem !important; }
+	.predator{max-width:100%;flex: 0 0 100%;text-align:left !important;}
+	.align_center{text-align:left;}
+	.align_right{text-align:left;}
 }
 
 body .sumome-share-client-wrapper.sumome-share-client-wrapper-desktop-bottom-bar, body .sumome-share-client-wrapper.sumome-share-client-wrapper-mobile-top-bar, body .sumome-share-client-wrapper.sumome-share-client-wrapper-mobile-bottom-bar{

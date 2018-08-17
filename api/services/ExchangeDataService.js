@@ -1212,7 +1212,7 @@ module.exports = {
 		var moment = require('moment');
 	
 		return new Promise(function(resolve,reject){
-			ExchangeList.find({select :['name','is_exchange']},function(err, exchanges){
+			ExchangeList.find({select :['name','is_exchange'],is_exchange:'yes'},function(err, exchanges){
 				if(err){ 
 					return resolve({exchanges:[],currencies:[]});
 				}

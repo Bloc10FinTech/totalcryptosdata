@@ -142,7 +142,7 @@ module.exports = {
   },
   
   fix:function(request,response){
-	return response.view('fix',{title: 'Total Cryptos - FIX',path:request.path}); 
+	return response.view('fix',{title: 'BIT FIX - The Official FIX for Crypto Currencies',og_img:'https:totalcryptos.com/images/bitfix.jpg',meta_description:'BIT FIX is the Official FIX for Crypto Currencies, hosted at http://totalcryptos.com/fix posted every day at 4:00 EST (NYC Time) Daily 7 days a week. BIT FIX includes the FIX in major currencies, on major Cryptos. For additional currencies or to list your own token as part of the FIX, contact Bloc10 or signup for zDATA.',path:request.path}); 
   },
   
   fix_data_by_symbol:function(request,response){
