@@ -6,8 +6,7 @@ module.exports = {
 		}
 		var currencies_temp=currencies;
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
-			
-		
+			console.log(exchange_list);
 			return Promise.all(exchange_list.map((exchange) => {
 				
 				return new Promise(function(resolve,reject){
@@ -339,7 +338,7 @@ module.exports = {
 								break;
 							}
 						}
-					});
+					}).catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 				});	
 			})).
 			then(response => {

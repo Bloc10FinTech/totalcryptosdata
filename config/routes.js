@@ -90,7 +90,7 @@ module.exports.routes = {
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
-  'post /predator/currencies':'PredatorTradeController.predators_data',
+  '/predator/currencies':'PredatorTradeController.predators_data',
   
   
   //WIDGET URLS
