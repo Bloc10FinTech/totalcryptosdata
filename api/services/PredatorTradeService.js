@@ -6,9 +6,9 @@ module.exports = {
 		}
 		var currencies_temp=currencies;
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
-			
+			console.log("bbb");
 			return Promise.all(exchange_list.map((exchange) => {
-				
+				console.log("ccc");
 				return new Promise(function(resolve,reject){
 					var tickers=ExchangeTickers.findOne();
 					tickers.where({exchange_id:exchange.id});
