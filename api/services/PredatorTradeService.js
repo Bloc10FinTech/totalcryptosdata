@@ -360,12 +360,12 @@ module.exports = {
 						}
 					});
 				});
-				callBack({errCode:1,message:'Request processed successfully.',data:return_array});
+				return resolve(callBack({errCode:1,message:'Request processed successfully.',data:return_array}));
 			}).
-			catch(err => {console.log(err);callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+			catch(err => {console.log(err);return resolve(callBack({errCode:500,message:'Server error. Please try again.',data:[]}));});
 		});	
 		});
 		console.log("aaaaa");
-		callBack({errCode:1,message:'Request processed successfully.',data:'hey!!!!'});
+		return resolve(callBack({errCode:1,message:'Request processed successfully.',data:'hey!!!!'}));
 	}
 };
