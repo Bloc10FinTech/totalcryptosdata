@@ -90,6 +90,8 @@ module.exports.routes = {
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',
+  
+  '/api/symbolsUSDPricesInc':'ApiController.symbolsUSDPricesInc',
   '/predator/currencies':'PredatorTradeController.predators_data',
   
   

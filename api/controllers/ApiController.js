@@ -72,6 +72,11 @@ module.exports = {
 		return response.send(data);
 	},request);
   },
+  symbolsUSDPricesInc:function(request, response) {
+	  MobileApisService.symbolsUSDPricesInc(function(data){
+		return response.send(data);
+	},request);
+  },
   userRegistration:function(request, response) {
 	  MobileApisService.userRegistration(function(data){
 		return response.send(data);

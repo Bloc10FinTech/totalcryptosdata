@@ -2,22 +2,12 @@ module.exports = {
 	
 	tcPrices:function(callBack,request){
 		var _ = require('lodash');
-		
-		
-		/*var crypto = require('crypto');
-		const secret = 'abcdefg';
-		const hash = crypto.createHmac('sha256', secret).update('I love cupcakes').digest('hex');*/
-		
 		MobileApisService.checkUpdateApiCalls(request.ip,'tcPrices').then(response => {
 			if(response){
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrice.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrice){ 
 						if(!_.isEmpty(totalCryptoPrice)){ 
 							totalCryptoPrice=_.head(totalCryptoPrice);
-							
-							
-							/*console.log(crypto.createHmac('sha256', secret).update("{errCode:1,message:'Request processed successfully.',data:"+{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}+"}").digest('hex'));*/
-							
 							callBack({errCode:1,message:'Request processed successfully.',data:{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}});
 						}
 						else{
@@ -580,6 +570,43 @@ module.exports = {
 			
 			//callBack({errCode:1,message:'User registered successfully.'});
 		});
+	},
+	
+	
+	symbolsUSDPricesInc:function(callBack,request){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
+				if(err){
+					callBack(MobileApisService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+				}
+				if(!_.isEmpty(totalCryptoPrices)){ 
+					totalCryptoPrices=_.head(totalCryptoPrices);
+					totalCryptoPrices=totalCryptoPrices.prices;
+					totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
+					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+					
+					totalCryptoPrices=MobileApisService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices});
+					callBack(totalCryptoPrices);
+				}
+				else{
+					callBack(MobileApisService.encrypt({errCode:404,message:'Record not found.',data:[]}));
+				}
+			});
+		});
+	},
+	
+	encrypt:function(data){
+		var crypto = require('crypto');
+		var data=JSON.stringify(data);
+		var key = crypto.createCipher('aes-256-ecb', '123');
+		return key.update(data, 'utf8', 'hex') + key.final('hex');
+	},
+	
+	decrypt:function(data){
+		var crypto = require('crypto');
+		var key = crypto.createDecipher('aes-256-ecb','123');
+		return key.update(data, 'hex','utf8')+ key.final('utf8');
 	},
 	
 	checkUpdateApiCalls:function(ip_address,api_name){
