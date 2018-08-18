@@ -5,7 +5,7 @@ module.exports = {
 			currencies=[];
 		}
 		var currencies_temp=currencies;
-		return new Promise(function(resolve,reject){
+		//return new Promise(function(resolve,reject){
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
 			console.log("bbb");
 			return Promise.all(exchange_list.map((exchange) => {
@@ -337,7 +337,13 @@ module.exports = {
 									});
 									return resolve(temp_array);
 								break;
+								default:
+									return resolve([]);
+								break;
 							}
+						}
+						else{
+							return resolve([]);
 						}
 					}).catch(err => { console.log(err); callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 				});	
@@ -360,12 +366,10 @@ module.exports = {
 						}
 					});
 				});
-				return resolve(callBack({errCode:1,message:'Request processed successfully.',data:return_array}));
+				callBack({errCode:1,message:'Request processed successfully.',data:return_array});
 			}).
-			catch(err => {console.log(err);return resolve(callBack({errCode:500,message:'Server error. Please try again.',data:[]}));});
+			catch(err => {console.log(err);callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 		});	
-		});
-		console.log("aaaaa");
-		return resolve(callBack({errCode:1,message:'Request processed successfully.',data:'hey!!!!'}));
+		//});
 	}
 };
