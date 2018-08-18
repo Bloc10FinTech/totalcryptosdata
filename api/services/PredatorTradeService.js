@@ -6,7 +6,7 @@ module.exports = {
 		}
 		var currencies_temp=currencies;
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
-			console.log(exchange_list);
+			
 			return Promise.all(exchange_list.map((exchange) => {
 				
 				return new Promise(function(resolve,reject){
@@ -338,11 +338,12 @@ module.exports = {
 								break;
 							}
 						}
-					}).catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+					}).catch(err => { console.log(err); callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 				});	
 			})).
 			then(response => {
 				var return_array=[];
+				console.log("sdsadasd!!!");
 				_.forEach(response,function(exchange_data){
 					_.forEach(exchange_data,function(data){
 						if(_.isEmpty(_.filter(return_array,{product:data.product}))){
@@ -360,7 +361,7 @@ module.exports = {
 				});
 				callBack({errCode:1,message:'Request processed successfully.',data:return_array});
 			}).
-			catch(err => {callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+			catch(err => {console.log(err);callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
 		});	
 	}
 };
