@@ -1226,5 +1226,21 @@ module.exports = {
 				}).catch(err => {return resolve({exchanges:exchanges,currencies:[]});});
 			});
 		});
+	},
+	
+	ico_data:function(){
+		var _ = require('lodash');
+		var moment = require('moment');
+		return new Promise(function(resolve,reject){
+			IcoWatch.find({name:'icowatchlist'}).limit(1).sort({id:-1}).exec(function(err, ico_watch){
+				if(!_.isEmpty(ico_watch)){
+					ico_watch=_.head(ico_watch);
+					return resolve({name:ico_watch.name,url:ico_watch.url,data:ico_watch.data});
+				}
+				else{
+					return resolve({name:'',url:'',data:[]});
+				}
+			});
+		});
 	}
 };

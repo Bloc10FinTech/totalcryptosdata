@@ -699,6 +699,14 @@ module.exports = {
 		catch(err => {callBack([]);});
 	},
 	
+	ico_data:function(callBack){
+		return Promise.all([
+			ExchangeDataService.ico_data()
+		]).then(response=> {
+			callBack(response[0].data);
+		}).catch(err => {callBack([]);});
+	},
+	
 	gainersLosers:function(callBack,count){
 		return Promise.all([
 			FrontendService.gainers_and_losers(count),

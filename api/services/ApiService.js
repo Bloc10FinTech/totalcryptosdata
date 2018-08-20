@@ -778,6 +778,22 @@ module.exports = {
 		});
 	},
 	
+	icoWatchList:function(){
+		var request=require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://api.icowatchlist.com/public/v1/',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
 	dataPredictionAPI:function(csvUrl,fileName){
 		var request = require('request');
 		return new Promise(function(resolve, reject){

@@ -1,0 +1,188 @@
+<main class="main-content">
+<%- partial('./partials/banner-ads.ejs') %>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-10 pl-0">
+				<div class="card card-table-pane">
+							<div class="card-body">
+								<div class="card-header">
+									<h5 class="card-title">ABCD</h5> 
+								</div>
+								<div class="sub-menu">
+								   <ul class="nav nav-tabs">
+									  <li class="nav-item">
+										<a class="nav-link active" data-toggle="tab" href="#live">Live</a>
+									  </li>
+									  <li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#finished">Finished</a>
+									  </li>
+									  <li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#upcoming">Upcoming</a>
+									  </li> 
+									</ul>
+								</div>
+								<div class="tab-content" style="margin-top:20px;">
+									<div class="tab-pane active" id="live">
+										<div class="table-responsive">
+											<table class="display table-custom dataTable">
+											<thead>
+											<tr role="row">
+												<th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Name</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Description</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Start Time</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">End Time</th>
+											</tr>
+											</thead>
+											<tbody id="live_data">
+												<tr>
+													<td colspan="4" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+												</tr>
+											</tbody>
+											</table>
+										</div>	
+									</div>
+									<div class="tab-pane" id="finished">
+										<div class="table-responsive">
+											<table class="display table-custom dataTable">
+											<thead>
+											<tr role="row">
+												<th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Name</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Description</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Start Time</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">End Time</th>
+											</tr>
+											</thead>
+											<tbody id="finished_data">
+												<tr>
+													<td colspan="4" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+												</tr>
+											</tbody>
+											</table>
+										</div>	
+									</div>
+									<div class="tab-pane" id="upcoming">
+										<div class="table-responsive">
+											<table class="display table-custom dataTable">
+											<thead>
+											<tr role="row">
+												<th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Name</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Description</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Start Time</th>
+												 <th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">End Time</th>
+											</tr>
+											</thead>
+											<tbody id="upcoming_data">
+												<tr>
+													<td colspan="4" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+												</tr>
+											</tbody>
+											</table>
+										</div>	
+									</div>
+								</div>
+							</div>
+						</div>
+			</div>	
+			<div class="col-lg-2 text-center pl-0 pr-0">
+				<%- partial('./partials/ads.ejs') %>
+			</div>
+		</div>
+	</div>	
+</main>
+<script>
+
+$(document).ready(function(){
+
+	$.ajax({
+		type:'GET',
+		url:'/ico_data',
+		success:function(data){ 
+			var str='';
+			
+			if(data.ico.live){
+				data.ico.live.forEach(function(obj,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					
+					str+='<tr role="row" class="'+even_odd_class+'">';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td class="text-bold">';
+					str+='<img src="'+obj.image+'" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;';
+					str+=obj.name;
+					str+'</td>';
+					str+='<td>'+obj.description+'</td>';
+					str+='<td>'+obj.start_time+'</td>';
+					str+='<td>'+obj.end_time+'</td>';
+					str+='</tr>';
+				});
+			}
+			$("#live_data").html(str);
+			
+			var str='';
+			if(data.ico.finished){
+				data.ico.finished.forEach(function(obj,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					
+					str+='<tr role="row" class="'+even_odd_class+'">';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td class="text-bold">';
+					str+='<img src="'+obj.image+'" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;';
+					str+=obj.name;
+					str+'</td>';
+					str+='<td>'+obj.description+'</td>';
+					str+='<td>'+obj.start_time+'</td>';
+					str+='<td>'+obj.end_time+'</td>';
+					str+='</tr>';
+				});
+			}
+			$("#finished_data").html(str);
+			
+			var str='';
+			if(data.ico.upcoming){
+				data.ico.upcoming.forEach(function(obj,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					
+					str+='<tr role="row" class="'+even_odd_class+'">';
+					str+='<td>'+(index+1)+'</td>';
+					str+='<td class="text-bold">';
+					str+='<img src="'+obj.image+'" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;';
+					str+=obj.name;
+					str+'</td>';
+					str+='<td>'+obj.description+'</td>';
+					str+='<td>'+obj.start_time+'</td>';
+					str+='<td>'+obj.end_time+'</td>';
+					str+='</tr>';
+				});
+			}
+			$("#upcoming_data").html(str);
+			
+			$('.dataTable').DataTable({
+				pageLength: 10,
+				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+				responsive: true,
+				dom: '<"html5buttons"B>lTfgitp',
+				aoColumnDefs: [{
+					'bSortable': false,
+					'aTargets': [0] 
+				}],
+				buttons:[],
+				order: []
+			});
+		}
+	});	
+});
+</script>

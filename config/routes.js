@@ -65,6 +65,8 @@ module.exports.routes = {
   '/crypto-arbitrage':'HomeController.crypto_arbitrage',
   '/exchanges_currencies':'HomeController.exchanges_currencies',
   'post /predator':'HomeController.predator',
+  '/ico':'HomeController.ico',
+  '/ico_data':'HomeController.ico_data',
   '/pro':'HomeController.pro',
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},

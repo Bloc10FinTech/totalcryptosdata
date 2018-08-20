@@ -177,6 +177,16 @@ module.exports = {
 	  });
   },
   
+  ico:function(request,response){
+	return response.view('ico',{title: 'Total Cryptos - ICO',path:request.path}); 
+  },
+  
+  ico_data:function(request,response){
+	  FrontendService.ico_data(function(data){
+		 response.send(data); 
+	  });
+  },
+  
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
   }
