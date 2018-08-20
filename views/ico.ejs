@@ -102,7 +102,7 @@ $(document).ready(function(){
 		success:function(data){ 
 			var str='';
 			
-			if(data.ico.live){
+			if(data.ico && data.ico.live){
 				data.ico.live.forEach(function(obj,index){
 					var even_odd_class='even';
 					if(index%2==0){
@@ -125,7 +125,7 @@ $(document).ready(function(){
 			$("#live_data").html(str);
 			
 			var str='';
-			if(data.ico.finished){
+			if(data.ico && data.ico.finished){
 				data.ico.finished.forEach(function(obj,index){
 					var even_odd_class='even';
 					if(index%2==0){
@@ -148,7 +148,7 @@ $(document).ready(function(){
 			$("#finished_data").html(str);
 			
 			var str='';
-			if(data.ico.upcoming){
+			if(data.ico && data.ico.upcoming){
 				data.ico.upcoming.forEach(function(obj,index){
 					var even_odd_class='even';
 					if(index%2==0){
