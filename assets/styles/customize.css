@@ -130,4 +130,28 @@ body .sumome-stylebufferbottom-shim{
 	top: 2px;
 }
 
+.fader { 
+	display: block;
+	margin-bottom:1.5rem !important; 
+	padding-left:0px !important;
+	padding-right:0px !important;
+}
+
+.fader > a {
+    position: relative;
+    top: 0; 
+    left: 0;
+    display: none;
+}
+
+.fader_sidebar { 
+	display: block; 
+}
+
+.fader_sidebar > a {
+    position: relative;
+    top: 0; 
+    left: 0;
+    display: none;
+}
 

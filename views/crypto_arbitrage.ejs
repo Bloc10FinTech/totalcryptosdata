@@ -11,7 +11,7 @@
 							<div class="card-header">
 								<div class="row">
 									<div class="col-md-12">
-										<h5 class="card-title">Predator</h5>
+										<h5 class="card-title">Crypto Arbitrage Dashboard</h5>
 									</div>
 								</div>
 								<div class="row" id="dropdown_list_container">	
@@ -50,7 +50,12 @@
 							</div> 
 							
 							<div class="row" id="predator_list">
-							</div>						
+							</div>
+							<div class="row">
+								<div class="col-md-12" style="margin-top:20px;">
+								<p><strong>This table is an example of what is possible. For real-time Arbitrage alerts you can trade on (actionable intelligence) sign up for <a href="https://portal.totalcryptos.com/total-cryptos-membership">Total Cryptos Membership</a></strong></p>
+								</div>
+							</div>							
 						</div>
 					</div>					
 				</div>
@@ -85,8 +90,16 @@ $(document).ready(function(){
         });
 	})
 	.on('change', '[type="checkbox"]', function() {
+		if(this.id && this.id=='select_all_exchanges'){
+			$("#exchange_list").find("input[type='checkbox']").prop('checked', this.checked);
+		}
     	var numChecked = $("#exchange_list").children('li').children('label').children('[type="checkbox"]:checked').length;
-    	$('#quantity').text(numChecked || 'Any');
+    	if($("#select_all_exchanges").prop('checked') == true){
+			$('#quantity').text((numChecked-1) || 'Any');
+		}
+		else{
+			$('#quantity').text(numChecked || 'Any');
+		}
 	});
 	
 	$('#dropdown-container2').on('click', '#dropdown-button2', function() {
@@ -108,8 +121,16 @@ $(document).ready(function(){
         });
 	})
 	.on('change', '[type="checkbox"]', function() {
+	    if(this.id && this.id=='select_all_currencies'){
+			$("#currency_list").find("input[type='checkbox']").prop('checked', this.checked);
+		}
     	var numChecked = $("#currency_list").children('li').children('label').children('[type="checkbox"]:checked').length;
-    	$('#quantity2').text(numChecked || 'Any');
+		if($("#select_all_currencies").prop('checked') == true){
+			$('#quantity2').text((numChecked-1) || 'Any');
+		}
+		else{
+			$('#quantity2').text(numChecked || 'Any');
+		}
 	});
 
 	$.ajax({
@@ -118,6 +139,7 @@ $(document).ready(function(){
 		success:function(data){ 
 			if(data.exchanges){ 
 				var exchange_checked_count=0;
+				$('#exchange_list').append('<li><li><label class="checkbox-inline"><input value="select_all_exchanges" id="select_all_exchanges" type="checkbox">&nbsp;<b>SELECT ALL</b></label></li></li>');
 				data.exchanges.forEach(function(exchange,index){
 					var item='<li>';
 					item+='<label class="checkbox-inline">';
@@ -139,6 +161,7 @@ $(document).ready(function(){
 			
 			if(data.currencies){
 				var currency_checked_count=0;
+				$('#currency_list').append('<li><li><label class="checkbox-inline"><input value="select_all_currencies" id="select_all_currencies" type="checkbox">&nbsp;<b>SELECT ALL</b></label></li></li>');
 				data.currencies.forEach(function(currency_name){
 					var item='<li>';
 					item+='<label class="checkbox-inline">';
@@ -177,11 +200,15 @@ function show_predator(exchanges=null,currencies=null){
 	}
 	else{
 		$("#exchange_list").children('li').children('label').children('[type="checkbox"]:checked').each(function(){
-			exchange_array.push($(this).val()); 
+			if($(this).val()!=='select_all_exchanges'){
+				exchange_array.push($(this).val()); 
+			}
 		});
 		
 		$("#currency_list").children('li').children('label').children('[type="checkbox"]:checked').each(function(){
-			currency_array.push($(this).val()); 
+			if($(this).val()!=='select_all_currencies'){
+				currency_array.push($(this).val()); 
+			}
 		});
 	}
 	$("#predator_list").html('<div class="col-md-12" style="text-align:center;"><img src="/images/data-loader.gif"></img></div>');
@@ -285,9 +312,4 @@ function show_predator(exchanges=null,currencies=null){
 		}
 	});
 }
-
-function format_numbers(number){
-	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
-}
-
 </script>

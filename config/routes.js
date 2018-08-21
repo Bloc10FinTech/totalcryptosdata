@@ -89,6 +89,7 @@ module.exports.routes = {
   '/api/topGainersLosers/:time':'ApiController.topGainersLosers',
   '/api/fixPrice/:symbol':'ApiController.fixPrice',
   '/api/fixPrices':'ApiController.fixPrices',
+  '/api/fixMaster':'ApiController.fixMaster',
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/userRegistration':'ApiController.userRegistration',

@@ -62,6 +62,12 @@ module.exports = {
 		return response.send(data);
 	},request);
   },
+  fixMaster:function(request,response){
+	  MobileApisService.fixMaster(function(data){
+		return response.redirect(data);
+		//return response.send(data);
+	},request);
+  },
   sliderData:function(request,response) {
 	  MobileApisService.sliderData(function(data){
 		return response.send(data);

@@ -485,8 +485,74 @@ module.exports = {
 			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
 		});
 	},
-
 	
+	fixMaster:function(callBack,request){
+		var _ = require('lodash');
+		var moment = require('moment');
+		var Excel = require('exceljs');
+		var env = require('dotenv');
+		
+		MobileApisService.checkUpdateApiCalls(request.ip,'fixMaster').
+		then(response => {
+			if(response){
+				return new Promise(function(resolve,reject){
+					TotalCryptoFix.find().limit(1).sort({id:-1}).exec(function(err,totalCryptofix){ 
+						if(!_.isEmpty(totalCryptofix)){ 
+							if(totalCryptofix.length==1){
+								totalCryptofix=_.head(totalCryptofix);
+							}
+							else{
+								totalCryptofix=totalCryptofix[1];
+							}
+							
+							var workbook = new Excel.Workbook();
+							workbook.views = [
+							  {
+								x: 0, y: 0, width: 10000, height: 20000,
+								firstSheet: 0, activeTab: totalCryptofix.prices.length, visibility: 'visible'
+							  }
+							];
+							
+							var date_created=moment(totalCryptofix.date_created).format('MM.DD.YYYY');
+							_.forEach(totalCryptofix.prices,function(data){
+								var worksheet = workbook.addWorksheet(_.toLower(data.currency));
+								worksheet.state = 'show';
+								
+								worksheet.columns = [
+									{ header: 'Currency', key: 'currency', width: 40 },
+									{ header: 'Price', key: 'price', width: 40 },
+									{ header: 'Date', key: 'date', width: 40, outlineLevel: 1 }
+								];
+								
+								var date=moment(totalCryptofix.date_created).format('YYYY-MM-DD');
+								_.forEach(data.prices,function(price){
+									worksheet.addRow({currency: price.currency, price: price.price, date: date});
+								});
+							});
+							
+							var tempFilePath = './.tmp/public/BITFIX.'+date_created+'.xlsx';
+							var url=(process.env.HOST)+'/BITFIX.'+date_created+'.xlsx';
+							workbook.xlsx.writeFile(tempFilePath).then(function() {
+								callBack(url);
+							}).catch(err => {
+								callBack('');
+							});
+						}
+						else{
+							callBack('');
+						}
+					});
+				});
+			}
+			else{
+				callBack('');
+			}
+		}).
+		catch(err => {
+			callBack('');
+		});
+	},
+
 	sliderData:function(callBack,request){
 		var _=require('lodash');
 		var time=request.param('time');

@@ -382,6 +382,26 @@
 				}*/	
 			}
 		});
+		
+		//BANNER IMAGES
+		var $imgs = $(".fader").find("a"),
+		i = 0;
+		function changeBanner(){
+			var next = (++i % $imgs.length);
+			$($imgs.get(next - 1)).fadeOut(0);
+			$($imgs.get(next)).fadeIn(1000);
+		}
+		setInterval(changeBanner, 3000);
+		
+		//SIDEBAR IMAGES
+		var $imgs1 = $(".fader_sidebar").find("a"),
+		j = 0;
+		function changeSideBar(){
+			var next1 = (++j % $imgs1.length);
+			$($imgs1.get(next1 - 1)).fadeOut(0);
+			$($imgs1.get(next1)).fadeIn(1000);
+		}
+		setInterval(changeSideBar, 3000);
 	});
 	</script>
   </body>
