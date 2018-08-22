@@ -130,18 +130,23 @@ body .sumome-stylebufferbottom-shim{
 	top: 2px;
 }
 
-.fader { 
+.fader1, .fader2, .fader3 { 
 	display: block;
 	margin-bottom:1.5rem !important; 
 	padding-left:0px !important;
 	padding-right:0px !important;
+	text-align:center;
 }
 
-.fader > a {
+.fader1 > a, .fader2 > a, .fader3 > a {
     position: relative;
     top: 0; 
     left: 0;
     display: none;
+}
+
+.fader1 > a > img, .fader2 > a > img, .fader3 > a >img {
+    width:70%;
 }
 
 .fader_sidebar { 

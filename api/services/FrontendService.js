@@ -710,13 +710,14 @@ module.exports = {
 	gainersLosers:function(callBack,count){
 		return Promise.all([
 			FrontendService.gainers_and_losers(count),
-			ExchangeDataService.fxMarketData(count)
-		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h'],fx_data:response[1].data});}).catch( err => {callBack({gainers:[],losers:[],fx_data:[]});});
+			ExchangeDataService.fxMarketData(count),
+			ExchangeDataService.rssFid(5)
+		]).then(response => {callBack({gainers:response[0].gainers_losers['gainer_24_h'],losers:response[0].gainers_losers['loser_24_h'],fx_data:response[1].data,feed:response[2]});}).catch( err => {callBack({gainers:[],losers:[],fx_data:[],feed:[]});});
 	},
 	
 	gainers_and_losers_data:function(callBack){
 		return Promise.all([
-			FrontendService.gainers_and_losers(),
+			FrontendService.gainers_and_losers()
 		]).then(response => {callBack({gainers_1h:response[0].gainers_losers['gainer_1_h'],gainers_24h:response[0].gainers_losers['gainer_24_h'],gainers_7d:response[0].gainers_losers['gainer_7_d'],losers_1h:response[0].gainers_losers['loser_1_h'],losers_24h:response[0].gainers_losers['loser_24_h'],losers_7d:response[0].gainers_losers['loser_7_d']});}).catch( err => {callBack({gainers_1h:[],gainers_24h:[],gainers_7d:[],losers_1h:[],losers_24h:[],losers_7d:[]});});
 	},
 	

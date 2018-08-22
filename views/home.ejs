@@ -134,7 +134,10 @@
 										</div>
 									</div>
 			</div>
-			<div class="col-lg-2 text-center pl-0 pr-0">
+			<div class="col-lg-2 pl-0 pr-0">
+				<div class="row" id="feed">
+					<div class="col-md-12 text-center"><img src="/images/data-loader.gif"/></div>
+				</div>
 				<%- partial('./partials/ads.ejs') %>
 			</div>
 		</div> 
@@ -220,6 +223,22 @@ $(document).ready(function(){
 				str+='</tr>';
 				$("#fx_data").append(str);
 			});
+			var str='';
+			if(data.feed.items){
+				str+='<div class="col-md-12">';
+				str+='<h5><strong>Latest Blog</strong></h5><hr/>';
+				str+='</div>';
+				data.feed.items.forEach(function(item){
+					str+='<div class="col-md-12" style="padding-bottom:10px;">';
+					str+='<p style="font-size:14px;"><strong>';
+					str+='<a href="'+item.link+'">'+item.title+'</a></strong><br/>';
+					str+='<span style="font-size:11px;">'+item.pubDate;
+					str+='</span></p>';
+					str+='<div style="font-size:13px;">'+item.contentSnippet+'</div><hr/>';
+					str+='</div>';
+				});	
+			}
+			$("#feed").html(str);
 			
 			//initialize_table('bigGainers');
 			//initialize_table('bigLoosers');

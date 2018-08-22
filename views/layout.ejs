@@ -92,7 +92,9 @@
 						<a class="nav-link" href="#" id="dropdown02" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Total Cryptos</a>
 						<div class="dropdown-menu" aria-labelledby="dropdown02">
 							<a class="dropdown-item <%if((path=='/exchange_prices/totalcryptospriceusd') || (path=='/exchange_prices/totalcryptospriceusd/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/totalcryptospriceusd">USD Based</a>
-							<a class="dropdown-item <%if((path=='/exchange_prices/totalcryptospricepairs') || (path=='/exchange_prices/totalcryptospricepairs/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/totalcryptospricepairs">Crypto Based</a> 
+							<a class="dropdown-item <%if((path=='/exchange_prices/totalcryptospricepairs') || (path=='/exchange_prices/totalcryptospricepairs/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/totalcryptospricepairs">Crypto Based</a>
+							<a class="dropdown-item <%if(path=='/new-listing'){%>active <%}else{%> ''<%}%>" href="/new-listing">Recently Added</a>
+							<a class="dropdown-item <%if(path=='/TCindex'){%>active <%}else{%> ''<%}%>" href="/TCindex">TC Indexes</a>
 						</div>
 					</li>
 					<% 
@@ -136,12 +138,6 @@
 								<li class="nav-item"></li><a class="dropdown-item <%if((path=='/exchange_prices/cex') || (path=='/exchange_prices/cex/details')){%>active <%}else{%> ''<%}%>" href="/exchange_prices/cex">CEX</a></li>
 							</ul> 
 						</div>
-					</li>
-					<li class="nav-item dropdown <%if(path=='/new-listing'){%>active <%}else{%> ''<%}%>">
-						<a class="nav-link" href="/new-listing">Recently Added</a> 
-					</li>
-					<li class="nav-item dropdown <%if(path=='/TCindex'){%>active <%}else{%> ''<%}%>">
-						<a class="nav-link" href="/TCindex">TC Indexes</a> 
 					</li>
 					<li class="nav-item dropdown <%if(path=='/fix'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/fix">BIT FIX</a> 
@@ -384,24 +380,40 @@
 		});
 		
 		//BANNER IMAGES
-		var $imgs = $(".fader").find("a"),
-		i = 0;
-		function changeBanner(){
-			var next = (++i % $imgs.length);
-			$($imgs.get(next - 1)).fadeOut(0);
-			$($imgs.get(next)).fadeIn(1000);
-		}
-		setInterval(changeBanner, 3000);
-		
-		//SIDEBAR IMAGES
-		var $imgs1 = $(".fader_sidebar").find("a"),
-		j = 0;
-		function changeSideBar(){
-			var next1 = (++j % $imgs1.length);
+		var $imgs1 = $(".fader1").find("a");
+		var $imgs2 = $(".fader2").find("a");
+		var $imgs3 = $(".fader3").find("a");
+		var i = 0, j=0, k=0;
+		function changeBanner1(){
+			var next1 = (++i % $imgs1.length);
 			$($imgs1.get(next1 - 1)).fadeOut(0);
 			$($imgs1.get(next1)).fadeIn(1000);
 		}
-		setInterval(changeSideBar, 3000);
+		setInterval(changeBanner1, 15000);
+		
+		function changeBanner2(){
+			var next2 = (++j % $imgs2.length);
+			$($imgs2.get(next2 - 1)).fadeOut(0);
+			$($imgs2.get(next2)).fadeIn(1000);
+		}
+		setInterval(changeBanner2, 15000);
+		
+		function changeBanner3(){
+			var next3 = (++k % $imgs3.length);
+			$($imgs3.get(next3 - 1)).fadeOut(0);
+			$($imgs3.get(next3)).fadeIn(1000);
+		}
+		setInterval(changeBanner3, 15000);
+		
+		//SIDEBAR IMAGES
+		var $imgs4 = $(".fader_sidebar").find("a"),
+		l = 0;
+		function changeSideBar(){
+			var next4 = (++l % $imgs4.length);
+			$($imgs4.get(next4 - 1)).fadeOut(0);
+			$($imgs4.get(next4)).fadeIn(1000);
+		}
+		setInterval(changeSideBar, 15000);
 	});
 	</script>
   </body>

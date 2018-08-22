@@ -1242,5 +1242,26 @@ module.exports = {
 				}
 			});
 		});
+	},
+	
+	rssFid:function(count){
+		var _ = require('lodash');
+		var Parser = require('rss-parser');
+		var parser = new Parser();
+		return new Promise(function(resolve,reject){
+		
+		(async () => {
+			try{
+				let feed = await parser.parseURL('https://portal.totalcryptos.com/index.php?option=com_easyblog&view=latest&format=feed&type=rss');
+				if(count>0){
+					feed.items=_.slice(feed.items,0,count);
+				}
+				return resolve(feed);
+			}
+			catch(err){
+				return resolve([]);
+			}
+		})();
+		});
 	}
 };

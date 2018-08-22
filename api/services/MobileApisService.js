@@ -508,8 +508,8 @@ module.exports = {
 							var workbook = new Excel.Workbook();
 							workbook.views = [
 							  {
-								x: 0, y: 0, width: 10000, height: 20000,
-								firstSheet: 0, activeTab: totalCryptofix.prices.length, visibility: 'visible'
+								x: 0, y: 0, width: 1000, height: 2000,
+								firstSheet: 0, activeTab: 0, visibility: 'visible'
 							  }
 							];
 							
@@ -521,7 +521,7 @@ module.exports = {
 								worksheet.columns = [
 									{ header: 'Currency', key: 'currency', width: 40 },
 									{ header: 'Price', key: 'price', width: 40 },
-									{ header: 'Date', key: 'date', width: 40, outlineLevel: 1 }
+									{ header: 'Date', key: 'date', width: 40 }
 								];
 								
 								var date=moment(totalCryptofix.date_created).format('YYYY-MM-DD');

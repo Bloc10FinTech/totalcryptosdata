@@ -190,6 +190,5 @@ module.exports = {
    pro:function(request,response){
 		return response.redirect('https://portal.totalcryptos.com/pro-data-service');
   }
- 
 };
 
