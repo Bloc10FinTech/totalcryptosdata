@@ -519,9 +519,9 @@ module.exports = {
 								worksheet.state = 'show';
 								
 								worksheet.columns = [
-									{ header: 'Currency', key: 'currency', width: 40 },
-									{ header: 'Price', key: 'price', width: 40 },
-									{ header: 'Date', key: 'date', width: 40 }
+									{ header: 'Currency', key: 'currency', width: 40,style: { alignment: { horizontal: 'left' }}},
+									{ header: 'Price', key: 'price', width: 40,style: { alignment: { horizontal: 'left' }}},
+									{ header: 'Date', key: 'date', width: 40,style: { alignment: { horizontal: 'left' }}}
 								];
 								
 								var date=moment(totalCryptofix.date_created).format('YYYY-MM-DD');

@@ -37,5 +37,11 @@ module.exports.cron = {
     onTick: function () {
       //CronService.socketUpdates();
     }
+  },
+  mySixthJob: {
+	schedule: '00 */10 * * * *',
+    onTick: function () {
+      PredatorTradeService.predators_data_alerts();
+    }
   }
 };
