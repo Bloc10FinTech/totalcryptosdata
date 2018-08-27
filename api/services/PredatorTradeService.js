@@ -6,6 +6,7 @@ module.exports = {
 		}
 		var currencies_temp=currencies;
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
+			if(_.isEmpty(exchange_list)){exchange_list=[];}
 			return Promise.all(exchange_list.map((exchange) => {
 				return new Promise(function(resolve,reject){
 					var tickers=ExchangeTickers.findOne();
@@ -356,7 +357,7 @@ module.exports = {
 							_.forEach(return_array,function(return_data){
 								if(return_data.product==data.product){
 									return_data.records.push(data.record);
-									return_data.records.sort(function(a,b){ if(parseFloat(a.price)>parseFloat(b.price)){return -1;}else {return 1;}});
+									return_data.records.sort(function(a,b){ if(parseFloat(a.sell)>parseFloat(b.sell)){return -1;}else {return 1;}});
 								}
 							});
 						}
@@ -369,11 +370,20 @@ module.exports = {
 	},
 	
 	//SOCKET BLAST
-	predators_data_alerts:function(){
+	predators_data_alerts:function(request){
 		var _ = require('lodash');
-		var currencies=['btc','usd'];
+		
+		var roomName=request.param('roomName');
+		var currencies=request.param('currencies');
+		
+		if(_.isEmpty(currencies)){
+			currencies=[];
+			//currencies=['btc','usd','eth','bch','gbp','ltc','eur','etc'];
+		}
 		var currencies_temp=currencies;
+		
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
+			if(_.isEmpty(exchange_list)){exchange_list=[];}
 			return Promise.all(exchange_list.map((exchange) => {
 				return new Promise(function(resolve,reject){
 					var tickers=ExchangeTickers.findOne();
@@ -710,29 +720,42 @@ module.exports = {
 						else{
 							return resolve([]);
 						}
-					}).catch(err => { callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+					}).catch(err => { return resolve([]);});
 				});	
 			})).
 			then(response => {
+				var temp_data_array=[];
 				var return_array=[];
 				_.forEach(response,function(exchange_data){
 					_.forEach(exchange_data,function(data){
-						if(_.isEmpty(_.filter(return_array,{product:data.product}))){
-							return_array.push({product:data.product,records:[data.record]});
+						if(_.isEmpty(_.filter(temp_data_array,{product:data.product}))){
+							temp_data_array.push({product:data.product,records:[data.record]});
 						}
 						else{
-							_.forEach(return_array,function(return_data){
+							_.forEach(temp_data_array,function(return_data){
 								if(return_data.product==data.product){
 									return_data.records.push(data.record);
-									return_data.records.sort(function(a,b){ if(parseFloat(a.price)>parseFloat(b.price)){return -1;}else {return 1;}});
 								}
 							});
 						}
 					});
 				});
-				sails.sockets.blast('predator_alert',{data:return_array});
+				
+				_.forEach(temp_data_array,function(data){
+					if(data.records.length>1){
+						data.records.sort(function(a,b){ if(parseFloat(a.buy)>parseFloat(b.buy)){return 1;}else {return -1;}});
+						var buy_from=data.records[0];
+						data.records.sort(function(a,b){ if(parseFloat(a.sell)>parseFloat(b.sell)){return -1;}else {return 1;}});
+						var sell_at=data.records[0];
+						if(buy_from.exchange!=sell_at.exchange){
+							return_array.push({product:data.product,buy_from:buy_from,sell_at:sell_at});
+						}
+					}
+				});
+				//sails.sockets.blast('predator_alert', {data:return_array});
+				sails.sockets.broadcast(roomName, 'predator_alert', {data:return_array});
 			}).
 			catch(err => {});
-		});	
+		});			
 	}
 };
