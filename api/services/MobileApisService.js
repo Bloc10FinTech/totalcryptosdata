@@ -621,45 +621,72 @@ module.exports = {
 		}	
 	},
 	
-	userRegistration:function(callBack,request){
-		var moment = require('moment');
+	productPriceHistoryChart:function(callBack,product,request){
 		var _ = require('lodash');
-		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
-		var name=request.param('name');
-		var email=request.param('email');
-		var password = Math.random().toString(36).slice(-8);
-		Auth.create({name:name,email:email,password:password,date_created:curDateTime},function(err, data){
-			console.log(data);
-			if(err){ console.log(err);
-				callBack({errCode:500,message:'Server error. Please try again.'});
+		var moment = require('moment');
+		
+		product=_.toLower(product);
+		MobileApisService.checkUpdateApiCalls(request.ip,'symbolsUSDPricesInc').
+		then(response => {
+			if(response){
+					return new Promise(function(resolve,reject){
+						TotalCryptoPricesHistory.find().limit(365).sort({id:-1}).exec(function(err,totalCryptoPrices){
+							var return_array=[];
+							_.forEach(totalCryptoPrices,function(totalCryptoPrice){
+								var price=_.filter(totalCryptoPrice.prices,{product:product});
+								if(!_.isEmpty(price)){
+									price=_.head(price);
+									return_array.push({price:price.price,data_date:moment(totalCryptoPrice.data_date).format('YYYY-MM-DD'),product:product});
+								}
+							});
+							return_array=_.uniqBy(return_array,'data_date');
+							return_array.sort(function(a,b){if(a.data_date>b.data_date){return -1;}else {return 1;}});
+							callBack({errCode:1,message:'Request processed successfully.',data:return_array});
+						});
+					});
+				}
+			else{
+				callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
 			}
-			
-			//callBack({errCode:1,message:'User registered successfully.'});
-		});
+		}).
+		catch(err => {
+			callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+		});	
 	},
 	
 	
 	symbolsUSDPricesInc:function(callBack,request){
 		var _ = require('lodash');
-		return new Promise(function(resolve,reject){
-			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
-				if(err){
-					callBack(MobileApisService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-				}
-				if(!_.isEmpty(totalCryptoPrices)){ 
-					totalCryptoPrices=_.head(totalCryptoPrices);
-					totalCryptoPrices=totalCryptoPrices.prices;
-					totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
-					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-					
-					totalCryptoPrices=MobileApisService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices});
-					callBack(totalCryptoPrices);
-				}
-				else{
-					callBack(MobileApisService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-				}
-			});
-		});
+		MobileApisService.checkUpdateApiCalls(request.ip,'symbolsUSDPricesInc').
+		then(response => {
+			if(response){
+				return new Promise(function(resolve,reject){
+					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
+						if(err){
+							callBack(MobileApisService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+						}
+						if(!_.isEmpty(totalCryptoPrices)){ 
+							totalCryptoPrices=_.head(totalCryptoPrices);
+							totalCryptoPrices=totalCryptoPrices.prices;
+							totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
+							totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
+							
+							totalCryptoPrices=MobileApisService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices});
+							callBack(totalCryptoPrices);
+						}
+						else{
+							callBack(MobileApisService.encrypt({errCode:404,message:'Record not found.',data:[]}));
+						}
+					});
+				});
+			}
+			else{
+				callBack(MobileApisService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
+			}
+		}).
+		catch(err => {
+			callBack(MobileApisService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+		});	
 	},
 	
 	encrypt:function(data){
@@ -690,6 +717,23 @@ module.exports = {
 					return resolve(true);
 				}
 			});
+		});
+	},
+	
+	userRegistration:function(callBack,request){
+		var moment = require('moment');
+		var _ = require('lodash');
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		var name=request.param('name');
+		var email=request.param('email');
+		var password = Math.random().toString(36).slice(-8);
+		Auth.create({name:name,email:email,password:password,date_created:curDateTime},function(err, data){
+			console.log(data);
+			if(err){ console.log(err);
+				callBack({errCode:500,message:'Server error. Please try again.'});
+			}
+			
+			//callBack({errCode:1,message:'User registered successfully.'});
 		});
 	}
 };

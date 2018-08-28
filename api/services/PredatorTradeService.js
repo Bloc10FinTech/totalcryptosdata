@@ -375,13 +375,15 @@ module.exports = {
 		
 		var roomName=request.param('roomName');
 		var currencies=request.param('currencies');
-		
 		if(_.isEmpty(currencies)){
 			currencies=[];
 			//currencies=['btc','usd','eth','bch','gbp','ltc','eur','etc'];
 		}
-		var currencies_temp=currencies;
+		else {
+			currencies=currencies.map(function(currency){ return _.toLower(currency);});
+		}
 		
+		var currencies_temp=currencies;
 		ExchangeList.find({select:['id','name'],is_exchange:'yes'},function(err, exchange_list){
 			if(_.isEmpty(exchange_list)){exchange_list=[];}
 			return Promise.all(exchange_list.map((exchange) => {
@@ -741,21 +743,39 @@ module.exports = {
 					});
 				});
 				
-				_.forEach(temp_data_array,function(data){
-					if(data.records.length>1){
-						data.records.sort(function(a,b){ if(parseFloat(a.buy)>parseFloat(b.buy)){return 1;}else {return -1;}});
-						var buy_from=data.records[0];
-						data.records.sort(function(a,b){ if(parseFloat(a.sell)>parseFloat(b.sell)){return -1;}else {return 1;}});
-						var sell_at=data.records[0];
-						if(buy_from.exchange!=sell_at.exchange){
-							return_array.push({product:data.product,buy_from:buy_from,sell_at:sell_at});
+				PredatorTradeService.fxPairList().then(response=>{
+					_.forEach(temp_data_array,function(data){
+						if(data.records.length>1){
+							data.records.sort(function(a,b){ if(parseFloat(a.buy)>parseFloat(b.buy)){return 1;}else {return -1;}});
+							var buy_from=data.records[0];
+							data.records.sort(function(a,b){ if(parseFloat(a.sell)>parseFloat(b.sell)){return -1;}else {return 1;}});
+							var sell_at=data.records[0];
+							if(buy_from.exchange!=sell_at.exchange && buy_from.buy>0 && sell_at.sell>0){
+								if(_.indexOf(response.data,data.product)==-1){
+									return_array.push({product:data.product,buy_from:buy_from,sell_at:sell_at});
+								}
+							}
 						}
-					}
-				});
-				//sails.sockets.blast('predator_alert', {data:return_array});
-				sails.sockets.broadcast(roomName, 'predator_alert', {data:return_array});
+					});
+					//sails.sockets.blast('predator_alert', {data:return_array});
+					sails.sockets.broadcast(roomName, 'predator_alert', {data:return_array});
+				}).catch( err => {});
+				
 			}).
 			catch(err => {});
 		});			
+	},
+	
+	fxPairList:function(){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			var return_array=[];
+			FxTickers.find().exec(function(err,tickers){
+				_.forEach(tickers,function(ticker){
+					return_array.push(_.toLower(_.replace(ticker.symbol,'/','_')));
+				});
+				return resolve({data:return_array});
+			});
+		});
 	}
 };

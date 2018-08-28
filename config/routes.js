@@ -92,11 +92,11 @@ module.exports.routes = {
   '/api/fixMaster':'ApiController.fixMaster',
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
-  '/api/userRegistration':'ApiController.userRegistration',
   
+  '/api/productPriceHistoryChart/:product':'ApiController.productPriceHistoryChart',
   '/api/symbolsUSDPricesInc':'ApiController.symbolsUSDPricesInc',
   '/predator/currencies':'PredatorTradeController.predators_data',
-  
+  '/api/userRegistration':'ApiController.userRegistration',
   
   //WIDGET URLS
   'GET /widget/gainers': { view: 'widget/gainers_widget',locals: {layout: false}},

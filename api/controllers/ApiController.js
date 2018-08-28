@@ -78,6 +78,11 @@ module.exports = {
 		return response.send(data);
 	},request);
   },
+  productPriceHistoryChart:function(request, response){
+	 MobileApisService.productPriceHistoryChart(function(data){
+		return response.send(data);
+	},request.param('product'),request); 
+  },
   symbolsUSDPricesInc:function(request, response) {
 	  MobileApisService.symbolsUSDPricesInc(function(data){
 		return response.send(data);
