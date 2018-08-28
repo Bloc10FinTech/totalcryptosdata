@@ -2581,7 +2581,8 @@ module.exports = {
 							tickers=JSON.parse(tickers);
 							
 							_.forEach(products,function(product){
-								if(!_.isEmpty(tickers[product])){
+								if(!_.isEmpty(tickers[_.toLower(product)])){
+									product=_.toLower(product);
 									var ticker=tickers[product];
 									ticker.product=product;
 									var chart_data=[];
