@@ -1016,6 +1016,7 @@ module.exports = {
 						then(ticker => {
 							ticker=JSON.parse(ticker);
 							ticker.product_id=product.id;
+							ticker.is_old='no';
 							return ticker;
 						}).
 						catch(err => { 
@@ -1045,6 +1046,7 @@ module.exports = {
 								_.forEach(last_tickers,function(ticker){
 									var filter=_.filter(tickers_data,{product_id:ticker.product_id});
 									if(_.isEmpty(filter)){
+										ticker.is_old='yes';
 										tickers_data.push(ticker);
 									}
 								});
@@ -1079,6 +1081,7 @@ module.exports = {
 						then(stat => {
 							stat=JSON.parse(stat);
 							stat.product_id=product.id;
+							stat.is_old='no';
 							return stat;
 						}).
 						catch(err => { 
@@ -1108,6 +1111,7 @@ module.exports = {
 								_.forEach(last_stats,function(stat){
 									var filter=_.filter(stats_data,{product_id:stat.product_id});
 									if(_.isEmpty(filter)){
+										stat.is_old='yes';
 										stats_data.push(stat);
 									}
 								});
@@ -1141,6 +1145,7 @@ module.exports = {
 						return ApiService.gdaxMarketTrade(product.id).
 						then(trade => {
 							trade=JSON.parse(trade);
+							trade.is_old='no';
 							return {product_id:product.id,data:trade};
 						}).
 						catch(err => { 
@@ -1170,6 +1175,7 @@ module.exports = {
 								_.forEach(last_trades,function(trade){
 									var filter=_.filter(trades_data,{product_id:trade.product_id});
 									if(_.isEmpty(filter)){
+										trade.is_old='yes';
 										trades_data.push(trade);
 									}
 								});
@@ -1213,6 +1219,7 @@ module.exports = {
 									var ticker=tickers[product];
 									ticker=ticker.ticker;
 									ticker.product=product;
+									ticker.is_old='no';
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
@@ -1245,6 +1252,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -1286,6 +1294,7 @@ module.exports = {
 							then(ticker => {
 								ticker=JSON.parse(ticker);
 								ticker.product=product;
+								ticker.is_old='no';
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
@@ -1327,6 +1336,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -1375,6 +1385,7 @@ module.exports = {
 									ticker.currency=keys[1];
 								}
 								ticker.product=product;
+								ticker.is_old='no';
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
@@ -1416,6 +1427,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -1463,6 +1475,7 @@ module.exports = {
 							ticker.product=product.name;
 							ticker.base_currency=product.base;
 							ticker.quote_currency=product.quote;
+							ticker.is_old='no';
 							return ticker;
 						}).
 						catch(err => { 
@@ -1510,6 +1523,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -1558,6 +1572,7 @@ module.exports = {
 							ticker.product=product.product_code;
 							ticker.base_currency=_.join(_.split(product.product_code,'_',1));
 							ticker.quote_currency=_.replace(product.product_code,ticker.base_currency+'_','');
+							ticker.is_old='no';
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
@@ -1599,6 +1614,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -1644,6 +1660,7 @@ module.exports = {
 										ticker.base_currency=currency;
 										ticker.quote_currency='KRW';
 										ticker.product=currency+'KRW';
+										ticker.is_old='no';
 										
 										var chart_data=[];
 										_.forEach(charts,function(chart){
@@ -1676,6 +1693,7 @@ module.exports = {
 											if(!_.isEmpty(ticker.product)){
 												var filter=_.filter(tickers,{product:ticker.product});
 												if(_.isEmpty(filter)){
+													ticker.is_old='yes';
 													tickers.push(ticker);
 												}
 											}
@@ -1721,6 +1739,7 @@ module.exports = {
 							ticker.product=product.url_symbol;
 							ticker.base_currency=_.join(_.split(product.name,'/',1));
 							ticker.quote_currency=_.replace(product.name,ticker.base_currency+'/','');
+							ticker.is_old='no';
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
@@ -1762,6 +1781,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -1801,6 +1821,7 @@ module.exports = {
 							_.forEach(tickers,function(ticker){
 								ticker.base_currency=_.join(_.split(ticker.symbol,'_',1));
 								ticker.quote_currency=_.replace(ticker.symbol,ticker.base_currency+'_','');
+								ticker.is_old='no';
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
@@ -1829,6 +1850,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{symbol:ticker.symbol});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -1876,6 +1898,7 @@ module.exports = {
 										ticker.base_currency=currency;
 										ticker.quote_currency='krw';
 										ticker.product=currency+'krw';
+										ticker.is_old='no';
 										
 										var chart_data=[];
 										_.forEach(charts,function(chart){
@@ -1908,6 +1931,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -1955,6 +1979,7 @@ module.exports = {
 								ticker.base_currency=_.join(_.split(product,'_',1));
 								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
 								ticker.product=product;
+								ticker.is_old='no';
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
@@ -1986,6 +2011,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -2032,6 +2058,7 @@ module.exports = {
 								ticker.base_currency=_.join(_.split(product,'_',1));
 								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
 								ticker.product=product;
+								ticker.is_old='no';
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
@@ -2063,6 +2090,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -2106,6 +2134,7 @@ module.exports = {
 							ticker.product=product;
 							ticker.base_currency=_.join(_.split(product,'_',1));
 							ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+							ticker.is_old='no';
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
@@ -2147,6 +2176,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -2187,6 +2217,7 @@ module.exports = {
 							ticker.product=product.symbol1+product.symbol2;
 							ticker.base_currency=product.symbol1;
 							ticker.quote_currency=product.symbol2;
+							ticker.is_old='no';
 							
 							var chart_data=[];
 							_.forEach(charts,function(chart){
@@ -2228,6 +2259,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers_data,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers_data.push(ticker);
 										}
 									});
@@ -2288,6 +2320,7 @@ module.exports = {
 									ticker.Bid=math.format(ticker.Bid,{lowerExp: -100, upperExp: 100});
 									ticker.Ask=math.format(ticker.Ask,{lowerExp: -100, upperExp: 100});
 									ticker.PrevDay=math.format(ticker.PrevDay,{lowerExp: -100, upperExp: 100});
+									ticker.is_old='no';
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
@@ -2318,6 +2351,7 @@ module.exports = {
 										if(!_.isEmpty(ticker.BaseCurrency)){
 											var filter=_.filter(tickers.result,{MarketName:ticker.MarketName});
 											if(_.isEmpty(filter)){
+												ticker.is_old='yes';
 												tickers.result.push(ticker);
 											}
 										}
@@ -2365,6 +2399,7 @@ module.exports = {
 							});
 							chart_data.push(ticker.price_usd);
 							ticker.chart=chart_data;
+							ticker.is_old='no';
 						});
 						
 						 //PROCESS TO SYNC WITH LAST ENTRY
@@ -2381,6 +2416,7 @@ module.exports = {
 								_.forEach(last_tickers,function(ticker){
 									var filter=_.filter(tickers,{symbol:ticker.symbol});
 									if(_.isEmpty(filter)){
+										ticker.is_old='yes';
 										tickers.push(ticker);
 									}
 								});
@@ -2432,6 +2468,7 @@ module.exports = {
 							
 							chart_data.push(ticker.bid);
 							ticker.chart=chart_data;
+							ticker.is_old='no';
 							return ticker;
 						}).
 						catch(err=> { 
@@ -2461,6 +2498,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product_id:ticker.product_id});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -2505,6 +2543,7 @@ module.exports = {
 									product=_.head(product);
 									ticker.baseCurrency=product.baseCurrency;
 									ticker.quoteCurrency=product.quoteCurrency;
+									ticker.is_old='no';
 									var chart_data=[];
 									
 									_.forEach(charts,function(chart){
@@ -2537,6 +2576,7 @@ module.exports = {
 										if(!_.isEmpty(ticker.baseCurrency)){
 											var filter=_.filter(tickers,{symbol:ticker.symbol});
 											if(_.isEmpty(filter)){
+												ticker.is_old='yes';
 												tickers.push(ticker);
 											}
 										}
@@ -2585,6 +2625,7 @@ module.exports = {
 									product=_.toLower(product);
 									var ticker=tickers[product];
 									ticker.product=product;
+									ticker.is_old='no';
 									var chart_data=[];
 									_.forEach(charts,function(chart){
 										chart=_.filter(chart.tickers,{product:product});
@@ -2615,6 +2656,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -2662,6 +2704,7 @@ module.exports = {
 									product=_.head(product);
 									ticker.baseAsset=product.baseAsset;
 									ticker.quoteAsset=product.quoteAsset;
+									ticker.is_old='no';
 									var chart_data=[];
 									_.forEach(charts,function(chart){
 										chart=_.filter(chart.tickers,{symbol:ticker.symbol});
@@ -2692,6 +2735,7 @@ module.exports = {
 										if(!_.isEmpty(ticker.baseAsset)){
 											var filter=_.filter(tickers,{symbol:ticker.symbol});
 											if(_.isEmpty(filter)){
+												ticker.is_old='yes';
 												tickers.push(ticker);
 											}
 										}	
@@ -2736,6 +2780,7 @@ module.exports = {
 								ticker.product=product['base-currency']+product['quote-currency'];
 								ticker.base_currency=product['base-currency'];
 								ticker.quote_currency=product['quote-currency'];
+								ticker.is_old='no';
 								//PROCESS TO FORMAT VALUE IF THERE IS ANY EXPONENTIAL VALUE
 								ticker.tick.open=math.format(ticker.tick.open,{lowerExp: -100, upperExp: 100});
 								ticker.tick.close=math.format(ticker.tick.close,{lowerExp: -100, upperExp: 100});
@@ -2786,6 +2831,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -2829,6 +2875,7 @@ module.exports = {
 									ticker.product=product;
 									ticker.base_currency=_.join(_.split(product,'_',1));
 									ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
+									ticker.is_old='no';
 									
 									var chart_data=[];
 									_.forEach(charts,function(chart){
@@ -2859,6 +2906,7 @@ module.exports = {
 										_.forEach(last_tickers,function(ticker){
 											var filter=_.filter(tickers,{product:ticker.product});
 											if(_.isEmpty(filter)){
+												ticker.is_old='yes';
 												tickers.push(ticker);
 											}
 										});
@@ -2907,6 +2955,7 @@ module.exports = {
 								ticker.base_currency=_.join(_.split(product,'_',1));
 								ticker.quote_currency=_.replace(product,ticker.base_currency+'_','');
 								ticker.product=product;
+								ticker.is_old='no';
 								
 								var chart_data=[];
 								_.forEach(charts,function(chart){
@@ -2938,6 +2987,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -2982,6 +3032,7 @@ module.exports = {
 								var chart_data=[];
 								ticker.base_currency=ticker.rootSymbol;
 								ticker.quote_currency=_.replace(ticker.symbol,ticker.rootSymbol,'');
+								ticker.is_old='no';
 								_.forEach(charts,function(chart){
 									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
 									if(!_.isEmpty(chart)){
@@ -3008,6 +3059,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{symbol:ticker.symbol});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
@@ -3050,6 +3102,7 @@ module.exports = {
 								ticker.base_currency=ticker.cur;
 								ticker.quote_currency=_.replace(ticker.symbol,ticker.cur+'/','');
 								ticker.product=_.replace(ticker.symbol,'/','');
+								ticker.is_old='no';
 								_.forEach(charts,function(chart){
 									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
 									if(!_.isEmpty(chart)){
@@ -3075,6 +3128,7 @@ module.exports = {
 									_.forEach(last_tickers,function(ticker){
 										var filter=_.filter(tickers,{product:ticker.product});
 										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
 											tickers.push(ticker);
 										}
 									});
