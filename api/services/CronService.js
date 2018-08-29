@@ -1487,7 +1487,10 @@ module.exports = {
 						var tickers_data=[];
 						_.forEach(tickers,function(ticker){
 							if(!_.isEmpty(ticker) &&_.isEmpty(ticker.error)){
-								ticker.price=ticker.result[ticker.product].b[0];
+								ticker.price=ticker.result[ticker.product].l[0];
+								ticker.last=ticker.result[ticker.product].l[0];
+								ticker.bid=ticker.result[ticker.product].b[0];
+								ticker.ask=ticker.result[ticker.product].a[0];
 								ticker.volume=ticker.result[ticker.product].v[1];
 								ticker.low=ticker.result[ticker.product].l[1];
 								ticker.high=ticker.result[ticker.product].h[1];
@@ -3259,13 +3262,13 @@ module.exports = {
 								product=_.toLower(_.replace(ticker.id,'-',''));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.price,volume:ticker.ticker.volume});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price,volume:ticker.volume,ask:ticker.ask,bid:ticker.bid,last:ticker.price});
 							break;
 							case 'bittrex':
 								product=_.toLower(_.replace(ticker.MarketName,'-',''));
 								base_currency=_.toLower(ticker.BaseCurrency);
 								quote_currency=_.toLower(ticker.MarketCurrency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.Bid,volume:ticker.Volume,high:ticker.High,low:ticker.Low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.Bid,volume:ticker.Volume,high:ticker.High,low:ticker.Low,ask:ticker.Ask,bid:ticker.Bid,last:ticker.Bid});
 							break;
 							case 'coinmarketcap':
 								if(!_.isEmpty(ticker.market_cap_usd)){
@@ -3279,73 +3282,73 @@ module.exports = {
 								product=_.toLower(ticker.product_id);
 								base_currency=_.toLower(product.substr(0,3));
 								quote_currency=_.replace(product,base_currency,'');	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last_price});
 							break;
 							case 'hitbtc':
 								product=_.toLower(ticker.symbol);
 								base_currency=_.toLower(ticker.baseCurrency);
 								quote_currency=_.toLower(ticker.quoteCurrency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
 							break;
 							case 'gate':
 								product=_.toLower(_.replace(ticker.product,'_',''));
 								base_currency=_.toLower(_.join(_.split(ticker.product,'_',1)));
 								quote_currency=_.replace(product,base_currency,'');	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.baseVolume,high:ticker.high24hr,low:ticker.low24hr});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.baseVolume,high:ticker.high24hr,low:ticker.low24hr,ask:ticker.lowestAsk,bid:ticker.highestBid,last:ticker.last});
 							break;
 							case 'okex':
 								product=_.toLower(_.replace(ticker.product,'_',''));
 								base_currency=_.toLower(_.join(_.split(ticker.product,'_',1)));
 								quote_currency=_.replace(product,base_currency,'');	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.last,volume:ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.last,volume:ticker.ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low,ask:ticker.ticker.buy,bid:ticker.ticker.sell,last:ticker.ticker.last});
 							break;
 							case 'binance':
 								product=_.toLower(ticker.symbol);
 								base_currency=_.toLower(ticker.baseAsset);
 								quote_currency=_.toLower(ticker.quoteAsset);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastPrice,volume:ticker.volume,high:ticker.highPrice,low:ticker.lowPrice});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastPrice,volume:ticker.volume,high:ticker.highPrice,low:ticker.lowPrice,ask:ticker.askPrice,bid:ticker.bidPrice,last:ticker.lastPrice});
 							break;
 							case 'huobi':
 								product=_.toLower(ticker.product);
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.tick.bid[0],volume:ticker.tick.vol,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.tick.bid[0],volume:ticker.tick.vol,high:ticker.high,low:ticker.low,ask:ticker.tick.ask[0],bid:ticker.tick.bid[0],last:ticker.tick.bid[0]});
 							break;
 							case 'gemini':
 								product=_.toLower(ticker.product);
 								base_currency=_.toLower(ticker.currency);
 								quote_currency=_.toLower(_.replace(product,base_currency,''	));	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.vol});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.vol,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
 							break;
 							case 'kraken':
 								product=_.toLower(ticker.product);
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.price,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
 							break;
 							case 'bitflyer':
 								product=_.toLower(_.replace(ticker.product,'_'));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.best_bid,volume:ticker.volume});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.best_bid,volume:ticker.volume,ask:ticker.best_ask,bid:ticker.best_bid,last:ticker.best_bid});
 							break;
 							case 'bithumb':
 								product=_.toLower(ticker.product);
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.volume_1day,high:ticker.max_price,low:ticker.min_price});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.volume_1day,high:ticker.max_price,low:ticker.min_price,ask:ticker.buy_price,bid:ticker.sell_price,last:ticker.sell_price});
 							break;
 							case 'bitstamp':
 								product=_.toLower(ticker.product);
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
 							break;
 							case 'bitz':
 								product=_.toLower(_.replace(ticker.product,'_',''));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell,volume:ticker.vol,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell,volume:ticker.vol,high:ticker.high,low:ticker.low,ask:ticker.buy,bid:ticker.sell,last:ticker.last});
 							break;
 							case 'lbank':
 								product=_.toLower(_.replace(ticker.symbol,'_',''));
@@ -3363,43 +3366,43 @@ module.exports = {
 								product=_.toLower(_.replace(ticker.product,'_',''));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low,ask:ticker.buy,bid:ticker.sell,last:ticker.last});
 							break;
 							case 'exmo':
 								product=_.toLower(_.replace(ticker.product,'_',''));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.vol,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.sell_price,volume:ticker.vol,high:ticker.high,low:ticker.low,ask:ticker.buy_price,bid:ticker.sell_price,last:ticker.last_trade});
 							break;
 							case 'liqui':
 								product=_.toLower(_.replace(ticker.product,'_',''));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.vol,high:ticker.high,low:ticker.low,ask:ticker.buy,bid:ticker.sell,last:ticker.last});
 							break;
 							case 'korbit':
 								product=_.toLower(_.replace(ticker.product,'_',''));        
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
 							break;
 							case 'bitmex':
 								product=_.toLower(_.replace(ticker.symbol,'_',''));        
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.settledPrice,volume:ticker.totalVolume});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.settledPrice,volume:ticker.totalVolume,ask:ticker.askPrice,bid:ticker.bidPrice,last:ticker.lastPrice});
 							break;
 							case 'livecoin':
 								product=_.toLower(ticker.product);        
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,ask:ticker.best_ask,bid:ticker.best_bid,last:ticker.last});
 							break;
 							case 'cex':
 								product=_.toLower(ticker.product);        
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.bid,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
 							break;
 							default:
 							break;
@@ -3417,6 +3420,9 @@ module.exports = {
 							if(!_.isEmpty(ticker.volume)){data.volumes.push(parseFloat(ticker.volume));}
 							if(!_.isEmpty(ticker.high)){data.max_prices.push(parseFloat(ticker.high));}
 							if(!_.isEmpty(ticker.low)){data.min_prices.push(parseFloat(ticker.low));}
+							if(!_.isEmpty(ticker.ask)){data.asks.push(parseFloat(ticker.ask));}
+							if(!_.isEmpty(ticker.bid)){data.bids.push(parseFloat(ticker.bid));}
+							if(!_.isEmpty(ticker.last)){data.lasts.push(parseFloat(ticker.last));}
 							if(!_.isEmpty(ticker.market_cap_usd)){data.market_cap_usds.push(parseFloat(ticker.market_cap_usd));}
 							exists=true;
 						}
@@ -3426,13 +3432,19 @@ module.exports = {
 						var volumes=[];
 						var max_prices=[];
 						var min_prices=[];
+						var asks=[];
+						var bids=[];
+						var lasts=[];
 						var market_cap_usds=[];
 						if(!_.isEmpty(ticker.price)){prices.push(parseFloat(ticker.price));}
 						if(!_.isEmpty(ticker.volume)){volumes.push(parseFloat(ticker.volume));}
 						if(!_.isEmpty(ticker.high)){max_prices.push(parseFloat(ticker.high));}
 						if(!_.isEmpty(ticker.low)){min_prices.push(parseFloat(ticker.low));}
+						if(!_.isEmpty(ticker.ask)){asks.push(parseFloat(ticker.ask));}
+						if(!_.isEmpty(ticker.bid)){bids.push(parseFloat(ticker.bid));}
+						if(!_.isEmpty(ticker.last)){lasts.push(parseFloat(ticker.last));}
 						if(!_.isEmpty(ticker.market_cap_usd)){market_cap_usds.push(parseFloat(ticker.market_cap_usd));}
-						temp.push({product:ticker.product,base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,prices:prices,volumes:volumes,max_prices:max_prices,min_prices:min_prices,market_cap_usds:market_cap_usds});
+						temp.push({product:ticker.product,base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,prices:prices,volumes:volumes,max_prices:max_prices,min_prices:min_prices,asks:asks,bids:bids,lasts:lasts,market_cap_usds:market_cap_usds});
 					}
 				});
 				
@@ -3443,6 +3455,18 @@ module.exports = {
 						data.high=math.format(Math.max.apply(Math,data.max_prices), {lowerExp: -100, upperExp: 100});
 						data.low=math.format(Math.min.apply(Math,data.min_prices), {lowerExp: -100, upperExp: 100});
 						
+						if(data.asks.length>0){
+							data.ask=math.format(_.reduce(data.asks,function(sum,n){return sum+n;},0)/data.asks.length, {lowerExp: -100, upperExp: 100});
+						}
+						
+						if(data.bids.length>0){
+							data.bid=math.format(_.reduce(data.bids,function(sum,n){return sum+n;},0)/data.bids.length, {lowerExp: -100, upperExp: 100});
+						}
+						
+						if(data.lasts.length>0){
+							data.last=math.format(_.reduce(data.lasts,function(sum,n){return sum+n;},0)/data.lasts.length, {lowerExp: -100, upperExp: 100});
+						}
+						
 						if(data.market_cap_usds.length>0){
 							data.market_cap_usd=math.format(_.reduce(data.market_cap_usds,function(sum,n){return sum+n;},0)/data.market_cap_usds.length, {lowerExp: -100, upperExp: 100});
 						}	
@@ -3452,6 +3476,9 @@ module.exports = {
 							delete data.volumes;
 							delete data.max_prices;
 							delete data.min_prices;
+							delete data.asks;
+							delete data.bids;
+							delete data.lasts;
 							delete data.market_cap_usds;
 							insert_array.push(data);
 						}

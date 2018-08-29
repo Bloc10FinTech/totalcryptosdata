@@ -526,7 +526,7 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject){
 			var options = {
-			  url: 'https://www.bit-z.com/api_v1/tickerall',
+			  url: 'https://api.bit-z.com/api_v1/tickerall',
 			  headers: {
 				'User-Agent': 'request'
 			  }
