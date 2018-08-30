@@ -274,7 +274,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{MarketName:_.toUpper(currency+'-'+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.Bid,volume:tickers_match.Volume,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.Last,volume:tickers_match.Volume,exchange:exchange}});
 								}
 							});
 						});
@@ -310,7 +310,7 @@ module.exports = {
 							var tickers_match=_.filter(tickers,{product_id:currency+currency_temp});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.bid,volume:tickers_match.volume,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last_price,volume:tickers_match.volume,exchange:exchange}});
 								}
 							});
 						});
@@ -327,7 +327,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{symbol:_.toUpper(currency+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.bid,volume:tickers_match.volume,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last,volume:tickers_match.volume,exchange:exchange}});
 								}
 							});
 						});
@@ -361,7 +361,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:currency+currency_temp});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.price,volume:tickers_match.vol,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last,volume:tickers_match.vol,exchange:exchange}});
 								}
 							});
 						});
@@ -378,7 +378,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:currency+'_'+currency_temp});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.ticker.sell,volume:tickers_match.ticker.vol,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.ticker.last,volume:tickers_match.ticker.vol,exchange:exchange}});
 								}
 							});
 						});
@@ -429,7 +429,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:currency+currency_temp});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.bid,volume:tickers_match.vol,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last,volume:tickers_match.vol,exchange:exchange}});
 								}
 							});
 						});
@@ -446,7 +446,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:_.toUpper(currency+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.price,volume:tickers_match.volume,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last,volume:tickers_match.volume,exchange:exchange}});
 								}
 							});
 						});
@@ -480,7 +480,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:_.toUpper(currency+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.sell_price,volume:tickers_match.volume_1day,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.buy_price,volume:tickers_match.volume_1day,exchange:exchange}});
 								}
 							});
 						});
@@ -514,7 +514,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:currency+'_'+currency_temp});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.sell,volume:tickers_match.vol,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last,volume:tickers_match.vol,exchange:exchange}});
 								}
 							});
 						});
@@ -582,7 +582,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:_.toUpper(currency+'_'+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.sell_price,volume:tickers_match.vol,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last_trade,volume:tickers_match.vol,exchange:exchange}});
 								}
 							});
 						});
@@ -633,7 +633,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{symbol:_.toUpper(currency+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.settledPrice,volume:tickers_match.totalVolume,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.lastPrice,volume:tickers_match.totalVolume,exchange:exchange}});
 								}
 							});
 						});
@@ -667,7 +667,7 @@ module.exports = {
 								var tickers_match=_.filter(tickers,{product:_.toUpper(currency+currency_temp)});
 								if(!_.isEmpty(tickers_match)){
 									tickers_match=_.head(tickers_match);
-									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.bid,volume:tickers_match.volume,exchange:exchange}});
+									temp_array.push({product:currency+'_'+currency_temp,record:{price:tickers_match.last,volume:tickers_match.volume,exchange:exchange}});
 								}
 							});
 						});

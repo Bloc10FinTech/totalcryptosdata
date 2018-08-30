@@ -654,7 +654,6 @@ module.exports = {
 		});	
 	},
 	
-	
 	symbolsUSDPricesInc:function(callBack,request){
 		var _ = require('lodash');
 		MobileApisService.checkUpdateApiCalls(request.ip,'symbolsUSDPricesInc').
@@ -663,7 +662,7 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 						if(err){
-							callBack(MobileApisService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+							callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
 						}
 						if(!_.isEmpty(totalCryptoPrices)){ 
 							totalCryptoPrices=_.head(totalCryptoPrices);
@@ -671,35 +670,22 @@ module.exports = {
 							totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
 							totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 							
-							totalCryptoPrices=MobileApisService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices});
+							totalCryptoPrices=ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices});
 							callBack(totalCryptoPrices);
 						}
 						else{
-							callBack(MobileApisService.encrypt({errCode:404,message:'Record not found.',data:[]}));
+							callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
 						}
 					});
 				});
 			}
 			else{
-				callBack(MobileApisService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
+				callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
 			}
 		}).
 		catch(err => {
-			callBack(MobileApisService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+			callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
 		});	
-	},
-	
-	encrypt:function(data){
-		var crypto = require('crypto');
-		var data=JSON.stringify(data);
-		var key = crypto.createCipher('aes-256-ecb', '123');
-		return key.update(data, 'utf8', 'hex') + key.final('hex');
-	},
-	
-	decrypt:function(data){
-		var crypto = require('crypto');
-		var key = crypto.createDecipher('aes-256-ecb','123');
-		return key.update(data, 'hex','utf8')+ key.final('utf8');
 	},
 	
 	checkUpdateApiCalls:function(ip_address,api_name){

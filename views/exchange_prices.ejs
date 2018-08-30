@@ -465,10 +465,10 @@ function show_tab_data(tab){
 						str+='</a>';
 						str+='</td>';
 						str+='<td id="'+summary.MarketName+'_bid_bittrex">';
-						if(summary.Bid>summary.Last){
-						str+='<span class="green-text">'+format_numbers(parseFloat(summary.Bid).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+						if(summary.Last>summary.Bid){
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.Last).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(summary.Bid).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.Last).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.MarketName+'_high_bittrex">'+format_numbers(parseFloat(summary.High).toFixed(8))+'</td>';
@@ -503,10 +503,10 @@ function show_tab_data(tab){
 							str+='</a>';
 							str+='</td>';
 							str+='<td id="'+summary.product_id+'_price_bitfinex">';
-							if(summary.bid>summary.last_price){
-							str+='<span class="green-text">'+format_numbers(parseFloat(summary.bid).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+							if(summary.last_price>summary.bid){
+							str+='<span class="green-text">'+format_numbers(parseFloat(summary.last_price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 							}else{
-							str+='<span class="red-text">'+format_numbers(parseFloat(summary.bid).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+							str+='<span class="red-text">'+format_numbers(parseFloat(summary.last_price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 							}
 							str+='</td>';
 							str+='<td id="'+summary.product_id+'_high_bitfinex">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
@@ -539,10 +539,10 @@ function show_tab_data(tab){
 						str+='</a>';
 						str+='</td>';
 						str+='<td id="'+summary.symbol+'_bid_hitbtc">';
-						if(summary.bid>summary.last){
-						str+='<span class="green-text">'+format_numbers(parseFloat(summary.bid).toFixed(10))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+						if(summary.last>summary.bid){
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(summary.bid).toFixed(10))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
 						str+='<td id="'+summary.symbol+'_high_hitbtc">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
@@ -613,7 +613,7 @@ function show_tab_data(tab){
 						str+=summary.product.toUpperCase();
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_kuna">'+format_numbers(parseFloat(summary.price).toFixed(10))+'</td>';
+						str+='<td id="'+summary.product+'_price_kuna">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</td>';
 						str+='<td id="'+summary.product+'_high_kuna">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
 						str+='<td id="'+summary.product+'_low_kuna">'+format_numbers(parseFloat(summary.low).toFixed(10))+'</td>';
 						str+='<td id="'+summary.product+'_vol_kuna">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
@@ -733,7 +733,7 @@ function show_tab_data(tab){
 						str+=summary.product.toUpperCase();
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_gemini">'+format_numbers(parseFloat(summary.bid).toFixed(5))+'</td>';
+						str+='<td id="'+summary.product+'_price_gemini">'+format_numbers(parseFloat(summary.last).toFixed(5))+'</td>';
 						str+='<td id="'+summary.product+'_vol_gemini">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
@@ -761,7 +761,7 @@ function show_tab_data(tab){
 						str+=summary.product;
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_kraken">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</td>';
+						str+='<td id="'+summary.product+'_price_kraken">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
 						str+='<td id="'+summary.product+'_high_kraken">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
 						str+='<td id="'+summary.product+'_low_kraken">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
 						str+='<td id="'+summary.product+'_vol_kraken">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
@@ -819,7 +819,7 @@ function show_tab_data(tab){
 						str+=summary.product;
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bithumb">'+format_numbers(parseFloat(summary.sell_price).toFixed(2))+'</td>';
+						str+='<td id="'+summary.product+'_price_bithumb">'+format_numbers(parseFloat(summary.buy_price).toFixed(2))+'</td>';
 						str+='<td id="'+summary.product+'_vol_bithumb">'+format_numbers(parseFloat(summary.volume_1day).toFixed(2))+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
@@ -847,7 +847,7 @@ function show_tab_data(tab){
 						str+=summary.product.toUpperCase();
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bitstamp">'+format_numbers(parseFloat(summary.bid).toFixed(8))+'</td>';
+						str+='<td id="'+summary.product+'_price_bitstamp">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
 						str+='<td id="'+summary.product+'_vol_bitstamp">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
@@ -876,7 +876,7 @@ function show_tab_data(tab){
 						str+=summary.product.replace('_','').toUpperCase();
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bitz">'+format_numbers(parseFloat(summary.sell).toFixed(8))+'</td>';
+						str+='<td id="'+summary.product+'_price_bitz">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
 						str+='<td id="'+summary.product+'_vol_bitz">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
@@ -1077,7 +1077,7 @@ function show_tab_data(tab){
 						str+=summary.symbol.replace('_','').toUpperCase();
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.symbol+'_price_bitmex">'+format_numbers(parseFloat(summary.settledPrice).toFixed(2))+'</td>';
+						str+='<td id="'+summary.symbol+'_price_bitmex">'+format_numbers(parseFloat(summary.lastPrice).toFixed(2))+'</td>';
 						str+='<td id="'+summary.symbol+'_vol_bitmex">'+format_numbers(parseFloat(summary.totalVolume).toFixed(2))+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
@@ -1135,7 +1135,7 @@ function show_tab_data(tab){
 						str+=summary.product.toUpperCase();
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_cex">'+parseFloat(summary.bid)+'</td>';
+						str+='<td id="'+summary.product+'_price_cex">'+parseFloat(summary.last)+'</td>';
 						str+='<td id="'+summary.product+'_vol_cex">'+Math.round(parseFloat(summary.volume))+'</td>';
 						str+='<td id="'+summary.product+'_high_cex">'+summary.high+'</td>';
 						str+='<td id="'+summary.product+'_low_cex">'+summary.low+'</td>';
