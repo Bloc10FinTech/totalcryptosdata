@@ -1304,8 +1304,18 @@ module.exports = {
 	encrypt:function(data){
 		var crypto = require('crypto');
 		var data=JSON.stringify(data);
-		var key = crypto.createCipher('aes-256-ecb', '123');
-		return key.update(data, 'utf8', 'hex') + key.final('hex');
+		
+		var alg = 'aes-256-cbc';
+		var key = '0123456789abcdefghijklmnopqrstuv';
+		var iv = '0123456789ABCDEF';
+		var cipher = crypto.createCipheriv(alg, key, iv);
+		var encoded = cipher.update(data, 'utf8', 'base64');
+		encoded += cipher.final('base64');
+		return encoded;
+		
+		
+		/*var key = crypto.createCipher('aes-256-ecb', '123');
+		return key.update(data, 'utf8', 'hex') + key.final('hex');*/
 	},
 	
 	decrypt:function(data){
