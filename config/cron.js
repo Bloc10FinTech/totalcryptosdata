@@ -1,8 +1,8 @@
 module.exports.cron = {
   //CREATE LIST OF EXCHANGES/TOTAL CRYPTO HISTORY OF PAST DATE/DELETE EXCHANGE DATA MORE THAN 15 DAYS
   myFirstJob: {
-    schedule: '00 */5 * * * *',
-	//schedule: '00 01 00 * * *',
+    //schedule: '00 */5 * * * *',
+	schedule: '00 01 00 * * *',
     onTick: function () {
       CronService.createExchange();
     }
