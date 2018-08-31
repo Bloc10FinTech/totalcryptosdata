@@ -121,6 +121,23 @@ module.exports = {
 			}
 		});
 		
+		//PROCESS TO INSERT COINMARKETCAP CURRENCY FULL NAME LIST 
+		ExchangeCurrencyFullNames.count({name: 'coinmarketcap'},function(err,count){
+			if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'currency_full_name_select',curDateTime);}
+			if(count==0){
+				Promise.all([
+					ApiService.coinFullNames()
+				]).then( response => {
+					ExchangeCurrencyFullNames.create({name:'coinmarketcap',list:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'currency_full_name_select',curDateTime);}
+					});
+				}).
+				catch(err => {
+					ApiService.exchangeErrors('coinmarketcap','api',err,'currency_full_name_api_select',curDateTime);
+				});
+			}
+		});
+		
 		//PROCESS TO INSERT BITFINEX STATIC DATA
 		ExchangeList.count({name: 'bitfinex'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitfinex','query_select',err,'exchange_select',curDateTime);}

@@ -99,7 +99,24 @@ module.exports = {
 							if(count>0){
 								bittrexTickers=_.slice(bittrexTickers,0,count);
 							}
-							return resolve({name:bittrexExchange.name,url:bittrexExchange.url,is_exchange:bittrexExchange.is_exchange,data:bittrexTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bittrexTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.BaseCurrency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.BaseCurrency;
+									}
+								});
+								
+								return resolve({name:bittrexExchange.name,url:bittrexExchange.url,is_exchange:bittrexExchange.is_exchange,data:bittrexTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -128,7 +145,22 @@ module.exports = {
 							if(count>0){
 								coinMarketTickers=_.slice(coinMarketTickers,0,count);
 							}
-							return resolve({name:coinmarketcapExchange.name,url:coinmarketcapExchange.url,is_exchange:coinmarketcapExchange.is_exchange,data:coinMarketTickers});
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(coinMarketTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.symbol)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.symbol;
+									}
+								});
+								return resolve({name:coinmarketcapExchange.name,url:coinmarketcapExchange.url,is_exchange:coinmarketcapExchange.is_exchange,data:coinMarketTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -157,7 +189,24 @@ module.exports = {
 							if(count>0){
 								bitfinexTickers=_.slice(bitfinexTickers,0,count);
 							}
-							return resolve({name:bitfinexExchange.name,url:bitfinexExchange.url,is_exchange:bitfinexExchange.is_exchange,data:bitfinexTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bitfinexTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.product_id.substr(0,3))});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.product_id.substr(0,3);
+									}
+								});
+								
+								return resolve({name:bitfinexExchange.name,url:bitfinexExchange.url,is_exchange:bitfinexExchange.is_exchange,data:bitfinexTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -186,7 +235,24 @@ module.exports = {
 							if(count>0){
 								hitbtcTickers=_.slice(hitbtcTickers,0,count);
 							}
-							return resolve({name:hitbtcExchange.name,url:hitbtcExchange.url,is_exchange:hitbtcExchange.is_exchange,data:hitbtcTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(hitbtcTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.baseCurrency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.baseCurrency;
+									}
+								});
+								
+								return resolve({name:hitbtcExchange.name,url:hitbtcExchange.url,is_exchange:hitbtcExchange.is_exchange,data:hitbtcTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -215,7 +281,24 @@ module.exports = {
 							if(count>0){
 								gateTickers=_.slice(gateTickers,0,count);
 							}
-							return resolve({name:gateExchange.name,url:gateExchange.url,is_exchange:gateExchange.is_exchange,data:gateTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(gateTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(_.join(_.split(ticker.product,'_',1)))});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=_.join(_.split(ticker.product,'_',1));
+									}
+								});
+								
+								return resolve({name:gateExchange.name,url:gateExchange.url,is_exchange:gateExchange.is_exchange,data:gateTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -244,6 +327,7 @@ module.exports = {
 							if(count>0){
 								kunaTickers=_.slice(kunaTickers,0,count);
 							}
+							
 							return resolve({name:kunaExchange.name,url:kunaExchange.url,is_exchange:kunaExchange.is_exchange,data:kunaTickers});
 						}
 						else{
@@ -274,7 +358,24 @@ module.exports = {
 							if(count>0){
 								okexTickers=_.slice(okexTickers,0,count);
 							}
-							return resolve({name:okexExchange.name,url:okexExchange.url,is_exchange:okexExchange.is_exchange,data:okexTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(okexTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(_.join(_.split(ticker.product,'_',1)))});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=_.join(_.split(ticker.product,'_',1));
+									}
+								});
+								
+								return resolve({name:okexExchange.name,url:okexExchange.url,is_exchange:okexExchange.is_exchange,data:okexTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -303,7 +404,23 @@ module.exports = {
 							if(count>0){
 								binanceTickers=_.slice(binanceTickers,0,count);
 							}
-							return resolve({name:binanceExchange.name,url:binanceExchange.url,is_exchange:binanceExchange.is_exchange,data:binanceTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(binanceTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.baseAsset)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.baseAsset;
+									}
+								});
+								return resolve({name:binanceExchange.name,url:binanceExchange.url,is_exchange:binanceExchange.is_exchange,data:binanceTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -332,7 +449,23 @@ module.exports = {
 							if(count>0){
 								huobiTickers=_.slice(huobiTickers,0,count);
 							}
-							return resolve({name:huobiExchange.name,url:huobiExchange.url,is_exchange:huobiExchange.is_exchange,data:huobiTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(huobiTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:huobiExchange.name,url:huobiExchange.url,is_exchange:huobiExchange.is_exchange,data:huobiTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -362,7 +495,23 @@ module.exports = {
 							if(count>0){
 								geminiTickers=_.slice(geminiTickers,0,count);
 							}
-							return resolve({name:geminiExchange.name,url:geminiExchange.url,is_exchange:geminiExchange.is_exchange,data:geminiTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(geminiTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.currency;
+									}
+								}); 
+								return resolve({name:geminiExchange.name,url:geminiExchange.url,is_exchange:geminiExchange.is_exchange,data:geminiTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -391,7 +540,23 @@ module.exports = {
 							if(count>0){
 								krakenTickers=_.slice(krakenTickers,0,count);
 							}
-							return resolve({name:krakenExchange.name,url:krakenExchange.url,is_exchange:krakenExchange.is_exchange,data:krakenTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(krakenTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:krakenExchange.name,url:krakenExchange.url,is_exchange:krakenExchange.is_exchange,data:krakenTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -420,7 +585,23 @@ module.exports = {
 							if(count>0){
 								bitflyerTickers=_.slice(bitflyerTickers,0,count);
 							}
-							return resolve({name:bitflyerExchange.name,url:bitflyerExchange.url,is_exchange:bitflyerExchange.is_exchange,data:bitflyerTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bitflyerTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:bitflyerExchange.name,url:bitflyerExchange.url,is_exchange:bitflyerExchange.is_exchange,data:bitflyerTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -449,7 +630,23 @@ module.exports = {
 							if(count>0){
 								bithumbTickers=_.slice(bithumbTickers,0,count);
 							}
-							return resolve({name:bithumbExchange.name,url:bithumbExchange.url,is_exchange:bithumbExchange.is_exchange,data:bithumbTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bithumbTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:bithumbExchange.name,url:bithumbExchange.url,is_exchange:bithumbExchange.is_exchange,data:bithumbTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -478,7 +675,23 @@ module.exports = {
 							if(count>0){
 								bitstampTickers=_.slice(bitstampTickers,0,count);
 							}
-							return resolve({name:bitstampExchange.name,url:bitstampExchange.url,is_exchange:bitstampExchange.is_exchange,data:bitstampTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bitstampTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:bitstampExchange.name,url:bitstampExchange.url,is_exchange:bitstampExchange.is_exchange,data:bitstampTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -507,7 +720,23 @@ module.exports = {
 							if(count>0){
 								bitzTickers=_.slice(bitzTickers,0,count);
 							}
-							return resolve({name:bitzExchange.name,url:bitzExchange.url,is_exchange:bitzExchange.is_exchange,data:bitzTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bitzTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:bitzExchange.name,url:bitzExchange.url,is_exchange:bitzExchange.is_exchange,data:bitzTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -536,7 +765,23 @@ module.exports = {
 							if(count>0){
 								lbankTickers=_.slice(lbankTickers,0,count);
 							}
-							return resolve({name:lbankExchange.name,url:lbankExchange.url,is_exchange:lbankExchange.is_exchange,data:lbankTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(lbankTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:lbankExchange.name,url:lbankExchange.url,is_exchange:lbankExchange.is_exchange,data:lbankTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -565,7 +810,23 @@ module.exports = {
 							if(count>0){
 								coinoneTickers=_.slice(coinoneTickers,0,count);
 							}
-							return resolve({name:coinoneExchange.name,url:coinoneExchange.url,is_exchange:coinoneExchange.is_exchange,data:coinoneTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(coinoneTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:coinoneExchange.name,url:coinoneExchange.url,is_exchange:coinoneExchange.is_exchange,data:coinoneTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -594,7 +855,23 @@ module.exports = {
 							if(count>0){
 								wexTickers=_.slice(wexTickers,0,count);
 							}
-							return resolve({name:wexExchange.name,url:wexExchange.url,is_exchange:wexExchange.is_exchange,data:wexTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(wexTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:wexExchange.name,url:wexExchange.url,is_exchange:wexExchange.is_exchange,data:wexTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -623,7 +900,23 @@ module.exports = {
 							if(count>0){
 								exmoTickers=_.slice(exmoTickers,0,count);
 							}
-							return resolve({name:exmoExchange.name,url:exmoExchange.url,is_exchange:exmoExchange.is_exchange,data:exmoTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(exmoTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:exmoExchange.name,url:exmoExchange.url,is_exchange:exmoExchange.is_exchange,data:exmoTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -652,7 +945,23 @@ module.exports = {
 							if(count>0){
 								liquiTickers=_.slice(liquiTickers,0,count);
 							}
-							return resolve({name:liquiExchange.name,url:liquiExchange.url,is_exchange:liquiExchange.is_exchange,data:liquiTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(liquiTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:liquiExchange.name,url:liquiExchange.url,is_exchange:liquiExchange.is_exchange,data:liquiTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -681,7 +990,23 @@ module.exports = {
 							if(count>0){
 								korbitTickers=_.slice(korbitTickers,0,count);
 							}
-							return resolve({name:korbitExchange.name,url:korbitExchange.url,is_exchange:korbitExchange.is_exchange,data:korbitTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(korbitTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:korbitExchange.name,url:korbitExchange.url,is_exchange:korbitExchange.is_exchange,data:korbitTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -710,7 +1035,23 @@ module.exports = {
 							if(count>0){
 								bitmexTickers=_.slice(bitmexTickers,0,count);
 							}
-							return resolve({name:bitmexExchange.name,url:bitmexExchange.url,is_exchange:bitmexExchange.is_exchange,data:bitmexTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(bitmexTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:bitmexExchange.name,url:bitmexExchange.url,is_exchange:bitmexExchange.is_exchange,data:bitmexTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -739,7 +1080,23 @@ module.exports = {
 							if(count>0){
 								livecoinTickers=_.slice(livecoinTickers,0,count);
 							}
-							return resolve({name:livecoinExchange.name,url:livecoinExchange.url,is_exchange:livecoinExchange.is_exchange,data:livecoinTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(livecoinTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:livecoinExchange.name,url:livecoinExchange.url,is_exchange:livecoinExchange.is_exchange,data:livecoinTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -768,7 +1125,23 @@ module.exports = {
 							if(count>0){
 								cexTickers=_.slice(cexTickers,0,count);
 							}
-							return resolve({name:cexExchange.name,url:cexExchange.url,is_exchange:cexExchange.is_exchange,data:cexTickers});
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(cexTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:cexExchange.name,url:cexExchange.url,is_exchange:cexExchange.is_exchange,data:cexTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
 						}
 						else{
 							return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -1012,6 +1385,7 @@ module.exports = {
 	
 	totalCryptoPricesUsd:function(count=0){
 		var _ = require('lodash');
+		
 		return new Promise(function(resolve,reject){
 			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 				if(!_.isEmpty(totalCryptoPrices)){ 
@@ -1023,7 +1397,23 @@ module.exports = {
 					if(count>0){
 						totalCryptoPrices=_.slice(totalCryptoPrices,0,count);
 					}
-					return resolve({name:'total cryptos usd price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+					
+					ExchangeDataService.currencyFullNames().then(full_names => {
+						_.forEach(totalCryptoPrices,function(price){ 
+							var full_name=_.filter(full_names.list,{symbol:price.base_currency});
+							if(!_.isEmpty(full_name)){
+								full_name=_.head(full_name);
+								price.full_name=full_name.full_name;
+							}
+							else{
+								price.full_name=price.base_currency;
+							}
+						});
+						return resolve({name:'total cryptos usd price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+					}).
+					catch(err => {
+						return resolve({name:'',url:'',is_exchange:'',data:[]});
+					});
 				}
 				else{
 					return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -1043,7 +1433,23 @@ module.exports = {
 					if(count>0){
 						totalCryptoPrices=_.slice(totalCryptoPrices,0,count);
 					}
-					return resolve({name:'total cryptos pair price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+					
+					ExchangeDataService.currencyFullNames().then(full_names => {
+						_.forEach(totalCryptoPrices,function(price){ 
+							var full_name=_.filter(full_names.list,{symbol:price.base_currency});
+							if(!_.isEmpty(full_name)){
+								full_name=_.head(full_name);
+								price.full_name=full_name.full_name;
+							}
+							else{
+								price.full_name=price.base_currency;
+							}
+						});
+						return resolve({name:'total cryptos pair price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+					}).
+					catch(err => {
+						return resolve({name:'',url:'',is_exchange:'',data:[]});
+					});
 				}
 				else{
 					return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -1130,7 +1536,23 @@ module.exports = {
 						if(count>0){
 							totalCryptoPrices=_.slice(totalCryptoPrices,0,count);
 						}
-						return resolve({name:'total cryptos pair price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+						
+						ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(totalCryptoPrices,function(price){ 
+								var full_name=_.filter(full_names.list,{symbol:price.base_currency});
+								if(!_.isEmpty(full_name)){
+									full_name=_.head(full_name);
+									price.full_name=full_name.full_name;
+								}
+								else{
+									price.full_name=price.base_currency;
+								}
+							});
+							return resolve({name:'total cryptos pair price',url:'http://totalcryptos.com',is_exchange:'yes',data:totalCryptoPrices});
+						}).
+						catch(err => {
+							return resolve({name:'',url:'',is_exchange:'',data:[]});
+						});
 					}
 					else{
 						return resolve({name:'',url:'',is_exchange:'',data:[]});
@@ -1138,6 +1560,16 @@ module.exports = {
 				});
 			
 			});	
+		});
+	},
+	
+	currencyFullNames:function(){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeCurrencyFullNames.findOne({name:'coinmarketcap'},function(err, currencies){
+				currencies=_.map(currencies.list.data,function(currency){ return {symbol:_.toLower(currency.symbol),full_name:currency.name};}); 
+				return resolve({list:currencies});
+			});
 		});
 	},
 	

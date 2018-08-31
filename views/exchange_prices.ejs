@@ -68,22 +68,22 @@
 											<thead>
 												<tr role="row">
 													<%if(tab=='totalcryptospriceusd'){%>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width:90px;">COIN</th>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1"  style="width:120px;">Price USD</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width:150px;">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width:120px;">Price USD</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Low</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Change % (1h)</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Change % (24h)</th>
 													<%}else if(tab=='totalcryptospricepairs') {%>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 90px;">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 150px;">Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 59px;">Pair</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 121px;">Price</th> 
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(1h): activate to sort column ascending" style="width: 150px;">Change %(1h)</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 150px;">Change %(24h)</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 150px;">24 Hour Volume</th>
 													<%}else if(tab=='coin') {%>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width:120px;">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width:150px;">Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width:120px;">Price</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Cap</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Circulating Supply</th>
@@ -114,7 +114,7 @@
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume Quote</th>
 													<%}else if(tab=='gate') {%>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width: 150px;">Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
@@ -145,7 +145,7 @@
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Low</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
 													<%}else if(tab=='huobi') {%>
-													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" style="width: 150px;">Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
@@ -313,7 +313,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
@@ -359,7 +360,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>'; 
 						str+='<td>';
@@ -406,7 +408,10 @@ function show_tab_data(tab){
 						str+='<tr role="row" class="'+even_odd_class+'" id="'+ticker.name+'_coinmarket">';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+ticker.symbol+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+ticker.symbol+'">'+ticker.symbol+'</a></td>';
+						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+ticker.symbol+'">';
+						//str+=ticker.symbol;
+						str+=ticker.full_name;
+						str+='</a></td>';
 						str+='<td id="'+ticker.name+'_price_coinmarket">';
 						if(ticker.percent_change_1h>0){
 						str+='<span class="green-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
@@ -456,7 +461,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.BaseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.BaseCurrency+'">';
-						str+=summary.BaseCurrency;
+						//str+=summary.BaseCurrency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">'
@@ -494,7 +500,8 @@ function show_tab_data(tab){
 							str+='<td class="text-bold">';
 							str+='<img src="/images/currencies/'+summary.product_id.substr(0,3)+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 							str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
-							str+=summary.product_id.substr(0,3).toUpperCase();
+							//str+=summary.product_id.substr(0,3).toUpperCase();
+							str+=summary.full_name;
 							str+='</a>';
 							str+='</td>';
 							str+='<td class="text-bold">';
@@ -530,7 +537,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.baseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseCurrency+'">';
-						str+=summary.baseCurrency;
+						//str+=summary.baseCurrency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -567,7 +575,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
-						str+=summary.product.split('_',1).join().toUpperCase();
+						//str+=summary.product.split('_',1).join().toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -635,7 +644,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
-						str+=summary.product.split('_',1).join().toUpperCase();
+						//str+=summary.product.split('_',1).join().toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -665,7 +675,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.baseAsset+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseAsset+'">';
-						str+=summary.baseAsset;
+						//str+=summary.baseAsset;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -695,7 +706,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -725,7 +737,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.currency+'">';
-						str+=summary.currency;
+						//str+=summary.currency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -753,7 +766,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						str+=summary.base_currency;
+						//str+=summary.base_currency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -783,7 +797,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						str+=summary.base_currency;
+						//str+=summary.base_currency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -811,7 +826,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						str+=summary.base_currency
+						//str+=summary.base_currency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -839,7 +855,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						str+=summary.base_currency;
+						//str+=summary.base_currency;
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -868,7 +885,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -897,7 +915,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -925,7 +944,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -953,7 +973,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -982,7 +1003,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -1012,7 +1034,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td class="text-bold">';
 						str+='<td>';
@@ -1041,7 +1064,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -1069,7 +1093,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -1097,7 +1122,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';
@@ -1127,7 +1153,8 @@ function show_tab_data(tab){
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						str+=summary.base_currency.toUpperCase();
+						//str+=summary.base_currency.toUpperCase();
+						str+=summary.full_name;
 						str+='</a>';
 						str+='</td>';
 						str+='<td class="text-bold">';

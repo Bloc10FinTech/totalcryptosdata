@@ -121,6 +121,22 @@ module.exports = {
 		});
 	},
 	
+	coinFullNames:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject) {
+			var options = {
+			  url: 'https://api.coinmarketcap.com/v2/listings/',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
 	coinMarketTicker:function(){
 		var request = require('request');
 		return new Promise(function(resolve, reject) {

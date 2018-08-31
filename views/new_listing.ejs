@@ -15,7 +15,7 @@
 												<table class="display table-custom dataTable no-footer totalcryptosprice" style="width: 100%;overflow:auto;" role="grid">
 													<thead>
 														<tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending" style="width: 10px;">#</th>
-															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 100px;">Name</th>
+															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 150px;">Name</th>
 															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="COIN: activate to sort column ascending" style="width: 59px;">Pair</th>
 															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Price USD: activate to sort column ascending" style="width: 140px;">Price</th>
 															<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1" aria-label="Change %(24h): activate to sort column ascending" style="width: 112px;">24 Hour Volume</th>
@@ -61,7 +61,8 @@ $(document).ready(function(){
 				str+='<td class="text-bold">';
 				str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="20px" height="20px" onError="this.src=\'/images/currency.png\'" />';
 				str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-				str+=summary.base_currency.toUpperCase();
+				//str+=summary.base_currency.toUpperCase();
+				str+=summary.full_name;
 				str+='</a>';
 				str+='</td>'; 
 				str+='<td>';
