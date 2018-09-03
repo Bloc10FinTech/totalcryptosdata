@@ -1,0 +1,71 @@
+<html>
+<head>
+<title>
+Total Cryptos
+</title>
+<link rel="stylesheet" href="/styles/lib/bootstrap.min.css">
+<link rel="stylesheet" href="/styles/lib/c3.min.css">
+<link rel="stylesheet" href="/styles/lib/vendor.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+</head>
+<body>
+<main class="main-content">     
+	<div class="container-fluid">
+		<div class="row">
+			<div class="table-responsive">
+				<h5><b>Top Losers</b></h5>
+				<table class="display table-custom dataTable no-footer" style="width: 100%;" role="grid">
+				<thead>
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Symbol</th>
+					<th>Price</th>
+					<th>% 24h</th>
+				</tr>
+				</thead>
+				<tbody id="losers">
+					<tr>
+						<td colspan="5" style="text-align:center;"><img src="/images/data-loader.gif"/></td>
+					</tr>
+				</tbody>
+				</table>
+				<h6>Powered by <a href="https://totalcryptos.com">totalcryptos.com<img src="/images/logo.png" style="width:15px;"/></a></h6>
+			</div>	
+		</div>	
+	</div>
+</main>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function(){
+
+	$.ajax({
+		type:'GET',
+		url:'/widget/losers_data',
+		success:function(data){  
+			var str='';
+			if(data.errCode==1){
+				data.data.forEach(function(loser,index){
+				
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'">';
+					str+='<td class="sorting_1">'+(index+1)+'</td>';
+					str+='<td><b>'+loser.name+'<b/></td>';
+					str+='<td>'+loser.symbol+'</td>';
+					str+='<td>'+parseFloat(loser.price_usd).toFixed(5)+'</td>';
+					str+='<td><span style="color:red;font-weight:bold;">'+loser.percent_change_24h+'%</span></td>';
+					str+='</tr>';
+				});
+			}	
+			$("#losers").html(str);
+		}
+	});	
+});
+</script>
+</body>
+</html>

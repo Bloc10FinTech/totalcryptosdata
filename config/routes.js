@@ -106,7 +106,15 @@ module.exports.routes = {
   'GET /widget_sm/gainers': { view: 'widget_sm/gainers_widget',locals: {layout: false}},
   'GET /widget_sm/losers': { view: 'widget_sm/losers_widget',locals: {layout: false}},
   'GET /widget_sm/gainers_losers': { view: 'widget_sm/gainers_losers_widget',locals: {layout: false}},
- 
+  
+  //WIDGET POWERED BY URLS
+  'GET /widgetp/gainers': { view: 'widgetp/gainers_widget',locals: {layout: false}},
+  'GET /widgetp/losers': { view: 'widgetp/losers_widget',locals: {layout: false}},
+  'GET /widgetp/gainers_losers': { view: 'widgetp/gainers_losers_widget',locals: {layout: false}},
+  
+  'GET /widget_smp/gainers': { view: 'widget_smp/gainers_widget',locals: {layout: false}},
+  'GET /widget_smp/losers': { view: 'widget_smp/losers_widget',locals: {layout: false}},
+  'GET /widget_smp/gainers_losers': { view: 'widget_smp/gainers_losers_widget',locals: {layout: false}},	
   
 
   /***************************************************************************
