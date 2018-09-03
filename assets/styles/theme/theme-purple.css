@@ -195,7 +195,7 @@ a {
 
 .footer-nav {
   font-size: 14px;
-  padding: 5px 26% 0; }
+  padding: 5px 22% 0; }
   .footer-nav .divider {
     padding: 0 7px; }
 
@@ -391,5 +391,7 @@ button.dt-button, div.dt-button, a.dt-button {
   .ads-container {
     padding-left: 15px;
   }
+  .main-nav { position: relative; }
+  .main-nav .navbar-nav .nav-link { padding: 10px 15px; } 
   }
 
