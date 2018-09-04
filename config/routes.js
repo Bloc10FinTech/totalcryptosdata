@@ -89,13 +89,33 @@ module.exports.routes = {
   '/api/topGainersLosers/:time':'ApiController.topGainersLosers',
   '/api/fixPrice/:symbol':'ApiController.fixPrice',
   '/api/fixPrices':'ApiController.fixPrices',
-  '/api/fixMaster':'ApiController.fixMaster',
   'post /api/sliderData':'ApiController.sliderData',
   '/api/biggestGainers':'ApiController.biggestGainers',
-  
   '/api/productPriceHistoryChart/:product':'ApiController.productPriceHistoryChart',
+  
+  //APIS SERVICES ENCRYPTED
+  '/api/tcPricesInc':'ApiController.tcPricesInc',
   '/api/symbolsUSDPricesInc':'ApiController.symbolsUSDPricesInc',
+  '/api/symbolsUSDPricesInc/:currency':'ApiController.symbolUSDPriceInc',
+  '/api/productsPricesInc':'ApiController.productsPricesInc',
+  '/api/productsPricesInc/:product':'ApiController.productPriceInc',
+  '/api/topProductsPricesInc':'ApiController.topProductsPricesInc',
+  '/api/tcHistory24HInc':'ApiController.tcHistory24HInc',
+  '/api/tcHistory7DInc':'ApiController.tcHistory7DInc',
+  '/api/topGainersLosersInc/:time':'ApiController.topGainersLosersInc',
+  '/api/fixPriceInc/:symbol':'ApiController.fixPriceInc',
+  '/api/fixPricesInc':'ApiController.fixPricesInc',
+  'post /api/sliderDataInc':'ApiController.sliderDataInc',
+  '/api/biggestGainersInc':'ApiController.biggestGainersInc',
+  '/api/productPriceHistoryChartInc/:product':'ApiController.productPriceHistoryChartInc',
+  
+  //GENERATE EXCEL OF FIX PRICES
+  '/api/fixMaster':'ApiController.fixMaster',
+  
+  //USED TO SEND PREDATOR DATA
   '/predator/currencies':'PredatorTradeController.predators_data',
+  
+  //NOT USED AS OF NOW	
   '/api/userRegistration':'ApiController.userRegistration',
   
   //WIDGET URLS

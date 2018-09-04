@@ -141,20 +141,22 @@ $(document).ready(function(){
 				var exchange_checked_count=0;
 				$('#exchange_list').append('<li><li><label class="checkbox-inline"><input value="select_all_exchanges" id="select_all_exchanges" type="checkbox">&nbsp;<b>SELECT ALL</b></label></li></li>');
 				data.exchanges.forEach(function(exchange,index){
-					var item='<li>';
-					item+='<label class="checkbox-inline">';
-					if(['gdax','bitstamp','gemini','exmo'].indexOf(exchange.name)==-1){
-						item+='<input value="'+exchange.name+'" type="checkbox">';
+					if(exchange.name!='wex'){
+						var item='<li>';
+						item+='<label class="checkbox-inline">';
+						if(['gdax','bitstamp','gemini','exmo'].indexOf(exchange.name)==-1){
+							item+='<input value="'+exchange.name+'" type="checkbox">';
+						}
+						else{
+							item+='<input value="'+exchange.name+'" type="checkbox" checked="checked">';
+							exchange_checked_count++;
+						}
+						
+						item+='&nbsp;<b>'+exchange.name.toUpperCase()+'</b>';
+						item+='</label>';
+						item+='</li>';
+						$('#exchange_list').append('<li>'+item+'</li>');
 					}
-					else{
-						item+='<input value="'+exchange.name+'" type="checkbox" checked="checked">';
-						exchange_checked_count++;
-					}
-					
-					item+='&nbsp;<b>'+exchange.name.toUpperCase()+'</b>';
-					item+='</label>';
-					item+='</li>';
-					$('#exchange_list').append('<li>'+item+'</li>');
 				});
 				$('#quantity').text(exchange_checked_count);
 			}

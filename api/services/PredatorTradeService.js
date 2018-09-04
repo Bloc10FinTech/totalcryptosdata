@@ -248,6 +248,7 @@ module.exports = {
 								break;
 								case 'lbank':
 									var temp_array=[];
+									//AS THERE IS NO ASK/BID OR BUY/SELL DATA HERE
 									/*_.forEach(currencies,function(currency){
 										_.forEach(currencies_temp,function(currency_temp){
 											var tickers_match=_.filter(tickers,{symbol:currency+'_'+currency_temp});
@@ -264,6 +265,7 @@ module.exports = {
 								break;
 								case 'coinone':
 									var temp_array=[];
+									//AS THERE IS NO ASK/BID OR BUY/SELL DATA HERE
 									/*_.forEach(currencies,function(currency){
 										_.forEach(currencies_temp,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:currency+currency_temp});
@@ -279,7 +281,8 @@ module.exports = {
 								break;
 								case 'wex':
 									var temp_array=[];
-									_.forEach(currencies,function(currency){
+									//AS IT IS A CRAP EXCHANGE
+									/*_.forEach(currencies,function(currency){
 										_.forEach(currencies_temp,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
@@ -289,7 +292,7 @@ module.exports = {
 												}
 											}
 										});
-									});
+									});*/
 									return resolve(temp_array);					
 								break;
 								case 'exmo':
@@ -681,6 +684,7 @@ module.exports = {
 								break;
 								case 'lbank':
 									var temp_array=[];
+									//AS THERE IS NO ASK/BID OR BUY/SELL DATA HERE
 									/*_.forEach(currencies,function(currency){
 										_.forEach(currencies_temp,function(currency_temp){
 											var tickers_match=_.filter(tickers,{symbol:currency+'_'+currency_temp});
@@ -697,6 +701,7 @@ module.exports = {
 								break;
 								case 'coinone':
 									var temp_array=[];
+									//AS THERE IS NO ASK/BID OR BUY/SELL DATA HERE
 									/*_.forEach(currencies,function(currency){
 										_.forEach(currencies_temp,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:currency+currency_temp});
@@ -712,7 +717,8 @@ module.exports = {
 								break;
 								case 'wex':
 									var temp_array=[];
-									_.forEach(currencies,function(currency){
+									//AS IT IS A CRAP EXCHANGE
+									/*_.forEach(currencies,function(currency){
 										_.forEach(currencies_temp,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
@@ -722,7 +728,7 @@ module.exports = {
 												}
 											}
 										});
-									});
+									});*/
 									return resolve(temp_array);					
 								break;
 								case 'exmo':
