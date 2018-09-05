@@ -236,275 +236,277 @@ module.exports = {
 						tickers.sort('id DESC');
 						tickers.then(function(tickers){
 							if(!_.isEmpty(tickers)){
+								var date_created=tickers.date_created;
 								var tickers=tickers.tickers;
 								switch(exchange.name){
 									case 'gdax':
-										var exchange_name='';
+										var temp_array=[];
 										var tickers2=_.filter(tickers,{base_currency:_.toUpper(base_currency)});
 										if(!_.isEmpty(tickers2)){
 											_.forEach(atc_currencies,function(currency_temp){
 												var tickers_match=_.filter(tickers2,{quote_currency:_.toUpper(currency_temp)});
 												if(!_.isEmpty(tickers_match)){
 													tickers_match=_.head(tickers_match);
-													exchange_name=exchange.name;
+													temp_array.push({last:tickers_match.price,exchange:exchange.name,date_created:date_created});
 												}
 											});
 										}
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'bittrex':
-										var exchange_name='';
+										var temp_array=[];
 										tickers=tickers.result;
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{MarketName:_.toUpper(base_currency+'-'+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.Last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'bitfinex':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product_id:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last_price,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'hitbtc':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{symbol:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'gate':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'kuna':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'okex':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.ticker.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'binance':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{symbol:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.lastPrice,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'huobi':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.tick.bid[0],exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'gemini':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'kraken':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'bitflyer':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+'_'+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.best_bid,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'bithumb':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.buy_price,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;	
 									case 'bitstamp':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'bitz':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'lbank':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{symbol:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.ticker.latest,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'coinone':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'wex':
-										var exchange_name='';
-										_.forEach(atc_currencies,function(currency_temp){
+										var temp_array=[];
+										//AS IT IS A CRAP EXCHANGE
+										/*_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
-										});
-										return resolve(exchange_name);					
+										});*/
+										return resolve(temp_array);					
 									break;
 									case 'exmo':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+'_'+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last_trade,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'liqui':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'korbit':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'bitmex':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{symbol:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.lastPrice,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'livecoin':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									case 'cex':
-										var exchange_name='';
+										var temp_array=[];
 										_.forEach(atc_currencies,function(currency_temp){
 											var tickers_match=_.filter(tickers,{product:_.toUpper(currency_temp+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												exchange_name=exchange.name;
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
 											}
 										});
-										return resolve(exchange_name);
+										return resolve(temp_array);
 									break;
 									default:
 										return resolve([]);
@@ -514,37 +516,20 @@ module.exports = {
 							else{
 								return resolve([]);
 							}
-						}).catch(err => { callBack({errCode:500,message:'Server error. Please try again.',data:[]});});
+						}).catch(err => { callBack([]);});
 					});	
 				})).
-				then(response => {
+				then(response => { 
 					var return_array=[];
-					_.forEach(response,function(exchange_name){
-						if(!_.isEmpty(exchange_name)){
-							return_array.push(exchange_name);
+					_.forEach(response,function(exchange_data){
+						if(!_.isEmpty(exchange_data)){
+							return_array.push(exchange_data[0]);
 						}
 					});
 					callBack(return_array);
 				}).
 				catch(err => { callBack([]);});
 			});	
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 		}).
 		catch(err => { callBack([]);});
 	},

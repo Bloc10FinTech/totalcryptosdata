@@ -17,8 +17,15 @@
 						<div class="card-body">
 							<div class="card-header">
 								<div class="row" style="text-align:center;">
-									<div class="col-md-3">
-										<a href="/BitFix_v1.3.pdf" target="_blank"><img src="/images/BitFixLogo.jpg" style="width:125px;" /></a>
+									<div class="col-md-4">
+										<div class="row" style="text-align:center;">
+											<div class="col-md-6">
+												<a href="/fix"><img src="/images/BitFixLogo.jpg" style="width:130px;" /></a>
+											</div>
+											<div class="col-md-6">
+												<a href="/BitFix_v1.3.pdf" target="_blank"><img src="/images/BitFixPDF.png" style="width:130px;height:100px;" /></a>
+											</div>
+										</div>
 									</div>
 									<div class="col-md-4" style="text-align:center;">
 										<h5>
@@ -31,7 +38,7 @@
 										</h5>
 										<span id="refresh_timer"><img src="/images/data-loader.gif"/></span>
 									</div>
-									<div class="col-md-5" style="font-size:23px;color:#000000;font-weight:bold;">
+									<div class="col-md-4" style="font-size:23px;color:#000000;font-weight:bold;">
 										<span id="cur_time"><img src="/images/data-loader.gif"/></span><span>&nbsp;(EDT)</span><br/>
 										<span style="font-size:20px;font-weight:bold;color:#4f5f6f;">Time In New York, NY</span>
 									</div>
@@ -150,7 +157,7 @@ $(document).ready(function(){
 						str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
 						str+='<img src="/images/currency_symbols/'+summary.currency.toLowerCase()+'.png" width="12px" height="12px" onError="" />';
 						str+='<span id="'+popver_id+'" style="color:#000;cursor:pointer;" onclick="fix_price_sources('+"\'"+record.currency+"\'"+','+"\'"+summary.currency+"\'"+','+"\'"+popver_id+"\'"+')"';
-						str+=' data-toggle="popover" title="Major Data Sources" data-content=""';
+						str+=' data-toggle="popover" data-html="true" title="Major Data Sources" data-content=""';
 						str+=' id="'+record.currency+summary.currency+'_fix">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
 						str+='</td>';
 						str+='<td>';
@@ -207,7 +214,7 @@ $(document).ready(function(){
 							str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
 							str+='<img src="/images/currency_symbols/'+summary.currency.toLowerCase()+'.png" width="12px" height="12px" onError="" />';
 							str+='<span id="'+popver_id+'" style="color:#000;cursor:pointer;" onclick="fix_price_sources('+"\'"+record.currency+"\'"+','+"\'"+summary.currency+"\'"+','+"\'"+popver_id+"\'"+')"';
-							str+=' data-toggle="popover" title="Major Data Sources" data-content=""';
+							str+=' data-toggle="popover" data-html="true" title="Major Data Sources" data-content=""';
 							str+='>'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
 							str+='</td>';
 							str+='<td>';
@@ -243,9 +250,31 @@ function fix_price_sources(base_currency,quote_currency,popover_id){
 		url:'/fix_price_sources/'+base_currency+'/'+quote_currency,
 		success:function(data){
 			data=data.slice(0,5);
-			var sources=data.slice(0,data.length-1).join(', ')+' and '+data[data.length-1]+'. REDACTED - ANTI-MANIPULATION ALGORITHM';
+			var table='<table class="table table-hover">';
+			table+='<thead>';
+			table+='<tr>';
+			table+='<th>';
+			table+='EXCHANGE';
+			table+='</th>';
+			table+='<th>';
+			table+='PRICE';
+			table+='</th>';
+			table+='</tr>';
+			table+='</thead>';
+			data.forEach(function(source){
+				table+='<tr>';
+				table+='<td>';
+				table+=source.exchange.toUpperCase();
+				table+='</td>';
+				table+='<td>';
+				table+=parseFloat(source.last).toFixed(2);
+				table+='</td>';
+				table+='</tr>';
+			});
+			table+='<table>';
+			table+='<b>REDACTED - ANTI-MANIPULATION ALGORITHM</b>';
 			$('[data-toggle="popover"]').popover('hide');
-			$('#'+popover_id).attr('data-content',sources);
+			$('#'+popover_id).attr('data-content',table);
 			$('#'+popover_id).popover('show');
 		}
 	});

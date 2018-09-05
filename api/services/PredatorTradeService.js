@@ -255,7 +255,7 @@ module.exports = {
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
 												if(_.isEmpty(tickers_match.is_old) || tickers_match.is_old=='no'){
-													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.ticker.low,sell:tickers_match.ticker.latest,volume:tickers_match.ticker.vol,exchange:exchange.name,date_created:date_created}});
+													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.ticker.low,sell:tickers_match.ticker.latest,volume:tickers_match.ticker.vol,last:tickers_match.ticker.latest,exchange:exchange.name,date_created:date_created}});
 												}
 											}
 										});
@@ -272,7 +272,7 @@ module.exports = {
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
 												if(_.isEmpty(tickers_match.is_old) || tickers_match.is_old=='no'){
-													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.low,sell:tickers_match.last,volume:tickers_match.volume,exchange:exchange.name,date_created:date_created}});
+													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.low,sell:tickers_match.last,volume:tickers_match.volume,last:tickers_match.last,exchange:exchange.name,date_created:date_created}});
 												}
 											}
 										});
@@ -691,7 +691,7 @@ module.exports = {
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
 												if(_.isEmpty(tickers_match.is_old) || tickers_match.is_old=='no'){
-													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.ticker.low,sell:tickers_match.ticker.latest,volume:tickers_match.ticker.vol,exchange:exchange.name,date_created:date_created}});
+													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.ticker.low,sell:tickers_match.ticker.latest,volume:tickers_match.ticker.vol,last:tickers_match.ticker.latest,exchange:exchange.name,date_created:date_created}});
 												}
 											}
 										});
@@ -708,7 +708,7 @@ module.exports = {
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
 												if(_.isEmpty(tickers_match.is_old) || tickers_match.is_old=='no'){
-													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.low,sell:tickers_match.last,volume:tickers_match.volume,exchange:exchange.name,date_created:date_created}});
+													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.low,sell:tickers_match.last,volume:tickers_match.volume,last:tickers_match.last,exchange:exchange.name,date_created:date_created}});
 												}
 											}
 										});
