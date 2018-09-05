@@ -250,7 +250,7 @@ function fix_price_sources(base_currency,quote_currency,popover_id){
 		url:'/fix_price_sources/'+base_currency+'/'+quote_currency,
 		success:function(data){
 			data=data.slice(0,5);
-			var table='<table class="table table-hover">';
+			var table='<table class="table table-hover table-striped table-bordered">';
 			table+='<thead>';
 			table+='<tr>';
 			table+='<th>';
@@ -272,7 +272,7 @@ function fix_price_sources(base_currency,quote_currency,popover_id){
 				table+='</tr>';
 			});
 			table+='<table>';
-			table+='<b>REDACTED - ANTI-MANIPULATION ALGORITHM</b>';
+			table+='<b style="font-size:15px;">REDACTED - ANTI-MANIPULATION ALGORITHM</b>';
 			$('[data-toggle="popover"]').popover('hide');
 			$('#'+popover_id).attr('data-content',table);
 			$('#'+popover_id).popover('show');

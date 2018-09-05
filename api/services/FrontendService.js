@@ -247,7 +247,7 @@ module.exports = {
 												var tickers_match=_.filter(tickers2,{quote_currency:_.toUpper(currency_temp)});
 												if(!_.isEmpty(tickers_match)){
 													tickers_match=_.head(tickers_match);
-													temp_array.push({last:tickers_match.price,exchange:exchange.name,date_created:date_created});
+													temp_array.push({last:tickers_match.price,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 												}
 											});
 										}
@@ -260,7 +260,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{MarketName:_.toUpper(base_currency+'-'+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.Last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.Last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -271,7 +271,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product_id:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last_price,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last_price,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -282,7 +282,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{symbol:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -293,7 +293,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -304,7 +304,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -315,7 +315,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.ticker.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.ticker.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -326,7 +326,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{symbol:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.lastPrice,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.lastPrice,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -337,7 +337,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.tick.bid[0],exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.tick.bid[0],exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -348,7 +348,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -359,7 +359,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -370,7 +370,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+'_'+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.best_bid,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.best_bid,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -381,7 +381,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.buy_price,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.buy_price,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -392,7 +392,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -403,7 +403,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -414,7 +414,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{symbol:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.ticker.latest,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.ticker.latest,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -425,7 +425,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -437,7 +437,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});*/
 										return resolve(temp_array);					
@@ -448,7 +448,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+'_'+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last_trade,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last_trade,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -459,7 +459,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -470,7 +470,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:base_currency+'_'+currency_temp});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -481,7 +481,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{symbol:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.lastPrice,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.lastPrice,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -492,7 +492,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:_.toUpper(base_currency+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -503,7 +503,7 @@ module.exports = {
 											var tickers_match=_.filter(tickers,{product:_.toUpper(currency_temp+currency_temp)});
 											if(!_.isEmpty(tickers_match)){
 												tickers_match=_.head(tickers_match);
-												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created});
+												temp_array.push({last:tickers_match.last,exchange:exchange.name,date_created:date_created,currency_temp:currency_temp});
 											}
 										});
 										return resolve(temp_array);
@@ -523,7 +523,26 @@ module.exports = {
 					var return_array=[];
 					_.forEach(response,function(exchange_data){
 						if(!_.isEmpty(exchange_data)){
-							return_array.push(exchange_data[0]);
+							var is_inserted=false;
+							_.forEach(exchange_data,function(exchange_price){
+								if(exchange_price.currency_temp==quote_currency){
+									return_array.push(exchange_price);
+									is_inserted=true;
+								}
+							});
+							if(!is_inserted){
+								var exchange_price=exchange_data[0];
+								var rel_prices=_.filter(fxData.data,{currency:_.toUpper(exchange_price.currency_temp)});
+								if(!_.isEmpty(rel_prices)){
+									rel_prices=_.head(rel_prices);
+									var rel_price=_.filter(rel_prices.prices,{currency:_.toUpper(quote_currency)});
+									if(!_.isEmpty(rel_price)){
+										rel_price=_.head(rel_price);
+										exchange_price.last=exchange_price.last*rel_price.price;
+										return_array.push(exchange_price);
+									}
+								}
+							}
 						}
 					});
 					callBack(return_array);
