@@ -1,5 +1,5 @@
 
-<main class="main-content">
+<main class="main-content"> 
 <!--<%- partial('./partials/banner-ads.ejs') %>-->
 	<div class="container-fluid">
 		<div class="row">
@@ -10,14 +10,15 @@
 	</div>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-lg-10">
+			<div class="col-lg-10"> 
 				<!-- TOTAL CRYPTOS TABLE -->
 				<div class="row" id="coins">
 					<div class="col-lg-12 card card-table-pane" style="margin-top:0 !important; padding: 0;">
 						<div class="card-body">
 							<div class="card-header">
-								<div class="row">
-									<div class="col-md-4">
+								<div class="row" style="text-align:center;">
+									<div class="col-md-3">
+										<a href="/BitFix_v1.3.pdf" target="_blank"><img src="/images/BitFixLogo.jpg" style="width:125px;" /></a>
 									</div>
 									<div class="col-md-4" style="text-align:center;">
 										<h5>
@@ -30,7 +31,7 @@
 										</h5>
 										<span id="refresh_timer"><img src="/images/data-loader.gif"/></span>
 									</div>
-									<div class="col-md-4" style="font-size:23px;color:#000000;font-weight:bold;">
+									<div class="col-md-5" style="font-size:23px;color:#000000;font-weight:bold;">
 										<span id="cur_time"><img src="/images/data-loader.gif"/></span><span>&nbsp;(EDT)</span><br/>
 										<span style="font-size:20px;font-weight:bold;color:#4f5f6f;">Time In New York, NY</span>
 									</div>
@@ -93,13 +94,17 @@
 				<%- partial('./partials/ads.ejs') %>
 			</div>
 		</div> 
-	</div>
+	</div> 
 </main>
 
 <script>
 
-$(document).ready(function(){
-	
+$(document).ready(function(){ 
+
+	$("body").click(function(){
+		$('[data-toggle="popover"]').popover('hide');
+	});
+
 	$('#fix_market_summary').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
 	
 	$('#fix_market_summary2').html('<tr><td colspan="6" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
@@ -127,6 +132,7 @@ $(document).ready(function(){
 			
 				data.prices.forEach(function(record,index){
 					record.prices.forEach(function(summary,index){
+						var popver_id=record.currency+summary.currency+'_popver';
 						var even_odd_class='even';
 						if(i%2==0){
 							even_odd_class='odd';
@@ -143,7 +149,9 @@ $(document).ready(function(){
 						str+='</td>';
 						str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
 						str+='<img src="/images/currency_symbols/'+summary.currency.toLowerCase()+'.png" width="12px" height="12px" onError="" />';
-						str+='<span style="color:#000;">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
+						str+='<span id="'+popver_id+'" style="color:#000;cursor:pointer;" onclick="fix_price_sources('+"\'"+record.currency+"\'"+','+"\'"+summary.currency+"\'"+','+"\'"+popver_id+"\'"+')"';
+						str+=' data-toggle="popover" title="Major Data Sources" data-content=""';
+						str+=' id="'+record.currency+summary.currency+'_fix">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
 						str+='</td>';
 						str+='<td>';
 						str+=data.date_created;
@@ -181,6 +189,7 @@ $(document).ready(function(){
 				if(data.prices){
 					data.prices.forEach(function(record,index){
 						record.prices.forEach(function(summary,index){
+							var popver_id=record.currency+summary.currency+'_popver';
 							var even_odd_class='even';
 							if(i%2==0){
 								even_odd_class='odd';
@@ -197,7 +206,9 @@ $(document).ready(function(){
 							str+='</td>';
 							str+='<td class="text-bold" id="'+summary.product+'_price_fix">';
 							str+='<img src="/images/currency_symbols/'+summary.currency.toLowerCase()+'.png" width="12px" height="12px" onError="" />';
-							str+='<span style="color:#000;">'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
+							str+='<span id="'+popver_id+'" style="color:#000;cursor:pointer;" onclick="fix_price_sources('+"\'"+record.currency+"\'"+','+"\'"+summary.currency+"\'"+','+"\'"+popver_id+"\'"+')"';
+							str+=' data-toggle="popover" title="Major Data Sources" data-content=""';
+							str+='>'+format_numbers(parseFloat(summary.price).toFixed(2))+'</span>';
 							str+='</td>';
 							str+='<td>';
 							str+=data.date_created;
@@ -225,6 +236,20 @@ $(document).ready(function(){
 		});
 	});
 });
+
+function fix_price_sources(base_currency,quote_currency,popover_id){  
+	$.ajax({
+		type:'GET',
+		url:'/fix_price_sources/'+base_currency+'/'+quote_currency,
+		success:function(data){
+			data=data.slice(0,5);
+			var sources=data.slice(0,data.length-1).join(', ')+' and '+data[data.length-1]+'. REDACTED - ANTI-MANIPULATION ALGORITHM';
+			$('[data-toggle="popover"]').popover('hide');
+			$('#'+popover_id).attr('data-content',sources);
+			$('#'+popover_id).popover('show');
+		}
+	});
+}
 
 function format_numbers(number){
 	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');

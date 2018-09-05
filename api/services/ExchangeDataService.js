@@ -1568,7 +1568,6 @@ module.exports = {
 						return resolve({name:'',url:'',is_exchange:'',data:[]});
 					}
 				});
-			
 			});	
 		});
 	},

@@ -60,6 +60,7 @@ module.exports.routes = {
   '/exchange_prices/:tab/details':'HomeController.exchange_prices_details',
   '/fix':'HomeController.fix',
   '/fix_data/databysymbol/:symbol':'HomeController.fix_data_by_symbol',
+  '/fix_price_sources/:base_currency/:quote_currency':'HomeController.fix_price_sources',
   '/fx':'HomeController.fx',
   '/fx_data/databysymbol/:symbol':'HomeController.fx_data_by_symbol',
   '/crypto-arbitrage':'HomeController.crypto_arbitrage',

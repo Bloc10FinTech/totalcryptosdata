@@ -151,6 +151,12 @@ module.exports = {
 	  });
   },
   
+  fix_price_sources:function(request,response){
+	  FrontendService.fixPriceSources(request.param('base_currency'), request.param('quote_currency'), function(data){
+		  response.send(data);
+	  });
+  },
+  
   fx:function(request,response){
 	return response.view('fx',{title: 'Total Cryptos - FX',path:request.path}); 
   },
