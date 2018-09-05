@@ -68,9 +68,10 @@
 </main>
 
 <script>
-
+var exchange_to_select=['okex','bithumb','bitz','gdax','bitstamp','gemini','exmo','coinone','binance'];
+var currency_to_select=['btc','usd','ltc','xrp','eos','xlm'];
 $(document).ready(function(){
-	
+	//EXCHANGES DROPDOWN
 	$('#dropdown-container').on('click', '#dropdown-button', function() {
     	$('#dropdown-list').toggle();
 	})
@@ -102,6 +103,7 @@ $(document).ready(function(){
 		}
 	});
 	
+	//CURRENCIES DROPDOWN
 	$('#dropdown-container2').on('click', '#dropdown-button2', function() {
     	$('#dropdown-list2').toggle();
 	})
@@ -144,7 +146,7 @@ $(document).ready(function(){
 					if(exchange.name!='wex'){
 						var item='<li>';
 						item+='<label class="checkbox-inline">';
-						if(['gdax','bitstamp','gemini','exmo'].indexOf(exchange.name)==-1){
+						if(exchange_to_select.indexOf(exchange.name)==-1){
 							item+='<input value="'+exchange.name+'" type="checkbox">';
 						}
 						else{
@@ -163,11 +165,11 @@ $(document).ready(function(){
 			
 			if(data.currencies){
 				var currency_checked_count=0;
-				$('#currency_list').append('<li><li><label class="checkbox-inline"><input value="select_all_currencies" id="select_all_currencies" type="checkbox">&nbsp;<b>SELECT ALL</b></label></li></li>');
+				/*$('#currency_list').append('<li><li><label class="checkbox-inline"><input value="select_all_currencies" id="select_all_currencies" type="checkbox">&nbsp;<b>SELECT ALL</b></label></li></li>');*/
 				data.currencies.forEach(function(currency_name){
 					var item='<li>';
 					item+='<label class="checkbox-inline">';
-					if(['btc','usd'].indexOf(currency_name)==-1){
+					if(currency_to_select.indexOf(currency_name)==-1){
 						item+='<input value="'+currency_name+'" type="checkbox">';
 					}
 					else{
@@ -187,7 +189,7 @@ $(document).ready(function(){
 });
 
 //PROCESS TO SHOW INITIAL DATA
-show_predator(['gdax','bitstamp','gemini','exmo'],['btc','usd']);
+show_predator(exchange_to_select,currency_to_select);
 function show_predator(exchanges=null,currencies=null){
 
 	$('#dropdown-list').hide();
@@ -221,12 +223,13 @@ function show_predator(exchanges=null,currencies=null){
 		data:{exchange_array:JSON.stringify(exchange_array),currency_array:JSON.stringify(currency_array)},
 		success:function(data){
 			var str='';
-			if(data.length>0){
-				data.forEach(function(product_exchanges){
+			if(data.length>0){ 
+				data.forEach(function(product_exchanges){ 
 					var product=product_exchanges.product;
 					var exchanges=product_exchanges.records;
 					
 					var base_currency=(product.split('_'))[0];
+					var quote_currency=(product.split('_'))[1];
 					product=product.replace('_','').toUpperCase();
 					
 					if(exchanges.length==1){
@@ -246,7 +249,12 @@ function show_predator(exchanges=null,currencies=null){
 						str+='<hr/>';
 						str+='</div>';
 						str+='<div class="col-md-12">';
-						str+='Price:&nbsp;'+exchange.price;
+						if(quote_currency=='usd'){
+							str+='Price:&nbsp;$'+exchange.price;
+						}
+						else{
+							str+='Price:&nbsp;'+exchange.price;
+						}
 						str+='</div>';
 						str+='<div class="col-md-12">';
 						str+='Volume:&nbsp;'+exchange.volume;
@@ -270,7 +278,12 @@ function show_predator(exchanges=null,currencies=null){
 								str+='<strong>'+product+'</strong>';
 								str+='</div>';
 								str+='<div class="col-md-4 col-sm-4 align_center predator">';
-								str+=parseFloat(first.price-second.price).toFixed(1);
+								if(quote_currency=='usd'){
+									str+='$'+parseFloat(first.price-second.price).toFixed(1);
+								}
+								else{
+									str+=parseFloat(first.price-second.price).toFixed(1);
+								}
 								str+='</div>';
 								str+='<div class="col-md-4 col-sm-4 align_right predator">';
 								str+='<strong>'+parseFloat(first.price*100/second.price-100).toFixed(1)+'%'+'</strong>';
@@ -283,7 +296,12 @@ function show_predator(exchanges=null,currencies=null){
 								str+='<hr/>';
 								str+='</div>';
 								str+='<div class="col-md-12 col-sm-12">';
-								str+='Price:&nbsp;'+parseFloat(first.price).toFixed(2);
+								if(quote_currency=='usd'){
+									str+='Price:&nbsp;$'+parseFloat(first.price).toFixed(2);
+								}
+								else{
+									str+='Price:&nbsp;'+parseFloat(first.price).toFixed(2);
+								}
 								str+='</div>';
 								str+='<div class="col-md-12 col-sm-12">';
 								str+='Volume:&nbsp;'+parseFloat(first.volume).toFixed(0);
@@ -295,7 +313,12 @@ function show_predator(exchanges=null,currencies=null){
 								str+='<hr/>';
 								str+='</div>';
 								str+='<div class="col-md-12 col-sm-12">';
-								str+='Price:&nbsp;'+parseFloat(second.price).toFixed(2);
+								if(quote_currency=='usd'){
+									str+='Price:&nbsp;$'+parseFloat(second.price).toFixed(2);
+								}
+								else{
+									str+='Price:&nbsp;'+parseFloat(second.price).toFixed(2);
+								}
 								str+='</div>';
 								str+='<div class="col-md-12 col-sm-12">';
 								str+='Volume:&nbsp;'+parseFloat(second.volume).toFixed(0);
