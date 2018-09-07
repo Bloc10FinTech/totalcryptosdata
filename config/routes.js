@@ -115,6 +115,7 @@ module.exports.routes = {
   
   //USED TO SEND PREDATOR DATA
   '/predator/currencies':'PredatorTradeController.predators_data',
+  'post /predator/predator_create_user_token':'PredatorTradeController.predator_create_user_token',
   
   //NOT USED AS OF NOW	
   '/api/userRegistration':'ApiController.userRegistration',

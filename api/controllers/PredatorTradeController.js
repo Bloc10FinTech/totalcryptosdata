@@ -20,6 +20,12 @@ module.exports = {
 		});
 		PredatorTradeService.predators_data_alerts(request);
 		return response.json({message: 'Subscribed to a room called '+roomName+' at '+request.param('today')});
+	},
+	
+	predator_create_user_token:function(request,response){
+		PredatorTradeService.predator_create_user_token(request,function(data){
+		  return response.send(data);
+		});
 	}
 };
 

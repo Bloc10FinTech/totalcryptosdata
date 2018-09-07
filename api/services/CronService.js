@@ -3371,13 +3371,13 @@ module.exports = {
 								product=_.toLower(_.replace(ticker.symbol,'_',''));
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.latest,volume:ticker.ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.ticker.latest,volume:ticker.ticker.vol,high:ticker.ticker.high,low:ticker.ticker.low,last:ticker.ticker.latest});
 							break;
 							case 'coinone':
 								product=_.toLower(ticker.product);
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
-								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low});
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low,last:ticker.last});
 							break;
 							case 'wex':
 								product=_.toLower(_.replace(ticker.product,'_',''));
