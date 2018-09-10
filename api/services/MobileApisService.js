@@ -988,22 +988,9 @@ module.exports = {
 		then(response => {
 			if(response){
 					return new Promise(function(resolve,reject){
-						TotalCryptoPricesHistory.find().limit(90).sort({id:1}).exec(function(err,totalCryptoPrices){
+						TotalCryptoChartHistory.find().limit(90).sort({id:-1}).exec(function(err,totalCryptoPrices){
 							var return_array=[];
-							
 							_.forEach(totalCryptoPrices,function(totalCryptoPrice){
-								var temp_array=[];
-								_.forEach(totalCryptoPrice.prices,function(a){
-									temp_array.push({product:a.product,price:a.price,date_created:totalCryptoPrice.date_created});
-								});
-								
-								TotalCryptoChartHistory.create({prices:temp_array,data_date:dataDate,date_created:curDateTime},function(err,data){
-									if(err){ 
-										ApiService.exchangeErrors('totalcryptocharthistory','query_insert',err,'history_insert',curDateTime);
-									}
-								});
-								
-								
 								var price=_.filter(totalCryptoPrice.prices,{product:product});
 								if(!_.isEmpty(price)){
 									price=_.head(price);
