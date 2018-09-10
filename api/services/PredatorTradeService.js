@@ -464,5 +464,36 @@ module.exports = {
 				}
 			});
 		}
+	},
+	
+	predator_update_user_currencies:function(request,callBack){
+		var _ = require('lodash');
+		var moment=require('moment');
+		var user_id=request.param('user_id');
+		var currencies=request.param('currencies');
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		if(_.isEmpty(user_id)){
+			callBack({errCode:300,message:'Invalid user id'});
+		}
+		else{
+			PredatorUserTokens.count({user_id:user_id},function(err,count){
+				if(err){
+					callBack({errCode:500,message:'Server error. Please try again.'});
+				}
+				if(count>0){
+					PredatorUserTokens.update({user_id:user_id},{currencies:currencies,date_updated:curDateTime},function(err,data){
+						if(err){
+							callBack({errCode:500,message:'Server error. Please try again.'});
+						}
+						else{
+							callBack({errCode:1,message:'Currencies updated successfully'});
+						}
+					});
+				}
+				else{
+					callBack({errCode:300,message:'Invalid user id'});
+				}
+			});
+		}
 	}
 };

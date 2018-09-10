@@ -979,6 +979,33 @@ module.exports = {
 		}	
 	},
 	
+	currencyFullNames:function(callBack,request,isInc){
+		var _ = require('lodash');
+		var moment = require('moment');
+		MobileApisService.checkUpdateApiCalls(request.ip,'currencyFullNames').
+		then(response => {
+			return new Promise(function(resolve,reject){
+				ExchangeCurrencyFullNames.findOne({name:'coinmarketcap'},function(err, currencies){
+					currencies=_.map(currencies.list.data,function(currency){ return {symbol:_.toLower(currency.symbol),full_name:currency.name};}); 
+					if(isInc){
+						callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:currencies}));
+					}
+					else{
+						callBack({errCode:1,message:'Request processed successfully.',data:currencies});
+					}
+				});
+			});
+		}).
+		catch(err => {
+			if(isInc){
+				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+			}
+			else{
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			}
+		});	
+	},
+	
 	productPriceHistoryChart:function(callBack,product,request,isInc){
 		var _ = require('lodash');
 		var moment = require('moment');

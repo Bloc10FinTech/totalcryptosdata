@@ -26,6 +26,12 @@ module.exports = {
 		PredatorTradeService.predator_create_user_token(request,function(data){
 		  return response.send(data);
 		});
+	},
+	
+	predator_update_user_currencies:function(request,response){
+		PredatorTradeService.predator_update_user_currencies(request,function(data){
+		  return response.send(data);
+		});
 	}
 };
 

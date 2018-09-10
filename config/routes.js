@@ -91,6 +91,7 @@ module.exports.routes = {
   '/api/fixPrice/:symbol':'ApiController.fixPrice',
   '/api/fixPrices':'ApiController.fixPrices',
   'post /api/sliderData':'ApiController.sliderData',
+  '/api/currencyFullNames':'ApiController.currencyFullNames',
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/productPriceHistoryChart/:product':'ApiController.productPriceHistoryChart',
   
@@ -107,6 +108,7 @@ module.exports.routes = {
   '/api/fixPriceInc/:symbol':'ApiController.fixPriceInc',
   '/api/fixPricesInc':'ApiController.fixPricesInc',
   'post /api/sliderDataInc':'ApiController.sliderDataInc',
+  '/api/currencyFullNamesInc':'ApiController.currencyFullNamesInc',
   '/api/biggestGainersInc':'ApiController.biggestGainersInc',
   '/api/productPriceHistoryChartInc/:product':'ApiController.productPriceHistoryChartInc',
   
@@ -116,6 +118,7 @@ module.exports.routes = {
   //USED TO SEND PREDATOR DATA
   '/predator/currencies':'PredatorTradeController.predators_data',
   'post /predator/predator_create_user_token':'PredatorTradeController.predator_create_user_token',
+  'post /predator/predator_update_user_currencies':'PredatorTradeController.predator_update_user_currencies',
   
   //NOT USED AS OF NOW	
   '/api/userRegistration':'ApiController.userRegistration',

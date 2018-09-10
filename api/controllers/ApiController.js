@@ -133,6 +133,16 @@ module.exports = {
 		return response.send(data);
 	},request,true);
   },
+  currencyFullNames:function(request,response){
+	  MobileApisService.currencyFullNames(function(data){
+		return response.send(data);
+	},request,false);
+  },
+  currencyFullNamesInc:function(request,response){
+	  MobileApisService.currencyFullNames(function(data){
+		return response.send(data);
+	},request,true);
+  },
   biggestGainers:function(request, response) {
 	  MobileApisService.biggestGainers(function(data){
 		return response.send(data);
