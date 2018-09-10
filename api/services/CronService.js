@@ -974,11 +974,24 @@ module.exports = {
 				record.high=math.format(Math.max.apply(Math,record.high), {lowerExp: -100, upperExp: 100});
 				record.low=math.format(Math.min.apply(Math,record.low), {lowerExp: -100, upperExp: 100});
 			});
+			
 			TotalCryptoPricesHistory.create({prices:insert_data,data_date:dataDate,date_created:curDateTime},function(err,data){
 				if(err){ 
 					ApiService.exchangeErrors('totalcryptopriceshistory','query_insert',err,'history_insert',curDateTime);
 				}
 			});
+			
+			//PROCESS TO PREPARE CHART HISTORY ARRAY
+			var chart_history=[];
+			_.forEach(insert_data,function(data){
+				chart_history.push({product:data.product,price:data.price});
+			});
+			TotalCryptoChartHistory.create({prices:chart_history,data_date:dataDate,date_created:curDateTime},function(err,data){
+				if(err){ 
+					ApiService.exchangeErrors('totalcryptocharthistory','query_insert',err,'history_insert',curDateTime);
+				}
+			});
+			
 		});
 		
 		//DELETE EXCHANGES TICKERS
