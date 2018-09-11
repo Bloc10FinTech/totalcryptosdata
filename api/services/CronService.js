@@ -1001,6 +1001,20 @@ module.exports = {
 			}
 		});
 		
+		//DELETE TOTALCRYPTO PRICES
+		TotalCryptoPrices.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('totalcryptoprices','delete',err,'tickers_delete',curDateTime);
+			}
+		});
+		
+		//DELETE TOTALCRYPTO PRICES CURRENCIES
+		TotalCryptoPricesCurrencies.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('totalcryptopricescurrencies','delete',err,'tickers_delete',curDateTime);
+			}
+		});
+		
 		//PROCESS TO INSERT ICO WATCHLIST DATA
 		IcoWatch.count({name:'icowatchlist'},function(err,count){
 			if(err){ ApiService.exchangeErrors('icowatchlist','query_select',err,'ico_select',curDateTime);}
