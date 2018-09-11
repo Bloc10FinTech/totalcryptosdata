@@ -994,6 +994,29 @@ module.exports = {
 			
 		});
 		
+		//PROCESS TO INSERT ICO WATCHLIST DATA
+		IcoWatch.count({name:'icowatchlist'},function(err,count){
+			if(err){ ApiService.exchangeErrors('icowatchlist','query_select',err,'ico_select',curDateTime);}
+			if(count==0){
+				ApiService.icoWatchList().then(response => {
+					IcoWatch.create({name:'icowatchlist',url:'https://icowatchlist.com',api_key:null,data:response,date_created: curDateTime},function(err,data){
+						if(err){ ApiService.exchangeErrors('icowatchlist','query_insert',err,'ico_insert',curDateTime);}
+					});
+				}).catch(err => {
+					ApiService.exchangeErrors('icowatchlist','api',err,'ico_api_select',curDateTime);
+				});
+			}
+			else{
+				ApiService.icoWatchList().then(response => {
+					IcoWatch.update({name:'icowatchlist'},{data:response,date_created: curDateTime},function(err,data){
+						if(err){ ApiService.exchangeErrors('icowatchlist','query_update',err,'ico_update',curDateTime);}
+					});
+				}).catch(err => {
+					ApiService.exchangeErrors('icowatchlist','api',err,'ico_api_select',curDateTime);
+				});
+			}
+		});
+		
 		//DELETE EXCHANGES TICKERS
 		ExchangeTickers.destroy({date_created:{'<':delete_before}}).exec(function(err){
 			if(err){
@@ -1015,26 +1038,10 @@ module.exports = {
 			}
 		});
 		
-		//PROCESS TO INSERT ICO WATCHLIST DATA
-		IcoWatch.count({name:'icowatchlist'},function(err,count){
-			if(err){ ApiService.exchangeErrors('icowatchlist','query_select',err,'ico_select',curDateTime);}
-			if(count==0){
-				ApiService.icoWatchList().then(response => {
-					IcoWatch.create({name:'icowatchlist',url:'https://icowatchlist.com',api_key:null,data:response,date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('icowatchlist','query_insert',err,'ico_insert',curDateTime);}
-					});
-				}).catch(err => {
-					ApiService.exchangeErrors('icowatchlist','api',err,'ico_api_select',curDateTime);
-				});
-			}
-			else{
-				ApiService.icoWatchList().then(response => {
-					IcoWatch.update({name:'icowatchlist'},{data:response,date_created: curDateTime},function(err,data){
-						if(err){ ApiService.exchangeErrors('icowatchlist','query_update',err,'ico_update',curDateTime);}
-					});
-				}).catch(err => {
-					ApiService.exchangeErrors('icowatchlist','api',err,'ico_api_select',curDateTime);
-				});
+		//DELETE EXCHANGES TICKERS ALERTS
+		ExchangeTickersAlerts.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('alert_tickers','delete',err,'alert_tickers_delete',curDateTime);
 			}
 		});
 	},
