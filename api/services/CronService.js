@@ -7,7 +7,6 @@ module.exports = {
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		var date_after = moment().subtract(24, 'hours').toDate();
 		var dataDate=moment().subtract(24, 'hours').format('YYYY-MM-DD');
-		var delete_before = moment().subtract(24*15, 'hours').toDate();
 		
 		//PROCESS TO INSERT GDAX STATIC DATA
 		ExchangeList.count({name: 'gdax'},function(err,count){
@@ -1016,36 +1015,8 @@ module.exports = {
 				});
 			}
 		});
-		
-		//DELETE EXCHANGES TICKERS
-		ExchangeTickers.destroy({date_created:{'<':delete_before}}).exec(function(err){
-			if(err){
-				ApiService.exchangeErrors('tickers','delete',err,'tickers_delete',curDateTime);
-			}
-		});
-		
-		//DELETE TOTALCRYPTO PRICES
-		TotalCryptoPrices.destroy({date_created:{'<':delete_before}}).exec(function(err){
-			if(err){
-				ApiService.exchangeErrors('totalcryptoprices','delete',err,'tickers_delete',curDateTime);
-			}
-		});
-		
-		//DELETE TOTALCRYPTO PRICES CURRENCIES
-		TotalCryptoPricesCurrencies.destroy({date_created:{'<':delete_before}}).exec(function(err){
-			if(err){
-				ApiService.exchangeErrors('totalcryptopricescurrencies','delete',err,'tickers_delete',curDateTime);
-			}
-		});
-		
-		//DELETE EXCHANGES TICKERS ALERTS
-		ExchangeTickersAlerts.destroy({date_created:{'<':delete_before}}).exec(function(err){
-			if(err){
-				ApiService.exchangeErrors('alert_tickers','delete',err,'alert_tickers_delete',curDateTime);
-			}
-		});
 	},
-	
+		
 	createExchangeTickers1:function(){
 		console.log('crone job for create tickers1 working');
 		var moment = require('moment');
@@ -3770,6 +3741,68 @@ module.exports = {
 					}
 				  }); 
 				//console.log(csv);
+			}
+		});
+	},
+	
+	deleteData:function(){	
+		console.log('crone job for delete records working');
+		var moment = require('moment');
+		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
+		var delete_before = moment().subtract(24*15, 'hours').toDate();
+		//DELETE API REQUESTS IPS
+		ApiRequestIps.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){ 
+				ApiService.exchangeErrors('api_request_ips','delete',err,'request_ips_delete',curDateTime);
+			}
+		});
+		
+		//DELETE EXCHANGE ERRORS
+		ExchangeErrors.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('exchange_errors','delete',err,'errors_delete',curDateTime);
+			}
+		});
+		
+		//DELETE EXCHANGE STATS
+		ExchangeStats.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('exchange_stats','delete',err,'stats_delete',curDateTime);
+			}
+		});
+		
+		//DELETE EXCHANGE TRADES
+		ExchangeTrades.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){ console.log(err);
+				ApiService.exchangeErrors('exchange_trades','delete',err,'trades_delete',curDateTime);
+			}
+		});
+		
+		//DELETE EXCHANGES TICKERS
+		ExchangeTickers.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('tickers','delete',err,'tickers_delete',curDateTime);
+			}
+		});
+		
+		//DELETE TOTALCRYPTO PRICES
+		TotalCryptoPrices.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('totalcryptoprices','delete',err,'tickers_delete',curDateTime);
+			}
+		});
+		
+		//DELETE TOTALCRYPTO PRICES CURRENCIES
+		TotalCryptoPricesCurrencies.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('totalcryptopricescurrencies','delete',err,'tickers_delete',curDateTime);
+			}
+		});
+		
+		//DELETE EXCHANGES TICKERS ALERTS
+		ExchangeTickersAlerts.destroy({date_created:{'<':delete_before}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('alert_tickers','delete',err,'alert_tickers_delete',curDateTime);
 			}
 		});
 	},

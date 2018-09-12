@@ -30,8 +30,16 @@ module.exports.cron = {
       CronService.createExchangeTickers3();
     } 
   },
-  //SEND SOCKET UPDATES ON PAGE
+  //DELETE OLD ENTRIES
   myFifthJob: {
+    //schedule: '00 */5 * * * *',
+	schedule: '00 30 00 * * *',
+    onTick: function () {
+      CronService.deleteData();
+    }
+  },
+  //SEND SOCKET UPDATES ON PAGE
+  mySixthJob: {
 	//schedule: '00 */5 * * * *',
 	schedule: '00 59 * * * *',
     onTick: function () {
