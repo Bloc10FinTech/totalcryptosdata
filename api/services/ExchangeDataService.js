@@ -1677,6 +1677,32 @@ module.exports = {
 		});
 	},
 	
+	totalCryptoHistoryChart:function(product){
+		var _ = require('lodash');
+		var moment = require('moment');
+		return new Promise(function(resolve,reject){
+			TotalCryptoChartHistory.find().sort({id:-1}).exec(function(err,totalCryptoChart){ 
+				if(!_.isEmpty(totalCryptoChart)){ 
+					var return_array=[];
+					_.forEach(totalCryptoChart,function(history){
+						var filter=_.filter(history.prices,{product:product});
+						if(!_.isEmpty(filter)){
+							filter=_.head(filter);
+							filter.data_date=moment(history.data_date).format('YYYY-MM-DD');
+							filter.timestamp=moment(history.data_date).unix();
+							return_array.push(filter);
+						}
+					});
+					return_array=_.uniqBy(return_array,'data_date');
+					return resolve(return_array);
+				}
+				else{
+					return resolve([]);
+				}
+			});
+		});
+	},
+	
 	exchanges_currencies:function(){
 		var _ = require('lodash');
 		var moment = require('moment');

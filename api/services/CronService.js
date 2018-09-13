@@ -983,7 +983,7 @@ module.exports = {
 			//PROCESS TO PREPARE CHART HISTORY ARRAY
 			var chart_history=[];
 			_.forEach(insert_data,function(data){
-				chart_history.push({product:data.product,price:data.price});
+				chart_history.push({product:data.product,price:data.price,base_currency:data.base_currency});
 			});
 			TotalCryptoChartHistory.create({prices:chart_history,data_date:dataDate,date_created:curDateTime},function(err,data){
 				if(err){ 
