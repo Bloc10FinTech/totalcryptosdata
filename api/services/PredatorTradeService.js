@@ -431,6 +431,8 @@ module.exports = {
 		var moment=require('moment');
 		var user_id=request.param('user_id');
 		var currencies=request.param('currencies');
+		var min_volume=request.param('minvolume');
+		var fast_coin=request.param('fastcoin');
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		
 		if(_.isEmpty(user_id)){
@@ -443,7 +445,7 @@ module.exports = {
 					callBack({errCode:500,message:'Server error. Please try again.',token:''});
 				}
 				if(count>0){
-					PredatorUserTokens.update({user_id:user_id},{token:token,currencies:currencies,date_updated:curDateTime},function(err,data){
+					PredatorUserTokens.update({user_id:user_id},{token:token,currencies:currencies,min_volume:min_volume,fast_coin:fast_coin,date_updated:curDateTime},function(err,data){
 						if(err){
 							callBack({errCode:500,message:'Server error. Please try again.',token:''});
 						}
@@ -453,7 +455,7 @@ module.exports = {
 					});
 				}
 				else{
-					PredatorUserTokens.create({user_id:user_id,token:token,currencies:currencies,date_created:curDateTime,date_updated:curDateTime},function(err,data){
+					PredatorUserTokens.create({user_id:user_id,token:token,currencies:currencies,min_volume:min_volume,fast_coin:fast_coin,date_created:curDateTime,date_updated:curDateTime},function(err,data){
 						if(err){ 
 							callBack({errCode:500,message:'Server error. Please try again.',token:''});
 						}
@@ -471,6 +473,8 @@ module.exports = {
 		var moment=require('moment');
 		var user_id=request.param('user_id');
 		var currencies=request.param('currencies');
+		var min_volume=request.param('minvolume');
+		var fast_coin=request.param('fastcoin');
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		if(_.isEmpty(user_id)){
 			callBack({errCode:300,message:'Invalid user id'});
@@ -481,7 +485,7 @@ module.exports = {
 					callBack({errCode:500,message:'Server error. Please try again.'});
 				}
 				if(count>0){
-					PredatorUserTokens.update({user_id:user_id},{currencies:currencies,date_updated:curDateTime},function(err,data){
+					PredatorUserTokens.update({user_id:user_id},{currencies:currencies,min_volume:min_volume,fast_coin:fast_coin,date_updated:curDateTime},function(err,data){
 						if(err){
 							callBack({errCode:500,message:'Server error. Please try again.'});
 						}
