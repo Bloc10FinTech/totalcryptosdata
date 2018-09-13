@@ -1689,10 +1689,10 @@ module.exports = {
 						if(!_.isEmpty(filter)){
 							filter=_.head(filter);
 							filter.data_date=moment(history.data_date).format('YYYY-MM-DD');
-							filter.timestamp=moment(history.data_date).unix();
+							filter.timestamp=moment(history.data_date).valueOf();
 							return_array.push(filter);
 						}
-					});
+					}); 
 					return_array=_.uniqBy(return_array,'data_date');
 					return resolve(return_array);
 				}

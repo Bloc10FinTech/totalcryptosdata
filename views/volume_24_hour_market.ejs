@@ -35,7 +35,7 @@ $(document).ready(function(){
 			
 			var chartData2 = [];  
 			chartData.history.forEach(function(val,index) {  
-			   chartData2.push.apply(chartData2, [[val.timestamp,parseFloat(val.price)]]);  
+			   chartData2.push.apply(chartData2, [[val.timestamp,val.price]]);  
 			}); 
 		
 			Highcharts.setOptions({
@@ -93,7 +93,7 @@ $(document).ready(function(){
 						}],
 					},
 					title: {
-						text: "TotalCryptos " + chartData.title + " Chart",
+						text: "TotalCryptos " + chartData.title,
 						x: 0,
 						align: 'left',
 						style: {
