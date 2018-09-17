@@ -1714,7 +1714,7 @@ module.exports = {
 								}	
 							} 
 							
-							return_array.sort(function(a,b){ if(parseFloat(a.timestamp)>parseFloat(b.timestamp)){return -1;}else {return 1;}});
+							return_array.sort(function(a,b){ if(parseFloat(a.timestamp)>parseFloat(b.timestamp)){return 1;}else {return -1;}});
 							return resolve(return_array);
 						}	
 					});
