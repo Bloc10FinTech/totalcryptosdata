@@ -1694,7 +1694,28 @@ module.exports = {
 						}
 					}); 
 					return_array=_.uniqBy(return_array,'data_date');
-					return resolve(return_array);
+					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+						if(!_.isEmpty(totalCryptoPrices)){
+							totalCryptoPrices=_.head(totalCryptoPrices);
+							var date_created=totalCryptoPrices.date_created;
+							totalCryptoPrice=_.filter(totalCryptoPrices.prices,{product:product});
+							if(!_.isEmpty(totalCryptoPrice)){
+								totalCryptoPrice=_.head(totalCryptoPrice);
+								if(!_.isEmpty(totalCryptoPrice.chart)){
+									for(var i=0;i<totalCryptoPrice.chart.length;i++){
+										var chart_data={};
+										var data_date=moment(date_created).subtract((totalCryptoPrice.chart.length-(i+1)), 'hours').toDate();
+										chart_data.price=totalCryptoPrice.chart[i];
+										chart_data.product=product;
+										chart_data.data_date=moment(data_date).format('YYYY-MM-DD');
+										chart_data.timestamp=moment(data_date).valueOf();
+										return_array.push(chart_data);
+									}
+								}	
+							} 
+							return resolve(return_array);
+						}	
+					});
 				}
 				else{
 					return resolve([]);

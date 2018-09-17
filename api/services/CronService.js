@@ -6,8 +6,7 @@ module.exports = {
 		var math = require('mathjs');
 		var curDateTime=moment().format('YYYY-MM-DD HH:mm:ss');
 		var date_after = moment().subtract(24, 'hours').toDate();
-		var dataDate=moment().subtract(24, 'hours').format('YYYY-MM-DD');
-		
+		var dataDate=moment().subtract(1, 'days').format('YYYY-MM-DD');
 		//PROCESS TO INSERT GDAX STATIC DATA
 		ExchangeList.count({name: 'gdax'},function(err,count){
 			if(err){ ApiService.exchangeErrors('gdax','query_select',err,'exchange_select',curDateTime);}
