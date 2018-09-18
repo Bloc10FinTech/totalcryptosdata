@@ -43,6 +43,7 @@ module.exports.routes = {
   '/volume_24_hour_currency_symbol_data/:symbol':'HomeController.volume_24_hour_currency_symbol_data',
   '/volume-24-hour-market/:market':'HomeController.volume_24_hour_market',
   '/volume_24_hour_market_data/:market':'HomeController.volume_24_hour_market_data',
+  '/product_history_chart/:market':'HomeController.product_history_chart',
   '/volume-24-hour-exchange':'HomeController.volume_24_hour_exchange',
   '/volume_24_hour_exchange_data':'HomeController.volume_24_hour_exchange_data',
   '/exchange/:exchangeName':'HomeController.exchange',

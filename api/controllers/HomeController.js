@@ -90,6 +90,11 @@ module.exports = {
 		 return response.send(data); 
 	  });
   },
+  product_history_chart:function(request,response){
+	  FrontendService.product_history_chart(request.param('market'),function(data){
+		 return response.send(data); 
+	  });
+  },
   volume_24_hour_exchange:function(request,response){
 	  return response.view('volume_24_hour_exchange',{title: 'Total Cryptos - Exchange',path:request.path});
   },

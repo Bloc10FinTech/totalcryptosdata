@@ -26,109 +26,117 @@ $(document).ready(function(){
 
 	$.ajax({
 		type:'GET',
+		url:'/product_history_chart/'+market,
+		success:function(data){
+			if(data.chart.length>0){
+				var chartData = {  
+				  "title": market+" History Chart", 
+				   "history": data.chart.map(function(price){ return {price:price.price,timestamp:price.timestamp};})
+				};
+				
+				var chartData2 = [];  
+				chartData.history.forEach(function(val,index) {  
+					chartData2.push.apply(chartData2, [[val.timestamp,parseFloat(val.price)]]);
+				}); 
+			
+				Highcharts.setOptions({
+				  lang:{
+					  rangeSelectorZoom: ''
+					}
+				});
+				
+				if (chartData=='' || chartData.history.length == 0) {
+					$('#chart').hide();
+				}
+				else{
+					var options = {
+						chart: {
+							borderWidth: 0,
+							type: 'line',
+							zoomType: 'x',
+							panning: true,
+							panKey: 'shift'
+						},  
+						rangeSelector: {
+							allButtonsEnabled: true, 
+							selected: 2,
+							buttonTheme: {
+								width: 80, 
+								style: {
+								  color: '#039',
+								  fontWeight: 'bold',
+								  fontSize: '14px',
+								}
+							},
+							buttons: [{
+								type: 'day',
+								count: 1,
+								text: '24 HOURS', 
+							}, 
+							{
+								type: 'week',
+								count: 1,
+								text: '7 DAYS',
+							}, 
+							{
+								type: 'month',
+								count: 1,
+								text: '30 DAYS',
+							}, 
+							{
+								type: 'month',
+								count: 2,
+								text: '1 YEAR',
+							},
+							{
+								type: 'all',
+								text: '5 YEARS'
+							}],
+						},
+						title: {
+							text: "TotalCryptos " + chartData.title,
+							x: 0,
+							align: 'left',
+							style: {
+								color: '#666',
+								fontSize: '24px', 
+							}, 
+						},
+						xAxis: { 
+							gridLineWidth: 1,
+							type: 'datetime',
+							ordinal: false,
+							labels: {enabled: true},
+						}, 
+						credits: { 
+							text: 'TotalCryptos.com',
+							href: 'https://www.totalcryptos.com'
+						}, 
+						series: [{
+							id: 'dataseries',
+							animation: false,
+							showInLegend: true,
+							data: chartData2,
+							name: chartData.title,
+							color: '#6699cc',
+							tooltip: {
+								pointFormatter: function() { 
+									return '<span style="color:' + this.color + '">\u25CF</span> ' + this.series.name +': <b>' + this.y + '</b><span>';
+								}   
+							},
+						}] 
+					};
+					Highcharts.stockChart('chart', options);
+					$('#chart').show();
+				}
+			}
+		}
+	});
+
+	$.ajax({
+		type:'GET',
 		url:'/volume_24_hour_market_data/'+market,
 		success:function(data){ 
-			var chartData = {  
-			  "title": market+" History Chart", 
-			   "history": data.chart.map(function(price){ return {price:price.price,timestamp:price.timestamp};})
-			};
-			
-			var chartData2 = [];  
-			chartData.history.forEach(function(val,index) {  
-				chartData2.push.apply(chartData2, [[val.timestamp,parseFloat(val.price)]]);
-			}); 
-		
-			Highcharts.setOptions({
-			  lang:{
-				  rangeSelectorZoom: ''
-				}
-			});
-			
-			if (chartData=='' || chartData.history.length == 0) {
-				$('#chart').hide();
-			}
-			else{
-				var options = {
-					chart: {
-						borderWidth: 0,
-						type: 'line',
-						zoomType: 'x',
-						panning: true,
-						panKey: 'shift'
-					},  
-					rangeSelector: {
-						allButtonsEnabled: true, 
-						selected: 2,
-						buttonTheme: {
-							width: 80, 
-							style: {
-							  color: '#039',
-							  fontWeight: 'bold',
-							  fontSize: '14px',
-							}
-						},
-						buttons: [{
-							type: 'day',
-							count: 1,
-							text: '24 HOURS', 
-						}, 
-						{
-							type: 'week',
-							count: 1,
-							text: '7 DAYS',
-						}, 
-						{
-							type: 'month',
-							count: 1,
-							text: '30 DAYS',
-						}, 
-						{
-							type: 'month',
-							count: 2,
-							text: '1 YEAR',
-						},
-						{
-							type: 'all',
-							text: '5 YEARS'
-						}],
-					},
-					title: {
-						text: "TotalCryptos " + chartData.title,
-						x: 0,
-						align: 'left',
-						style: {
-							color: '#666',
-							fontSize: '24px', 
-						}, 
-					},
-					xAxis: { 
-						gridLineWidth: 1,
-						type: 'datetime',
-						ordinal: false,
-						labels: {enabled: true},
-					}, 
-					credits: { 
-						text: 'TotalCryptos.com',
-						href: 'https://www.totalcryptos.com'
-					}, 
-					series: [{
-						id: 'dataseries',
-						animation: false,
-						showInLegend: true,
-						data: chartData2,
-						name: chartData.title,
-						color: '#6699cc',
-						tooltip: {
-							pointFormatter: function() { 
-								return '<span style="color:' + this.color + '">\u25CF</span> ' + this.series.name +': <b>' + this.y + '</b><span>';
-							}   
-						},
-					}] 
-				};
-				Highcharts.stockChart('chart', options);
-				$('#chart').show();
-			}
-			
 			var str='';
 			data.market.forEach(function(markets){
 				str+='<div class="table-responsive">';
