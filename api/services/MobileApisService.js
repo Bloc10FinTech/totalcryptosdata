@@ -1054,6 +1054,54 @@ module.exports = {
 		});	
 	},
 	
+	productPriceHistoryChartDays:function(callBack,product,days,request,isInc){
+		var _ = require('lodash');
+		var moment = require('moment');
+		
+		product=_.toLower(product);
+		MobileApisService.checkUpdateApiCalls(request.ip,'productPriceHistoryChart').
+		then(response => {
+			if(response){
+					return new Promise(function(resolve,reject){
+						TotalCryptoChartHistory.find().limit(days).sort({id:-1}).exec(function(err,totalCryptoPrices){
+							var return_array=[];
+							_.forEach(totalCryptoPrices,function(totalCryptoPrice){
+								var price=_.filter(totalCryptoPrice.prices,{product:product});
+								if(!_.isEmpty(price)){
+									price=_.head(price);
+									return_array.push({price:price.price,data_date:moment(totalCryptoPrice.data_date).format('YYYY-MM-DD'),product:product});
+								}
+							});
+							return_array=_.uniqBy(return_array,'data_date');
+							return_array.sort(function(a,b){if(a.data_date>b.data_date){return -1;}else {return 1;}});
+							if(isInc){
+								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:return_array}));
+							}
+							else{
+								callBack({errCode:1,message:'Request processed successfully.',data:return_array});
+							}
+						});
+					});
+				}
+			else{
+				if(isInc){
+					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
+				}
+				else{
+					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
+				}
+			}
+		}).
+		catch(err => {
+			if(isInc){
+				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+			}
+			else{
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			}
+		});	
+	},
+	
 	checkUpdateApiCalls:function(ip_address,api_name){
 		var moment = require('moment');
 		var _ = require('lodash');
