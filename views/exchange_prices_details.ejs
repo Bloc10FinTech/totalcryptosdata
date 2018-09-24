@@ -1185,7 +1185,7 @@ function show_tab_data(tab){
 						if(index%2==0){
 							even_odd_class='odd';
 						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_kucoin">';
+						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol.replace('-','')+'_kucoin">';
 						str+='<td class="text-bold">';
 						str+='<img src="/images/currencies/'+summary.coinType.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
 						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.coinType+'">';
@@ -1198,10 +1198,10 @@ function show_tab_data(tab){
 						str+=summary.symbol.replace('-','');
 						str+='</a>';
 						str+='</td>';
-						str+='<td id="'+summary.product+'_price_kucoin">'+parseFloat(summary.lastDealPrice)+'</td>';
-						str+='<td id="'+summary.product+'_vol_kucoin">'+Math.round(parseFloat(summary.vol))+'</td>';
-						str+='<td id="'+summary.product+'_high_kucoin">'+summary.high+'</td>';
-						str+='<td id="'+summary.product+'_low_kucoin">'+summary.low+'</td>';
+						str+='<td id="'+summary.symbol.replace('-','')+'_price_kucoin">'+parseFloat(summary.lastDealPrice)+'</td>';
+						str+='<td id="'+summary.symbol.replace('-','')+'_vol_kucoin">'+Math.round(parseFloat(summary.vol))+'</td>';
+						str+='<td id="'+summary.symbol.replace('-','')+'_high_kucoin">'+summary.high+'</td>';
+						str+='<td id="'+summary.symbol.replace('-','')+'_low_kucoin">'+summary.low+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
 						str+='<div class="col-md-12" id="chart_'+summary.symbol.replace('-','')+'_kucoin"><input type="hidden" id="hidden_'+summary.symbol.replace('-','')+'_kucoin" value="'+summary.chart+'" /></div>';
