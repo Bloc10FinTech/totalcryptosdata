@@ -3231,10 +3231,10 @@ module.exports = {
 								if(!_.isEmpty(last_tickers)){
 									last_tickers=last_tickers.tickers;
 									_.forEach(last_tickers.data,function(ticker){
-										var filter=_.filter(tickers,{symbol:ticker.symbol});
+										var filter=_.filter(tickers.data,{symbol:ticker.symbol});
 										if(_.isEmpty(filter)){
 											ticker.is_old='yes';
-											tickers.push(ticker);
+											tickers.data.push(ticker);
 										}
 									});
 								}
