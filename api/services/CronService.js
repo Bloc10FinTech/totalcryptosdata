@@ -3209,7 +3209,7 @@ module.exports = {
 								ticker.high=math.format(ticker.high,{lowerExp: -100, upperExp: 100});
 								ticker.low=math.format(ticker.low,{lowerExp: -100, upperExp: 100});
 								_.forEach(charts,function(chart){
-									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
+									chart=_.filter(chart.tickers.data,{symbol:ticker.symbol});
 									if(!_.isEmpty(chart)){
 										chart=_.head(chart);
 										chart_data.push(chart.lastDealPrice);
