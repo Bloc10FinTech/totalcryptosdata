@@ -933,6 +933,16 @@ module.exports = {
 			}
 		});
 		
+		//PROCESS TO INSERT KUCOIN STATIC DATA
+		ExchangeList.count({name:'kucoin'},function(err,count){
+			if(err){ ApiService.exchangeErrors('kucoin','query_select',err,'exchange_select',curDateTime);}
+			if(count==0){
+				ExchangeList.create({name:'kucoin',url:'https://www.kucoin.com',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+					if(err){ ApiService.exchangeErrors('kucoin','query_insert',err,'exchange_insert',curDateTime);}
+				});
+			}
+		});
+		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES 24 HOUR HISTORY
 		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, data){
 			if(err){ 
@@ -3174,6 +3184,77 @@ module.exports = {
 			}	
 		});
 		
+		//PROCESS TO CREATE KUCOIN MARKET TICKERS
+		ExchangeList.findOne({name:'kucoin'},function(err,data){ 
+			if(err){ 
+				ApiService.exchangeErrors('kucoin','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('kucoin','query_select',err,'tickers_select',curDateTime);
+					}
+					
+					ApiService.kucoinTicker().then(tickers=>{
+						tickers=JSON.parse(tickers);
+						
+						if(tickers.success){
+						_.forEach(tickers.data,function(ticker){
+								var chart_data=[];
+								ticker.is_old='no';
+								ticker.lastDealPrice=math.format(ticker.lastDealPrice,{lowerExp: -100, upperExp: 100});
+								ticker.buy=math.format(ticker.buy,{lowerExp: -100, upperExp: 100});
+								ticker.sell=math.format(ticker.sell,{lowerExp: -100, upperExp: 100});
+								ticker.high=math.format(ticker.high,{lowerExp: -100, upperExp: 100});
+								ticker.low=math.format(ticker.low,{lowerExp: -100, upperExp: 100});
+								_.forEach(charts,function(chart){
+									chart=_.filter(chart.tickers,{symbol:ticker.symbol});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.lastDealPrice);
+									}
+								});
+								chart_data.push(ticker.lastDealPrice);
+								ticker.chart=chart_data;
+							});
+						
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
+								if(err){ 
+									ApiService.exchangeErrors('kucoin','query_select',err,'tickers_select',curDateTime);
+								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers.data,function(ticker){
+										var filter=_.filter(tickers,{symbol:ticker.symbol});
+										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
+											tickers.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('kucoin','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+							});
+						}	
+					
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('kucoin','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});
+		
 		//PROCESS TO CALCULATE TOTAL CRYPTO PRICE
 		TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 			if(err){ 
@@ -3267,10 +3348,11 @@ module.exports = {
 				ExchangeDataService.korbitMarketData(),
 				ExchangeDataService.bitmexMarketData(),
 				ExchangeDataService.livecoinMarketData(),
-				ExchangeDataService.cexMarketData()
+				ExchangeDataService.cexMarketData(),
+				ExchangeDataService.kucoinMarketData()
 			]
 			).then(response => { 
-				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data};
+				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data,kucoin:response[25].data};
 				var total_crypto_prices=[];
 				
 				_.forEach(Object.keys(exchange_objects),function(exchange){
@@ -3424,6 +3506,12 @@ module.exports = {
 								base_currency=_.toLower(ticker.base_currency);
 								quote_currency=_.toLower(ticker.quote_currency);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.last,volume:ticker.volume,high:ticker.high,low:ticker.low,ask:ticker.ask,bid:ticker.bid,last:ticker.last});
+							break;
+							case 'kucoin':
+								product=_.toLower(_.replace(ticker.symbol,'-',''));        
+								base_currency=_.toLower(ticker.coinType);
+								quote_currency=_.toLower(ticker.coinTypePair);	
+								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastDealPrice,volume:ticker.vol,high:ticker.high,low:ticker.low,ask:ticker.sell,bid:ticker.buy,last:ticker.lastDealPrice});
 							break;
 							default:
 							break;

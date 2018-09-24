@@ -387,6 +387,22 @@ module.exports = {
 									});
 									return resolve(temp_array);
 								break;
+								case 'kucoin':
+									var temp_array=[];
+									tickers=tickers.data;
+									_.forEach(currencies,function(currency){
+										_.forEach(currencies_temp,function(currency_temp){
+											var tickers_match=_.filter(tickers,{symbol:_.toUpper(currency+'-'+currency_temp)});
+											if(!_.isEmpty(tickers_match)){
+												tickers_match=_.head(tickers_match);
+												if(_.isEmpty(tickers_match.is_old) || tickers_match.is_old=='no'){
+													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.buy,sell:tickers_match.sell,volume:tickers_match.vol,ask:tickers_match.sell,bid:tickers_match.buy,last:tickers_match.lastDealPrice,exchange:exchange.name,date_created:date_created}});
+												}
+											}
+										});
+									});
+									return resolve(temp_array);
+								break;
 								default:
 									return resolve([]);
 								break;

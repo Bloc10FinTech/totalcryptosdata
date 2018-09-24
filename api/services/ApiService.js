@@ -794,6 +794,22 @@ module.exports = {
 		});
 	},
 	
+	kucoinTicker:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://api.kucoin.com/v1/open/tick',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
 	icoWatchList:function(){
 		var request=require('request');
 		return new Promise(function(resolve, reject){

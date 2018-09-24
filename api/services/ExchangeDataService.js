@@ -1155,6 +1155,51 @@ module.exports = {
 		});
 	},
 	
+	kucoinMarketData:function(count=0){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeList.findOne({name:'kucoin'},function(err, kucoinExchange){
+				if(!_.isEmpty(kucoinExchange)){
+					var kucoinTickers=ExchangeTickers.findOne();
+					kucoinTickers.where({exchange_id:kucoinExchange.id});
+					kucoinTickers.sort('id DESC');
+					kucoinTickers.exec(function(err,kucoinTickers){
+						if(!_.isEmpty(kucoinTickers)){
+							kucoinTickers=kucoinTickers.tickers.data;
+							kucoinTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
+							if(count>0){
+								kucoinTickers=_.slice(kucoinTickers,0,count);
+							}
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(kucoinTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.coinType)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.coinType;
+									}
+								}); 
+								return resolve({name:kucoinExchange.name,url:kucoinExchange.url,is_exchange:kucoinExchange.is_exchange,data:kucoinTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
+						}
+						else{
+							return resolve({name:'',url:'',is_exchange:'',data:[]});
+						}
+					});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
 	fxMarketData:function(){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
@@ -1515,6 +1560,9 @@ module.exports = {
 									case 'gemini':
 										new_products.push({product:product,added:added_days});
 									break;
+									case 'kraken':
+										new_products.push({product:_.toLower(product),added:added_days});
+									break;
 									case 'bitflyer':
 										if(!_.isEmpty(product.alias)){
 											new_products.push({product:_.toLower(_.replace(product.alias,'_','')),added:added_days});
@@ -1523,7 +1571,13 @@ module.exports = {
 											new_products.push({product:_.toLower(_.replace(product.product_code,'_','')),added:added_days});
 										}
 									break;
+									case 'bitstamp':
+										new_products.push({product:_.toLower(_.replace(product.name,'/','')),added:added_days});
+									break;
 									case 'lbank':
+										new_products.push({product:_.replace(product,'_',''),added:added_days});
+									break;
+									case 'wex':
 										new_products.push({product:_.replace(product,'_',''),added:added_days});
 									break;
 									case 'exmo':
@@ -1531,6 +1585,9 @@ module.exports = {
 									break;
 									case 'liqui':
 										new_products.push({product:_.toLower(_.replace(product,'_','')),added:added_days});
+									break;
+									case 'cex':
+										new_products.push({product:_.toLower((product.symbol1+product.symbol2)),added:added_days});
 									break;
 								}
 							});
