@@ -1021,7 +1021,8 @@ module.exports = {
 								var price=_.filter(totalCryptoPrice.prices,{product:product});
 								if(!_.isEmpty(price)){
 									price=_.head(price);
-									return_array.push({price:price.price,data_date:moment(totalCryptoPrice.data_date).format('YYYY-MM-DD'),product:product});
+									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
+									return_array.push(price);
 								}
 							});
 							return_array=_.uniqBy(return_array,'data_date');
@@ -1069,7 +1070,8 @@ module.exports = {
 								var price=_.filter(totalCryptoPrice.prices,{product:product});
 								if(!_.isEmpty(price)){
 									price=_.head(price);
-									return_array.push({price:price.price,data_date:moment(totalCryptoPrice.data_date).format('YYYY-MM-DD'),product:product});
+									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
+									return_array.push(price);
 								}
 							});
 							return_array=_.uniqBy(return_array,'data_date');
