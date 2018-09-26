@@ -3609,7 +3609,7 @@ module.exports = {
 						}
 						
 						if(data.closes.length>0){
-							data.close=math.format(_.reduce(data.closes,function(sum,n){return sum+n;},0)/data.opens.closes, {lowerExp: -100, upperExp: 100});
+							data.close=math.format(_.reduce(data.closes,function(sum,n){return sum+n;},0)/data.closes.length, {lowerExp: -100, upperExp: 100});
 						}
 						
 						if(data.market_cap_usds.length>0){
