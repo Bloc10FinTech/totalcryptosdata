@@ -385,7 +385,7 @@
 		
 		//BANNER IMAGES
 		var $imgs1 = $(".fader1").find("a");
-		var $imgs2 = $(".fader2").find("a");
+		//var $imgs2 = $(".fader2").find("a");
 		var $imgs3 = $(".fader3").find("a");
 		var i = 0, j=0, k=0;
 		function changeBanner1(){
@@ -395,12 +395,12 @@
 		}
 		setInterval(changeBanner1, 15000);
 		
-		function changeBanner2(){
+		/*function changeBanner2(){
 			var next2 = (++j % $imgs2.length);
 			$($imgs2.get(next2 - 1)).fadeOut(0);
 			$($imgs2.get(next2)).fadeIn(1000);
 		}
-		setInterval(changeBanner2, 15000);
+		setInterval(changeBanner2, 15000);*/
 		
 		function changeBanner3(){
 			var next3 = (++k % $imgs3.length);
@@ -408,6 +408,26 @@
 			$($imgs3.get(next3)).fadeIn(1000);
 		}
 		setInterval(changeBanner3, 15000);
+		
+		
+		$('#option_5_green_blue').hover(
+		function () {
+			$(this).stop().fadeOut(1000,function () {
+				var $temp = $(this).attr('src');
+				$(this).attr('src', $(this).attr('data-alt-src'));
+				$(this).attr('data-alt-src', $temp);
+			});
+			$(this).fadeIn(1000);
+		},
+
+		function () {
+			$(this).stop().fadeOut(1000,function () {
+				var $temp = $(this).attr('data-alt-src');
+				$(this).attr('data-alt-src', $(this).attr('src'));
+				$(this).attr('src', $temp);
+			});
+			$(this).fadeIn(1000);
+		});
 		
 		//SIDEBAR IMAGES
 		var $imgs4 = $(".fader_sidebar").find("a"),

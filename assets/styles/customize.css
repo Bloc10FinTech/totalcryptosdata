@@ -138,7 +138,7 @@ body .sumome-stylebufferbottom-shim{
 	text-align:center;
 }
 
-.fader1 > a, .fader2 > a, .fader3 > a {
+.fader1 > a, .fader3 > a {
     position: relative;
     top: 0; 
     left: 0;
