@@ -1118,29 +1118,23 @@ module.exports = {
 					var product_prices=_.filter(totalCryptoPrices,{product:product});
 					if(!_.isEmpty(product_prices)){
 						product_prices=_.head(product_prices);
-						TotalCryptoChartHistoryMinutes.find().limit(1).sort({'id':-1}).exec(function(err,historyMinuts){
-							historyMinuts=_.head(historyMinuts);
-							historyMinuts=_.filter(historyMinuts.prices,{product:product});console.log(historyMinuts);
-							if(!_.isEmpty(historyMinuts)){
-								historyMinuts=_.head(historyMinuts);
-								historyMinuts.data_date=moment(historyMinuts.date_created).format('YYYY-MM-DD');
-								historyMinuts.data_time=moment(historyMinuts.date_created).format('YYYY-MM-DD HH:mm:ss');
-								historyMinuts.open=product_prices.open;
-								historyMinuts.close=product_prices.close;
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:historyMinuts}));
+						TotalCryptoChartHistoryMinutes.find().limit(1440).sort({'id':-1}).exec(function(err,historyMinutes){	var return_array=[];
+							_.forEach(historyMinutes,function(historyMinute){
+								historyData=_.filter(historyMinute.prices,{product:product});
+								if(!_.isEmpty(historyData)){
+									historyData=_.head(historyData);
+									historyData.data_date=moment(historyMinute.date_created).format('YYYY-MM-DD');
+									historyData.data_time=moment(historyMinute.date_created).format('YYYY-MM-DD HH:mm:ss');
+									historyData.open=product_prices.open;
+									historyData.close=product_prices.close;
+									return_array.push(historyData);
 								}
-								else{
-									callBack({errCode:1,message:'Request processed successfully.',data:historyMinuts});
-								}
+							});
+							if(isInc){
+								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:return_array}));
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack({errCode:1,message:'Request processed successfully.',data:return_array});
 							}
 						});
 					}
