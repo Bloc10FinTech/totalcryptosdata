@@ -962,8 +962,8 @@ module.exports = {
 							record.volume.push(parseFloat(price.volume));
 							record.low.push(parseFloat(price.low));
 							record.high.push(parseFloat(price.high));
-							if(!_.isEmpty(price.open)){record.open.push(parseFloat(price.open));}
-							if(!_.isEmpty(price.close)){record.close.push(parseFloat(price.close));}
+							if(!_.isEmpty(price.open)){ record.open.push(parseFloat(price.open));}
+							if(!_.isEmpty(price.close) && !_.isNaN(parseFloat(price.close))){ record.close.push(parseFloat(price.close));}
 						}
 					});
 					if(!updated){
@@ -976,7 +976,7 @@ module.exports = {
 						high.push(parseFloat(price.high));
 						volume.push(parseFloat(price.volume));
 						if(!_.isEmpty(price.open)){open.push(parseFloat(price.open));}
-						if(!_.isEmpty(price.close)){close.push(parseFloat(price.close));}
+						if(!_.isEmpty(price.close) && !_.isNaN(parseFloat(price.close))){close.push(parseFloat(price.close));}
 						insert_data.push({base_currency:price.base_currency,quote_currency:price.quote_currency,product:price.product,price:parseFloat(price.price),change_perc_1h:parseFloat(price.change_perc_1h),change_perc_24h:parseFloat(price.change_perc_24h),low:low,high:high,volume:volume,open:open,close:close,chart:price.chart});
 					}
 				});
@@ -990,8 +990,14 @@ module.exports = {
 				if(!_.isEmpty(record.open)){
 					record.open=math.format(Math.min.apply(Math,record.open), {lowerExp: -100, upperExp: 100});
 				}
+				else{
+					record.open=record.chart[0];
+				}
 				if(!_.isEmpty(record.close)){
 					record.close=math.format(Math.min.apply(Math,record.close), {lowerExp: -100, upperExp: 100});
+				}
+				else{
+					delete record.close;
 				}
 			});
 			
