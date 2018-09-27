@@ -1104,6 +1104,67 @@ module.exports = {
 		});	
 	},
 	
+	productPriceHistoryChartMinute:function(callBack,product,request,isInc){
+		var _ = require('lodash');
+		var moment = require('moment');
+		
+		product=_.toLower(product);
+		MobileApisService.checkUpdateApiCalls(request.ip,'productPriceHistoryChartMinute').
+		then(response => {
+			if(response){
+				TotalCryptoChartHistory.find().limit(1).sort({'id':-1}).exec(function(err,totalCryptoPrices){
+					totalCryptoPrices=_.head(totalCryptoPrices);
+					totalCryptoPrices=totalCryptoPrices.prices;
+					var product_prices=_.filter(totalCryptoPrices,{product:product});
+					if(!_.isEmpty(product_prices)){
+						product_prices=_.head(product_prices);
+						TotalCryptoChartHistoryMinutes.find().limit(1).sort({'id':-1}).exec(function(err,historyMinuts){
+							historyMinuts=_.head(historyMinuts);
+							historyMinuts=_.filter(historyMinuts.prices,{product:product});console.log(historyMinuts);
+							if(!_.isEmpty(historyMinuts)){
+								historyMinuts=_.head(historyMinuts);
+								historyMinuts.data_date=moment(historyMinuts.date_created).format('YYYY-MM-DD');
+								historyMinuts.data_time=moment(historyMinuts.date_created).format('YYYY-MM-DD HH:mm:ss');
+								historyMinuts.open=product_prices.open;
+								historyMinuts.close=product_prices.close;
+								if(isInc){
+									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:historyMinuts}));
+								}
+								else{
+									callBack({errCode:1,message:'Request processed successfully.',data:historyMinuts});
+								}
+							}
+							else{
+								if(isInc){
+									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
+								}
+								else{
+									callBack({errCode:404,message:'Record not found.',data:[]});
+								}
+							}
+						});
+					}
+					else{
+						if(isInc){
+							callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
+						}
+						else{
+							callBack({errCode:404,message:'Record not found.',data:[]});
+						}
+					}
+				});
+			}
+		}).
+		catch(err => {
+			if(isInc){
+				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+			}
+			else{
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			}
+		});	
+	},
+	
 	checkUpdateApiCalls:function(ip_address,api_name){
 		var moment = require('moment');
 		var _ = require('lodash');

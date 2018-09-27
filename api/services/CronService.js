@@ -3934,5 +3934,12 @@ module.exports = {
 				ApiService.exchangeErrors('alert_tickers','delete',err,'alert_tickers_delete',curDateTime);
 			}
 		});
+		
+		//DELETE TOTALCRYPTO PRICES HISTORY MINUTES
+		TotalCryptoChartHistoryMinutes.destroy({date_created:{'<':delete_before_alerts}}).exec(function(err){
+			if(err){
+				ApiService.exchangeErrors('totalcryptocharthistoryminutes','delete',err,'history_delete',curDateTime);
+			}
+		});
 	},
 };

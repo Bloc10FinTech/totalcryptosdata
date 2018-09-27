@@ -96,6 +96,7 @@ module.exports.routes = {
   '/api/biggestGainers':'ApiController.biggestGainers',
   '/api/productPriceHistoryChart/:product':'ApiController.productPriceHistoryChart',
   '/api/productPriceHistoryChart/:product/:days':'ApiController.productPriceHistoryChartDays',
+  '/api/productPriceHistoryChartMinute/:product':'ApiController.productPriceHistoryChartMinute',
   
   //APIS SERVICES ENCRYPTED
   '/api/tcPricesInc':'ApiController.tcPricesInc',
@@ -114,6 +115,7 @@ module.exports.routes = {
   '/api/biggestGainersInc':'ApiController.biggestGainersInc',
   '/api/productPriceHistoryChartInc/:product':'ApiController.productPriceHistoryChartInc',
   '/api/productPriceHistoryChartInc/:product/:days':'ApiController.productPriceHistoryChartDaysInc',
+  '/api/productPriceHistoryChartMinuteInc/:product':'ApiController.productPriceHistoryChartMinuteInc',
   
   //GENERATE EXCEL OF FIX PRICES
   '/api/fixMaster':'ApiController.fixMaster',

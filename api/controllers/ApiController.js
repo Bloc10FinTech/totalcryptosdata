@@ -173,6 +173,16 @@ module.exports = {
 		return response.send(data);
 	},request.param('product'),request.param('days'),request,true); 
   },
+  productPriceHistoryChartMinute:function(request, response){
+	  MobileApisService.productPriceHistoryChartMinute(function(data){
+		return response.send(data);
+	},request.param('product'),request,false);
+  },
+  productPriceHistoryChartMinuteInc:function(request, response){
+	  MobileApisService.productPriceHistoryChartMinute(function(data){
+		return response.send(data);
+	},request.param('product'),request,true);
+  },
   userRegistration:function(request, response) {
 	  MobileApisService.userRegistration(function(data){
 		return response.send(data);
