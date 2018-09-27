@@ -994,10 +994,10 @@ module.exports = {
 					record.open=record.chart[0];
 				}
 				if(!_.isEmpty(record.close)){
-					record.close=record.close[0];
+					record.close=record.close[record.close.length-1];
 				}
 				else{
-					delete record.close;
+					record.close=record.chart[record.chart.length-1];
 				}
 			});
 			
@@ -1010,18 +1010,7 @@ module.exports = {
 			//PROCESS TO PREPARE CHART HISTORY ARRAY
 			var chart_history=[];
 			_.forEach(insert_data,function(data){
-				if(!_.isEmpty(data.open) && !_.isEmpty(data.close)){
-					chart_history.push({product:data.product,price:data.price,base_currency:data.base_currency,high:data.high,low:data.low,volume:data.volume,open:data.open,close:data.close});
-				}
-				else if(!_.isEmpty(data.open)){
-					chart_history.push({product:data.product,price:data.price,base_currency:data.base_currency,high:data.high,low:data.low,volume:data.volume,open:data.open});
-				}
-				else if(!_.isEmpty(data.close)){
-					chart_history.push({product:data.product,price:data.price,base_currency:data.base_currency,high:data.high,low:data.low,volume:data.volume,close:data.close});
-				}
-				else{
-					chart_history.push({product:data.product,price:data.price,base_currency:data.base_currency,high:data.high,low:data.low,volume:data.volume});
-				}
+				chart_history.push({product:data.product,price:data.price,base_currency:data.base_currency,high:data.high,low:data.low,volume:data.volume,open:data.open,close:data.close});
 			});
 			TotalCryptoChartHistory.create({prices:chart_history,data_date:dataDate,date_created:curDateTime},function(err,data){
 				if(err){ 
@@ -3655,6 +3644,10 @@ module.exports = {
 						
 						if(!_.has(data,'open')){
 							data.open=chart_data[0];
+						}
+						
+						if(!_.has(data,'close')){
+							data.close=chart_data[chart_data.length-1];
 						}
 					});
 					
