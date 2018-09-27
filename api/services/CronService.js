@@ -988,13 +988,13 @@ module.exports = {
 				record.high=math.format(Math.max.apply(Math,record.high), {lowerExp: -100, upperExp: 100});
 				record.low=math.format(Math.min.apply(Math,record.low), {lowerExp: -100, upperExp: 100});
 				if(!_.isEmpty(record.open)){
-					record.open=math.format(Math.min.apply(Math,record.open), {lowerExp: -100, upperExp: 100});
+					record.open=record.open[0];
 				}
 				else{
 					record.open=record.chart[0];
 				}
 				if(!_.isEmpty(record.close)){
-					record.close=math.format(Math.min.apply(Math,record.close), {lowerExp: -100, upperExp: 100});
+					record.close=record.close[0];
 				}
 				else{
 					delete record.close;
@@ -3652,6 +3652,10 @@ module.exports = {
 						data.chart=chart_data;
 						data.change_perc_1h=(chart_data[chart_data.length-1]-chart_data[chart_data.length-2])*100/chart_data[chart_data.length-2];
 						data.change_perc_24h=(chart_data[chart_data.length-1]-chart_data[0])*100/chart_data[0];
+						
+						if(!_.has(data,'open')){
+							data.open=chart_data[0];
+						}
 					});
 					
 					TotalCryptoPrices.create({prices:insert_array,date_created:curDateTime},function(err,data){
