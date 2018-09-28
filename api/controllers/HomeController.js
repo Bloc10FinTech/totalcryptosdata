@@ -142,6 +142,10 @@ module.exports = {
   about:function(request,response){
 	return response.view('about',{title: 'Total Cryptos - About',path:request.path}); 
   },
+  
+  ninja_trader:function(request,response){
+	return response.view('ninja_trader',{title: 'Total Cryptos - Ninja Trader',path:request.path}); 
+  },
   TC_index:function(request,response){
 		return response.view('TCindex',{title: 'Total Cryptos - TC Index',path:request.path}); 
   },

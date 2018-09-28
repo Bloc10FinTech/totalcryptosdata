@@ -73,6 +73,7 @@ module.exports.routes = {
   '/home': {view: 'homepage'},
   '/login':{view: 'login'},
   '/about':'HomeController.about',
+  '/ninja_trader':'HomeController.ninja_trader',
   '/TCindex':'HomeController.TC_index',
   '/ninjatrader': { view: 'ninjatrader',locals: {layout: false}},
   'post /doLogin':'AuthController.doLogin',

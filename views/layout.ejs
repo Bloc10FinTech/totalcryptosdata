@@ -155,6 +155,9 @@
 					<li class="nav-item <%if(path=='/about'){%>active <%}else{%> ''<%}%>">
 						<a class="nav-link" href="/about">About</a>
 					</li>
+					<li class="nav-item <%if(path=='/ninja_trader'){%>active <%}else{%> ''<%}%>">
+						<a class="nav-link" href="/ninja_trader">Ninja Trader</a>
+					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="https://portal.totalcryptos.com/create-an-account/">Register</a>
 					</li>
@@ -390,43 +393,46 @@
 		var i = 0, j=0, k=0;
 		function changeBanner1(){
 			var next1 = (++i % $imgs1.length);
-			$($imgs1.get(next1 - 1)).fadeOut(0);
-			$($imgs1.get(next1)).fadeIn(1000);
+			$($imgs1.get(next1 - 1)).fadeOut(3000,function(){
+				$($imgs1.get(next1)).fadeIn(3000);
+			});
 		}
 		setInterval(changeBanner1, 15000);
 		
 		/*function changeBanner2(){
 			var next2 = (++j % $imgs2.length);
-			$($imgs2.get(next2 - 1)).fadeOut(0);
-			$($imgs2.get(next2)).fadeIn(1000);
+			$($imgs2.get(next2 - 1)).fadeOut(3000,function(){
+				$($imgs2.get(next2)).fadeIn(3000);
+			});
 		}
 		setInterval(changeBanner2, 15000);*/
 		
 		function changeBanner3(){
 			var next3 = (++k % $imgs3.length);
-			$($imgs3.get(next3 - 1)).fadeOut(0);
-			$($imgs3.get(next3)).fadeIn(1000);
+			$($imgs3.get(next3 - 1)).fadeOut(3000,function(){
+				$($imgs3.get(next3)).fadeIn(3000);
+			});
 		}
 		setInterval(changeBanner3, 15000);
 		
 		
 		$('#option_5_green_blue').hover(
 		function () {
-			$(this).stop().fadeOut(1000,function () {
+			$(this).stop().fadeOut(2000,function () {
 				var $temp = $(this).attr('src');
 				$(this).attr('src', $(this).attr('data-alt-src'));
 				$(this).attr('data-alt-src', $temp);
 			});
-			$(this).fadeIn(1000);
+			$(this).fadeIn(2000);
 		},
 
 		function () {
-			$(this).stop().fadeOut(1000,function () {
+			$(this).stop().fadeOut(2000,function () {
 				var $temp = $(this).attr('data-alt-src');
 				$(this).attr('data-alt-src', $(this).attr('src'));
 				$(this).attr('src', $temp);
 			});
-			$(this).fadeIn(1000);
+			$(this).fadeIn(2000);
 		});
 		
 		//SIDEBAR IMAGES
@@ -434,8 +440,9 @@
 		l = 0;
 		function changeSideBar(){
 			var next4 = (++l % $imgs4.length);
-			$($imgs4.get(next4 - 1)).fadeOut(0);
-			$($imgs4.get(next4)).fadeIn(1000);
+			$($imgs4.get(next4 - 1)).fadeOut(3000,function(){
+				$($imgs4.get(next4)).fadeIn(3000);
+			});
 		}
 		setInterval(changeSideBar, 15000);
 	});
