@@ -156,7 +156,7 @@
 						<a class="nav-link" href="/about">About</a>
 					</li>
 					<li class="nav-item <%if(path=='/ninja_trader'){%>active <%}else{%> ''<%}%>">
-						<a class="nav-link" href="/ninja_trader">Ninja Trader</a>
+						<a class="nav-link" href="/ninja_trader">NinjaTrader</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="https://portal.totalcryptos.com/create-an-account/">Register</a>
@@ -418,21 +418,21 @@
 		
 		$('#option_5_green_blue').hover(
 		function () {
-			$(this).stop().fadeOut(2000,function () {
+			$(this).stop().fadeOut(1000,function () {
 				var $temp = $(this).attr('src');
 				$(this).attr('src', $(this).attr('data-alt-src'));
 				$(this).attr('data-alt-src', $temp);
 			});
-			$(this).fadeIn(2000);
+			$(this).fadeIn(1000);
 		},
 
 		function () {
-			$(this).stop().fadeOut(2000,function () {
+			$(this).stop().fadeOut(1000,function () {
 				var $temp = $(this).attr('data-alt-src');
 				$(this).attr('data-alt-src', $(this).attr('src'));
 				$(this).attr('src', $temp);
 			});
-			$(this).fadeIn(2000);
+			$(this).fadeIn(1000);
 		});
 		
 		//SIDEBAR IMAGES
