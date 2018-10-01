@@ -20,6 +20,11 @@ module.exports = {
 		  response.send(data);
 	  },50);
   },
+  tabDataSearch:function(request, response){
+	  FrontendService.tabData(request.param('tab'),function(data){
+		  response.send(data);
+	  },50,request.param('currency'));
+  },
   tabDataAll:function(request, response){
 	  FrontendService.tabData(request.param('tab'),function(data){
 		  response.send(data);

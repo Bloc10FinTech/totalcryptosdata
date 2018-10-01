@@ -36,6 +36,7 @@ module.exports.routes = {
   '/headerFooterData':'HomeController.headerFooterData',
   '/gainersLosers':'HomeController.gainersLosers',
   '/tabData/:tab':'HomeController.tabData',
+  '/tabData/:tab/:currency':'HomeController.tabDataSearch',
   '/tabDataAll/:tab':'HomeController.tabDataAll',
   '/volume-24-hour-currency':'HomeController.volume_24_hour_currency',
   '/volume_24_hour_currency_data':'HomeController.volume_24_hour_currency_data',

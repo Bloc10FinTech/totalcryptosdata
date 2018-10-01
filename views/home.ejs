@@ -258,7 +258,7 @@ $(document).ready(function(){
 	show_totalcrypto_price('totalcryptospriceusd');
 });
 
-function initialize_table(className){
+function initialize_table(className,currency=null){
 	$('.'+className).DataTable({
         "paging":   false, 
         "info":     false,
@@ -267,11 +267,37 @@ function initialize_table(className){
 		dom: 'Bfrtip',
         buttons: [
             'csv', 'excel', 'pdf', 'print'
-        ]
+        ],
+		initComplete : function() {
+			if(currency){
+				$('.dataTables_filter input').val(currency);
+			}
+			$('.dataTables_filter input').unbind(),
+			self = this.api(),
+			$searchButton = $('<button>')
+			   .text('search')
+			   .click(function() {
+				  //self.search(input.val()).draw();
+				  show_totalcrypto_price('search',$('.dataTables_filter input').val());
+			   }),
+            $clearButton = $('<button>')
+			   .text('clear')
+			   .click(function() {
+				  show_totalcrypto_price('totalcryptospriceusd');
+			   }), 
+			$('.dataTables_filter').append($searchButton, $clearButton);
+			
+			$('.dataTables_filter input').keyup(function(){ 
+				if($(this).val()==''){
+					show_totalcrypto_price('totalcryptospriceusd');
+				}
+			});
+		}
     });
 }
 
-function show_totalcrypto_price(tab){ 
+function show_totalcrypto_price(tab,currency=null){
+	var url='/tabData/'+tab;
 	if(tab=='totalcryptosall'){
 	    $("#dropdownMenuButton").html('Full List'); 
 	}
@@ -280,6 +306,9 @@ function show_totalcrypto_price(tab){
 	}
 	else if(tab=='totalcryptospricepairs'){
 		$("#dropdownMenuButton").html('Crypto Based');
+	}
+	else if(tab=='search'){
+		var url='/tabData/totalcryptosall/'+currency;
 	}
  
 	//PROCESS TO SHOW LOADER
@@ -291,7 +320,7 @@ function show_totalcrypto_price(tab){
 	$.ajax({
 		type:'GET',
 		//url:'<%= socketURL %>/tabData/'+tab,
-		url:'/tabData/'+tab,
+		url:url,
 		success:function(data){ 
 			var str='';
 			data.forEach(function(summary,index){
@@ -345,16 +374,21 @@ function show_totalcrypto_price(tab){
 			});
 			$('#totalcryptosprice_market_summary').html(str);
 			draw_chart();
-			initialize_table('totalcryptosprice');
+			if(tab=='search'){
+				initialize_table('totalcryptosprice',currency);
+			}
+			else{
+				initialize_table('totalcryptosprice');
+			}
 			whether_total_crypto_table_initialized=true;
 			//MANAGE DROPDOWN OPTION SELECTED
 			$("#total_cryptos_dropdown").children('a').removeClass('active');
 			$("#"+tab).addClass('active');
 			//MANAGE VIEW ALL OPTION ON FOOTER
-			if(tab=='totalcryptosall'){
+			if(tab=='totalcryptosall' || tab=='search'){
 				$("#crypto_footer").css({'display':'none'});
 			}
-			else{
+			else{ 
 				$("#crypto_footer").css({'display':'block'});
 				$("#crypto_footer").html('<a href="/exchange_prices/'+tab+'/details" class="btn btn-primary btn-sm pull-right theme-btn">View All</a>');
 			}

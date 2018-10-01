@@ -1449,6 +1449,7 @@ module.exports = {
 					totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
 					_.remove(totalCryptoPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
 					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
+					
 					if(count>0){
 						totalCryptoPrices=_.slice(totalCryptoPrices,0,count);
 					}
@@ -1477,7 +1478,7 @@ module.exports = {
 		});
 	},
 	
-	totalCryptoPricesPairs:function(count=0){
+	totalCryptoPricesPairs:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
@@ -1485,7 +1486,19 @@ module.exports = {
 					totalCryptoPrices=_.head(totalCryptoPrices);
 					totalCryptoPrices=totalCryptoPrices.prices;
 					totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-					if(count>0){
+					
+					if(!_.isEmpty(currency)){
+						currency=_.toLower(currency);
+						var temp=[];
+						_.forEach(totalCryptoPrices,function(price){
+							//if(_.includes(price.product,currency)){
+							if(price.base_currency==currency){
+								temp.push(price);
+							}
+						});
+						totalCryptoPrices=temp;
+					}
+					else if(count>0){
 						totalCryptoPrices=_.slice(totalCryptoPrices,0,count);
 					}
 					
