@@ -146,6 +146,7 @@
 
 <script>
 var whether_total_crypto_table_initialized=false;
+var search_currency='<%= search_currency %>';
 $(document).ready(function(){
 	//PROCESS TO FETCH GAINERS AND LOSERS
 	$("#fx_data").html('<tr><td colspan="2" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
@@ -255,7 +256,12 @@ $(document).ready(function(){
 	});	
 
 	//PROCESS TO FETCH TOTAL CRYPTO DATA
-	show_totalcrypto_price('totalcryptospriceusd');
+	if(search_currency){
+		show_totalcrypto_price('search',search_currency);
+	}
+	else{
+		show_totalcrypto_price('totalcryptospriceusd');
+	}
 });
 
 function initialize_table(className,currency=null){

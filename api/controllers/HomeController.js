@@ -8,7 +8,8 @@
 require('dotenv').config();
 module.exports = {
 	index: function (request, response) {
-		return response.view('home', {title: 'Total Cryptos',socketURL:process.env.SOCKETURL,path:request.path});
+		var search_currency=request.param('search_currency') || '';
+		return response.view('home', {title: 'Total Cryptos',search_currency:search_currency,socketURL:process.env.SOCKETURL,path:request.path});
   },
   headerFooterData:function(request, response){
 	  FrontendService.headerFooterData(function(data){
