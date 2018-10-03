@@ -2549,10 +2549,10 @@ module.exports = {
 								if(!_.isEmpty(last_tickers)){
 									last_tickers=last_tickers.tickers;
 									_.forEach(last_tickers,function(ticker){
-										var filter=_.filter(tickers,{product_id:ticker.product_id});
+										var filter=_.filter(tickers_data,{product_id:ticker.product_id});
 										if(_.isEmpty(filter)){
 											ticker.is_old='yes';
-											tickers.push(ticker);
+											tickers_data.push(ticker);
 										}
 									});
 								}
@@ -3927,19 +3927,6 @@ module.exports = {
 				ApiService.exchangeErrors('totalcryptopricescurrencies','delete',err,'tickers_delete',curDateTime);
 			}
 		});
-		
-		//DELETE EXCHANGES TICKERS ALERTS
-		ExchangeTickersAlerts.destroy({date_created:{'<':delete_before_alerts}}).exec(function(err){
-			if(err){
-				ApiService.exchangeErrors('alert_tickers','delete',err,'alert_tickers_delete',curDateTime);
-			}
-		});
-		
-		//DELETE TOTALCRYPTO PRICES HISTORY MINUTES
-		TotalCryptoChartHistoryMinutes.destroy({date_created:{'<':delete_before_alerts}}).exec(function(err){
-			if(err){
-				ApiService.exchangeErrors('totalcryptocharthistoryminutes','delete',err,'history_delete',curDateTime);
-			}
-		});
+
 	},
 };
