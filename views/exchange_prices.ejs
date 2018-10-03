@@ -266,13 +266,13 @@
 </main>
 
 <script>
-
+var whether_total_crypto_table_initialized=false;
 $(document).ready(function(){
 	//PROCESS TO FETCH TOTAL CRYPTO DATA
 	show_tab_data('<%= tab %>');
 });
 
-function initialize_table(){
+function initialize_table(currency=null){ 
 	$('.exchange').DataTable({
         "paging":   false, 
         "info":     false,
@@ -281,7 +281,32 @@ function initialize_table(){
 		dom: 'Bfrtip',
         buttons: [
             'csv', 'excel', 'pdf', 'print'
-        ]
+        ],
+		initComplete : function() { 
+			if(currency){
+				$('.dataTables_filter input').val(currency);
+			}
+			$('.dataTables_filter input').unbind(),
+			self = this.api(),
+			$searchButton = $('<button>')
+			   .text('search')
+			   .click(function() { 
+				  //self.search(input.val()).draw();
+				  show_tab_data('<%= tab %>',$('.dataTables_filter input').val());
+			   }),
+            $clearButton = $('<button>')
+			   .text('clear')
+			   .click(function() {
+				 show_tab_data('<%= tab %>');
+			   }), 
+			$('.dataTables_filter').append($searchButton, $clearButton);
+			
+			$('.dataTables_filter input').keyup(function(){ 
+				if($(this).val()==''){
+					show_tab_data('<%= tab %>');
+				}
+			});
+		}
     });
 }
 
@@ -299,930 +324,939 @@ function draw_chart(){
 	});
 }
 
-
-function show_tab_data(tab){
-	if($('#market_summary').children('tr').length==0){ 
-		//PROCESS TO SHOW LOADER
-		var cols=$('#market_summary').parent().children('thead').children('tr').children('th').length;
-		$('#market_summary').append('<tr><td colspan="'+cols+'" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
-		
-		$.ajax({
-			type:'GET',
-			url:'/tabData/'+tab,
-			success:function(data){ 
-				var str='';
-				switch(tab){
-					case 'totalcryptospriceusd':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_usd">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
-						if(summary.change_perc_1h>0){
-						str+='<span class="text-bold green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span>  <img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+='<span class="text-bold red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_vol_totalcryptos_usd">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_high_totalcryptos_usd">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_low_totalcryptos_usd">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_usd">';
-						if(summary.change_perc_1h>0){
-						str+='<span class="text-bold green-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
-						}else{
-						str+='<span class="text-bold red-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span> ';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_usd">';
-						if(summary.change_perc_24h>0){
-						str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}else{
-						str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_usd"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_usd" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'totalcryptospricepairs':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_pairs">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>'; 
-						str+='<td>';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
-						if(summary.change_perc_1h>0){
-						str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_pairs">';
-						if(summary.change_perc_1h>0){
-						str+='<span class="market-up-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
-						}else{
-						str+='<span class="market-down-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_pairs">';
-						if(summary.change_perc_24h>0){
-						str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}else{
-						str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.product+'_vol_totalcryptos_pairs">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_pairs"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_pairs" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'coin':
-						data.forEach(function(ticker,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+ticker.name+'_coinmarket">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+ticker.symbol+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+ticker.symbol+'">';
-						//str+=ticker.symbol;
-						str+=ticker.full_name;
-						str+='</a></td>';
-						str+='<td id="'+ticker.name+'_price_coinmarket">';
-						if(ticker.percent_change_1h>0){
-						str+='<span class="green-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						
-						str+='<td id="'+ticker.name+'_cap_coinmarket">';
-						str+=format_numbers(parseFloat(ticker.market_cap_usd).toFixed(2));
-						str+='</td>';
-						str+='<td id="'+ticker.name+'_available_coinmarket">';
-						str+=format_numbers(parseFloat(ticker.available_supply).toFixed(2));
-						str+='</td>';
-
-						str+='<td id="'+ticker.name+'_change_1h_coinmarket">';
+function show_tab_data(tab,currency=null){  
+	//PROCESS TO SHOW LOADER
+	if(whether_total_crypto_table_initialized){
+		$(".exchange").dataTable().fnDestroy();
+	}
+	var cols=$('#market_summary').parent().children('thead').children('tr').children('th').length;
+	$('#market_summary').html('<tr><td colspan="'+cols+'" style="text-align:center;"><img src="/images/data-loader.gif"/></td></tr>');
+	
+	var url='/tabData/'+tab;
+	if(currency){
+		url+='/'+currency;
+	}
+	
+	$.ajax({
+		type:'GET',
+		url:url,
+		success:function(data){ 
+			var str='';
+			switch(tab){
+				case 'totalcryptospriceusd':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_usd">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
+					if(summary.change_perc_1h>0){
+					str+='<span class="text-bold green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span>  <img src="/images/green-up-arrow.png" alt="green arrow">';
+					}else{
+					str+='<span class="text-bold red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.product+'_vol_totalcryptos_usd">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_high_totalcryptos_usd">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_low_totalcryptos_usd">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_usd">';
+					if(summary.change_perc_1h>0){
+					str+='<span class="text-bold green-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+					}else{
+					str+='<span class="text-bold red-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span> ';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_usd">';
+					if(summary.change_perc_24h>0){
+					str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+					}else{
+					str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+					}
+					str+='</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_usd"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_usd" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'totalcryptospricepairs':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
 					
-						if(ticker.percent_change_1h>0){
-						str+='<span class="market-up-text">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>';
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_totalcryptos_pairs">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>'; 
+					str+='<td>';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos_usd">';
+					if(summary.change_perc_1h>0){
+					str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+					}else{
+					str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.product+'_change_perc_1h_totalcryptos_pairs">';
+					if(summary.change_perc_1h>0){
+					str+='<span class="market-up-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+					}else{
+					str+='<span class="market-down-text">'+parseFloat(summary.change_perc_1h).toFixed(2)+'</span>';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.product+'_change_perc_24h_totalcryptos_pairs">';
+					if(summary.change_perc_24h>0){
+					str+='<span class="market-up-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+					}else{
+					str+='<span class="market-down-text">'+parseFloat(summary.change_perc_24h).toFixed(2)+'</span>';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.product+'_vol_totalcryptos_pairs">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_totalcryptos_pairs"><input type="hidden" id="hidden_'+summary.product+'_totalcryptos_pairs" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'coin':
+					data.forEach(function(ticker,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+ticker.name+'_coinmarket">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+ticker.symbol+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+ticker.symbol+'">';
+					//str+=ticker.symbol;
+					str+=ticker.full_name;
+					str+='</a></td>';
+					str+='<td id="'+ticker.name+'_price_coinmarket">';
+					if(ticker.percent_change_1h>0){
+					str+='<span class="green-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+					}else{
+					str+='<span class="red-text">'+format_numbers(parseFloat(ticker.price_usd).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+					}
+					str+='</td>';
+					
+					str+='<td id="'+ticker.name+'_cap_coinmarket">';
+					str+=format_numbers(parseFloat(ticker.market_cap_usd).toFixed(2));
+					str+='</td>';
+					str+='<td id="'+ticker.name+'_available_coinmarket">';
+					str+=format_numbers(parseFloat(ticker.available_supply).toFixed(2));
+					str+='</td>';
+
+					str+='<td id="'+ticker.name+'_change_1h_coinmarket">';
+				
+					if(ticker.percent_change_1h>0){
+					str+='<span class="market-up-text">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>';
+					}else{
+					str+='<span class="market-down-text">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>';
+					}
+					str+='</td>';
+					str+='<td id="'+ticker.name+'_change_24h_coinmarket">';
+					if(ticker.percent_change_24h>0){
+					str+='<span class="market-up-text">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>';
+					}else{
+					str+='<span class="market-down-text">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>';
+					}
+					str+='</td>';
+					str+='<td id="'+ticker.name+'_24h_volume_coinmarket">'+format_numbers(parseFloat(ticker['24h_volume_usd']).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+ticker.name+'_coinmarket"><input type="hidden" id="hidden_'+ticker.name+'_coinmarket" value="'+ticker.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});	
+				break;
+				case 'bittrex':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.MarketName+'_bittrex">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.BaseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.BaseCurrency+'">';
+					//str+=summary.BaseCurrency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">'
+					str+='<a href="/volume-24-hour-market/'+summary.MarketName.replace('-','')+'">';
+					str+=summary.MarketName.replace('-','');
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.MarketName+'_bid_bittrex">';
+					if(summary.Last>summary.Bid){
+					str+='<span class="green-text">'+format_numbers(parseFloat(summary.Last).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+					}else{
+					str+='<span class="red-text">'+format_numbers(parseFloat(summary.Last).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.MarketName+'_high_bittrex">'+format_numbers(parseFloat(summary.High).toFixed(8))+'</td>';
+					str+='<td id="'+summary.MarketName+'_low_bittrex">'+format_numbers(parseFloat(summary.Low).toFixed(8))+'</td>';
+					str+='<td id="'+summary.MarketName+'_volume_bittrex">'+format_numbers(parseFloat(summary.Volume).toFixed(2))+'</td>';
+					str+='<td id="'+summary.MarketName+'_base_volume_bittrex">'+format_numbers(parseFloat(summary.BaseVolume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.MarketName+'_bittrex"><input type="hidden" id="hidden_'+summary.MarketName+'_bittrex" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+					
+				case 'bitfinex':
+					data.forEach(function(summary,index){
+						var even_odd_class='even';
+						if(index%2==0){
+							even_odd_class='odd';
+						}
+						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product_id+'_bitfinex">';
+						str+='<td class="text-bold">';
+						str+='<img src="/images/currencies/'+summary.product_id.substr(0,3)+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
+						//str+=summary.product_id.substr(0,3).toUpperCase();
+						str+=summary.full_name;
+						str+='</a>';
+						str+='</td>';
+						str+='<td class="text-bold">';
+						str+='<a href="/volume-24-hour-market/'+summary.product_id.toUpperCase()+'">';
+						str+=summary.product_id.toUpperCase();
+						str+='</a>';
+						str+='</td>';
+						str+='<td id="'+summary.product_id+'_price_bitfinex">';
+						if(summary.last_price>summary.bid){
+						str+='<span class="green-text">'+format_numbers(parseFloat(summary.last_price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 						}else{
-						str+='<span class="market-down-text">'+parseFloat(ticker.percent_change_1h).toFixed(2)+'</span>';
+						str+='<span class="red-text">'+format_numbers(parseFloat(summary.last_price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 						}
 						str+='</td>';
-						str+='<td id="'+ticker.name+'_change_24h_coinmarket">';
-						if(ticker.percent_change_24h>0){
-						str+='<span class="market-up-text">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>';
-						}else{
-						str+='<span class="market-down-text">'+parseFloat(ticker.percent_change_24h).toFixed(2)+'</span>';
-						}
-						str+='</td>';
-						str+='<td id="'+ticker.name+'_24h_volume_coinmarket">'+format_numbers(parseFloat(ticker['24h_volume_usd']).toFixed(2))+'</td>';
+						str+='<td id="'+summary.product_id+'_high_bitfinex">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
+						str+='<td id="'+summary.product_id+'_low_bitfinex">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
+						str+='<td id="'+summary.product_id+'_volume_bitfinex">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
 						str+='<td>';
 						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+ticker.name+'_coinmarket"><input type="hidden" id="hidden_'+ticker.name+'_coinmarket" value="'+ticker.chart+'" /></div>';
+						str+='<div class="col-md-12" id="chart_'+summary.product_id+'_bitfinex"><input type="hidden" id="hidden_'+summary.product_id+'_bitfinex" value="'+summary.chart+'" /></div>';
 						str+='</div>';
 						str+='</td>';
 						str+='</tr>';
-						});	
-					break;
-					case 'bittrex':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.MarketName+'_bittrex">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.BaseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.BaseCurrency+'">';
-						//str+=summary.BaseCurrency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">'
-						str+='<a href="/volume-24-hour-market/'+summary.MarketName.replace('-','')+'">';
-						str+=summary.MarketName.replace('-','');
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.MarketName+'_bid_bittrex">';
-						if(summary.Last>summary.Bid){
-						str+='<span class="green-text">'+format_numbers(parseFloat(summary.Last).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(summary.Last).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.MarketName+'_high_bittrex">'+format_numbers(parseFloat(summary.High).toFixed(8))+'</td>';
-						str+='<td id="'+summary.MarketName+'_low_bittrex">'+format_numbers(parseFloat(summary.Low).toFixed(8))+'</td>';
-						str+='<td id="'+summary.MarketName+'_volume_bittrex">'+format_numbers(parseFloat(summary.Volume).toFixed(2))+'</td>';
-						str+='<td id="'+summary.MarketName+'_base_volume_bittrex">'+format_numbers(parseFloat(summary.BaseVolume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.MarketName+'_bittrex"><input type="hidden" id="hidden_'+summary.MarketName+'_bittrex" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-						
-					case 'bitfinex':
-						data.forEach(function(summary,index){
-							var even_odd_class='even';
-							if(index%2==0){
-								even_odd_class='odd';
-							}
-							str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product_id+'_bitfinex">';
-							str+='<td class="text-bold">';
-							str+='<img src="/images/currencies/'+summary.product_id.substr(0,3)+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-							str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product_id.substr(0,3).toUpperCase()+'">';
-							//str+=summary.product_id.substr(0,3).toUpperCase();
-							str+=summary.full_name;
-							str+='</a>';
-							str+='</td>';
-							str+='<td class="text-bold">';
-							str+='<a href="/volume-24-hour-market/'+summary.product_id.toUpperCase()+'">';
-							str+=summary.product_id.toUpperCase();
-							str+='</a>';
-							str+='</td>';
-							str+='<td id="'+summary.product_id+'_price_bitfinex">';
-							if(summary.last_price>summary.bid){
-							str+='<span class="green-text">'+format_numbers(parseFloat(summary.last_price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-							}else{
-							str+='<span class="red-text">'+format_numbers(parseFloat(summary.last_price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-							}
-							str+='</td>';
-							str+='<td id="'+summary.product_id+'_high_bitfinex">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
-							str+='<td id="'+summary.product_id+'_low_bitfinex">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
-							str+='<td id="'+summary.product_id+'_volume_bitfinex">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-							str+='<td>';
-							str+='<div class="row">';
-							str+='<div class="col-md-12" id="chart_'+summary.product_id+'_bitfinex"><input type="hidden" id="hidden_'+summary.product_id+'_bitfinex" value="'+summary.chart+'" /></div>';
-							str+='</div>';
-							str+='</td>';
-							str+='</tr>';
-						});
-					break;
-					case 'hitbtc':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_hitbtc">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.baseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseCurrency+'">';
-						//str+=summary.baseCurrency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.symbol+'">';
-						str+=summary.symbol;
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.symbol+'_bid_hitbtc">';
-						if(summary.last>summary.bid){
-						str+='<span class="green-text">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
-						}else{
-						str+='<span class="red-text">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
-						}
-						str+='</td>';
-						str+='<td id="'+summary.symbol+'_high_hitbtc">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
-						str+='<td id="'+summary.symbol+'_low_hitbtc">'+format_numbers(parseFloat(summary.low).toFixed(10))+'</td>';
-						str+='<td id="'+summary.symbol+'_volume_hitbtc">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td id="'+summary.symbol+'_volume_quote_hitbtc">'+format_numbers(parseFloat(summary.volumeQuote).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.symbol+'_hitbtc"><input type="hidden" id="hidden_'+summary.symbol+'_hitbtc" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'gate':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_gate">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
-						//str+=summary.product.split('_',1).join().toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_last_gate">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_highest_gate">'+format_numbers(parseFloat(summary.highestBid).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_lowest_gate">'+format_numbers(parseFloat(summary.lowestAsk).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_volume_gate">'+format_numbers(parseFloat(summary.baseVolume).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_volume_quote_gate">'+format_numbers(parseFloat(summary.quoteVolume).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_high_24h_gate">'+format_numbers(parseFloat(summary.high24hr).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_low_24h_gate">'+format_numbers(parseFloat(summary.low24hr).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_percentage_change_gate">';
-						if(parseFloat(summary.percentChange)>0){
-						str+='<span class="market-up-text">';
-						str+=parseFloat(summary.percentChange).toFixed(2);
-						str+='</span>';
-						}else{
-						str+='<span class="market-down-text">';
-						str+=parseFloat(summary.percentChange).toFixed(2);
-						str+='</span>';
-						}
-						str+='</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_gate"><input type="hidden" id="hidden_'+summary.product+'_gate" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'kuna':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_kuna">';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
-						str+=summary.product.toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_kuna">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</td>';
-						str+='<td id="'+summary.product+'_high_kuna">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
-						str+='<td id="'+summary.product+'_low_kuna">'+format_numbers(parseFloat(summary.low).toFixed(10))+'</td>';
-						str+='<td id="'+summary.product+'_vol_kuna">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_kuna"><input type="hidden" id="hidden_'+summary.product+'_kuna" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'okex':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_okex">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
-						//str+=summary.product.split('_',1).join().toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_okex">'+format_numbers(parseFloat(summary.ticker.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_high_okex">'+format_numbers(parseFloat(summary.ticker.high).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_low_okex">'+format_numbers(parseFloat(summary.ticker.low).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_okex">'+format_numbers(parseFloat(summary.ticker.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_okex"><input type="hidden" id="hidden_'+summary.product+'_okex" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'binance':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_binance">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.baseAsset+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseAsset+'">';
-						//str+=summary.baseAsset;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.symbol+'">';
-						str+=summary.symbol;
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.symbol+'_price_binance">'+format_numbers(parseFloat(summary.lastPrice).toFixed(8))+'</td>';
-						str+='<td id="'+summary.symbol+'_high_binance">'+format_numbers(parseFloat(summary.highPrice).toFixed(8))+'</td>';
-						str+='<td id="'+summary.symbol+'_low_binance">'+format_numbers(parseFloat(summary.lowPrice).toFixed(8))+'</td>';
-						str+='<td id="'+summary.symbol+'_vol_binance">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.symbol+'_binance"><input type="hidden" id="hidden_'+summary.symbol+'_binance" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'huobi':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_huobi">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
-						str+=summary.product.toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_huobi">'+format_numbers(parseFloat(summary.tick.bid[0]).toFixed(10))+'</td>';
-						str+='<td id="'+summary.product+'_high_huobi">'+format_numbers(parseFloat(summary.tick.high).toFixed(10))+'</td>';
-						str+='<td id="'+summary.product+'_low_huobi">'+format_numbers(parseFloat(summary.tick.low).toFixed(10))+'</td>';
-						str+='<td id="'+summary.product+'_vol_huobi">'+format_numbers(parseFloat(summary.tick.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_huobi"><input type="hidden" id="hidden_'+summary.product+'_huobi" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'gemini':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_gemini">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.currency+'">';
-						//str+=summary.currency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
-						str+=summary.product.toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_gemini">'+format_numbers(parseFloat(summary.last).toFixed(5))+'</td>';
-						str+='<td id="'+summary.product+'_vol_gemini">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_gemini"><input type="hidden" id="hidden_'+summary.product+'_gemini" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'kraken':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_kraken">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						//str+=summary.base_currency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product+'">';
-						str+=summary.product;
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_kraken">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_high_kraken">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_low_kraken">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_kraken">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_kraken"><input type="hidden" id="hidden_'+summary.product+'_kraken" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'bitflyer':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitflyer">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						//str+=summary.base_currency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','')+'">';
-						str+=summary.product.replace('_','');
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bitflyer">'+format_numbers(parseFloat(summary.best_bid).toFixed(5))+'</td>';
-						str+='<td id="'+summary.product+'_vol_bitflyer">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_bitflyer"><input type="hidden" id="hidden_'+summary.product+'_bitflyer" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'bithumb':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bithumb">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						//str+=summary.base_currency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product+'">';
-						str+=summary.product;
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bithumb">'+format_numbers(parseFloat(summary.buy_price).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_vol_bithumb">'+format_numbers(parseFloat(summary.volume_1day).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_bithumb"><input type="hidden" id="hidden_'+summary.product+'_bithumb" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'bitstamp':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitstamp">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
-						//str+=summary.base_currency;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
-						str+=summary.product.toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bitstamp">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_bitstamp">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_bitstamp"><input type="hidden" id="hidden_'+summary.product+'_bitstamp" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'bitz':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						if(summary.base_currency && summary.product){
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitz">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_bitz">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_bitz">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_bitz"><input type="hidden" id="hidden_'+summary.product+'_bitz" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						}
-						});
-					break;
-					case 'lbank':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_lbank">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('_','').toUpperCase()+'">';
-						str+=summary.symbol.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.symbol+'_price_lbank">'+format_numbers(parseFloat(summary.ticker.latest).toFixed(8))+'</td>';
-						str+='<td id="'+summary.symbol+'_vol_lbank">'+format_numbers(parseFloat(summary.ticker.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.symbol+'_lbank"><input type="hidden" id="hidden_'+summary.symbol+'_lbank" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'coinone':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_coinone">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
-						str+=summary.product.toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_coinone">'+format_numbers(parseFloat(summary.last).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_vol_coinone">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_coinone"><input type="hidden" id="hidden_'+summary.product+'_coinone" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'wex':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_wex">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_wex">'+format_numbers(parseFloat(summary.last).toFixed(5))+'</td>';
-						str+='<td id="'+summary.product+'_vol_wex">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_wex"><input type="hidden" id="hidden_'+summary.product+'_wex" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'exmo':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						if(summary.base_currency && summary.product){
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_exmo">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_exmo">'+format_numbers(parseFloat(summary.last_trade).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_exmo">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_exmo"><input type="hidden" id="hidden_'+summary.product+'_exmo" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						}
-						});
-					break;
-					case 'liqui':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						if(summary.base_currency && summary.product){
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_liqui">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td class="text-bold">';
-						str+='<td>';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_liqui">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_liqui">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_liqui"><input type="hidden" id="hidden_'+summary.product+'_liqui" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						}
-						});
-					break;
-					case 'korbit':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_korbit">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_korbit">'+format_numbers(parseFloat(summary.last).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_vol_korbit">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_korbit"><input type="hidden" id="hidden_'+summary.product+'_korbit" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'bitmex':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_bitmex">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('_','').toUpperCase()+'">';
-						str+=summary.symbol.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.symbol+'_price_bitmex">'+format_numbers(parseFloat(summary.lastPrice).toFixed(2))+'</td>';
-						str+='<td id="'+summary.symbol+'_vol_bitmex">'+format_numbers(parseFloat(summary.totalVolume).toFixed(2))+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.symbol+'_bitmex"><input type="hidden" id="hidden_'+summary.symbol+'_bitmex" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'livecoin':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_livecoin">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
-						str+=summary.product.replace('_','').toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_livecoin">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
-						str+='<td id="'+summary.product+'_vol_livecoin">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
-						str+='<td id="'+summary.product+'_livecoin_high">'+summary.high+'</td>';
-						str+='<td id="'+summary.product+'_livecoin_low">'+summary.low+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_livecoin"><input type="hidden" id="hidden_'+summary.product+'_livecoin" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'cex':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_cex">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
-						//str+=summary.base_currency.toUpperCase();
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
-						str+=summary.product.toUpperCase();
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.product+'_price_cex">'+parseFloat(summary.last)+'</td>';
-						str+='<td id="'+summary.product+'_vol_cex">'+Math.round(parseFloat(summary.volume))+'</td>';
-						str+='<td id="'+summary.product+'_high_cex">'+summary.high+'</td>';
-						str+='<td id="'+summary.product+'_low_cex">'+summary.low+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.product+'_cex"><input type="hidden" id="hidden_'+summary.product+'_cex" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-					case 'kucoin':
-						data.forEach(function(summary,index){
-						var even_odd_class='even';
-						if(index%2==0){
-							even_odd_class='odd';
-						}
-						str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol.replace('-','')+'_kucoin">';
-						str+='<td class="text-bold">';
-						str+='<img src="/images/currencies/'+summary.coinType.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
-						str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.coinType+'">';
-						//str+=summary.coinType;
-						str+=summary.full_name;
-						str+='</a>';
-						str+='</td>';
-						str+='<td class="text-bold">';
-						str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('-','')+'">';
-						str+=summary.symbol.replace('-','');
-						str+='</a>';
-						str+='</td>';
-						str+='<td id="'+summary.symbol.replace('-','')+'_price_kucoin">'+parseFloat(summary.lastDealPrice)+'</td>';
-						str+='<td id="'+summary.symbol.replace('-','')+'_vol_kucoin">'+Math.round(parseFloat(summary.vol))+'</td>';
-						str+='<td id="'+summary.symbol.replace('-','')+'_high_kucoin">'+summary.high+'</td>';
-						str+='<td id="'+summary.symbol.replace('-','')+'_low_kucoin">'+summary.low+'</td>';
-						str+='<td>';
-						str+='<div class="row">';
-						str+='<div class="col-md-12" id="chart_'+summary.symbol.replace('-','')+'_kucoin"><input type="hidden" id="hidden_'+summary.symbol.replace('-','')+'_kucoin" value="'+summary.chart+'" /></div>';
-						str+='</div>';
-						str+='</td>';
-						str+='</tr>';
-						});
-					break;
-				}
-				$("#market_summary").html(str);
-				if(data.length>=50){
-					$("#exchange_data_details_link").css({'display':'block'});
-				}
-				initialize_table();
-				draw_chart();
+					});
+				break;
+				case 'hitbtc':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_hitbtc">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.baseCurrency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseCurrency+'">';
+					//str+=summary.baseCurrency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.symbol+'">';
+					str+=summary.symbol;
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.symbol+'_bid_hitbtc">';
+					if(summary.last>summary.bid){
+					str+='<span class="green-text">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+					}else{
+					str+='<span class="red-text">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+					}
+					str+='</td>';
+					str+='<td id="'+summary.symbol+'_high_hitbtc">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
+					str+='<td id="'+summary.symbol+'_low_hitbtc">'+format_numbers(parseFloat(summary.low).toFixed(10))+'</td>';
+					str+='<td id="'+summary.symbol+'_volume_hitbtc">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td id="'+summary.symbol+'_volume_quote_hitbtc">'+format_numbers(parseFloat(summary.volumeQuote).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.symbol+'_hitbtc"><input type="hidden" id="hidden_'+summary.symbol+'_hitbtc" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'gate':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_gate">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
+					//str+=summary.product.split('_',1).join().toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_last_gate">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_highest_gate">'+format_numbers(parseFloat(summary.highestBid).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_lowest_gate">'+format_numbers(parseFloat(summary.lowestAsk).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_volume_gate">'+format_numbers(parseFloat(summary.baseVolume).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_volume_quote_gate">'+format_numbers(parseFloat(summary.quoteVolume).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_high_24h_gate">'+format_numbers(parseFloat(summary.high24hr).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_low_24h_gate">'+format_numbers(parseFloat(summary.low24hr).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_percentage_change_gate">';
+					if(parseFloat(summary.percentChange)>0){
+					str+='<span class="market-up-text">';
+					str+=parseFloat(summary.percentChange).toFixed(2);
+					str+='</span>';
+					}else{
+					str+='<span class="market-down-text">';
+					str+=parseFloat(summary.percentChange).toFixed(2);
+					str+='</span>';
+					}
+					str+='</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_gate"><input type="hidden" id="hidden_'+summary.product+'_gate" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'kuna':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_kuna">';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+					str+=summary.product.toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_kuna">'+format_numbers(parseFloat(summary.last).toFixed(10))+'</td>';
+					str+='<td id="'+summary.product+'_high_kuna">'+format_numbers(parseFloat(summary.high).toFixed(10))+'</td>';
+					str+='<td id="'+summary.product+'_low_kuna">'+format_numbers(parseFloat(summary.low).toFixed(10))+'</td>';
+					str+='<td id="'+summary.product+'_vol_kuna">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_kuna"><input type="hidden" id="hidden_'+summary.product+'_kuna" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'okex':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_okex">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.product.split('_',1).join()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.product.split('_',1).join().toUpperCase()+'">';
+					//str+=summary.product.split('_',1).join().toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_okex">'+format_numbers(parseFloat(summary.ticker.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_high_okex">'+format_numbers(parseFloat(summary.ticker.high).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_low_okex">'+format_numbers(parseFloat(summary.ticker.low).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_okex">'+format_numbers(parseFloat(summary.ticker.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_okex"><input type="hidden" id="hidden_'+summary.product+'_okex" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'binance':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_binance">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.baseAsset+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.baseAsset+'">';
+					//str+=summary.baseAsset;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.symbol+'">';
+					str+=summary.symbol;
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.symbol+'_price_binance">'+format_numbers(parseFloat(summary.lastPrice).toFixed(8))+'</td>';
+					str+='<td id="'+summary.symbol+'_high_binance">'+format_numbers(parseFloat(summary.highPrice).toFixed(8))+'</td>';
+					str+='<td id="'+summary.symbol+'_low_binance">'+format_numbers(parseFloat(summary.lowPrice).toFixed(8))+'</td>';
+					str+='<td id="'+summary.symbol+'_vol_binance">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.symbol+'_binance"><input type="hidden" id="hidden_'+summary.symbol+'_binance" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'huobi':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_huobi">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+					str+=summary.product.toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_huobi">'+format_numbers(parseFloat(summary.tick.bid[0]).toFixed(10))+'</td>';
+					str+='<td id="'+summary.product+'_high_huobi">'+format_numbers(parseFloat(summary.tick.high).toFixed(10))+'</td>';
+					str+='<td id="'+summary.product+'_low_huobi">'+format_numbers(parseFloat(summary.tick.low).toFixed(10))+'</td>';
+					str+='<td id="'+summary.product+'_vol_huobi">'+format_numbers(parseFloat(summary.tick.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_huobi"><input type="hidden" id="hidden_'+summary.product+'_huobi" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'gemini':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_gemini">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.currency+'">';
+					//str+=summary.currency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+					str+=summary.product.toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_gemini">'+format_numbers(parseFloat(summary.last).toFixed(5))+'</td>';
+					str+='<td id="'+summary.product+'_vol_gemini">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_gemini"><input type="hidden" id="hidden_'+summary.product+'_gemini" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'kraken':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_kraken">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+					//str+=summary.base_currency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product+'">';
+					str+=summary.product;
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_kraken">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_high_kraken">'+format_numbers(parseFloat(summary.high).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_low_kraken">'+format_numbers(parseFloat(summary.low).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_kraken">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_kraken"><input type="hidden" id="hidden_'+summary.product+'_kraken" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'bitflyer':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitflyer">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+					//str+=summary.base_currency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','')+'">';
+					str+=summary.product.replace('_','');
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_bitflyer">'+format_numbers(parseFloat(summary.best_bid).toFixed(5))+'</td>';
+					str+='<td id="'+summary.product+'_vol_bitflyer">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_bitflyer"><input type="hidden" id="hidden_'+summary.product+'_bitflyer" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'bithumb':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bithumb">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+					//str+=summary.base_currency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product+'">';
+					str+=summary.product;
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_bithumb">'+format_numbers(parseFloat(summary.buy_price).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_vol_bithumb">'+format_numbers(parseFloat(summary.volume_1day).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_bithumb"><input type="hidden" id="hidden_'+summary.product+'_bithumb" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'bitstamp':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitstamp">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+					//str+=summary.base_currency;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+					str+=summary.product.toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_bitstamp">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_bitstamp">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_bitstamp"><input type="hidden" id="hidden_'+summary.product+'_bitstamp" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'bitz':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					if(summary.base_currency && summary.product){
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_bitz">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_bitz">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_bitz">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_bitz"><input type="hidden" id="hidden_'+summary.product+'_bitz" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					}
+					});
+				break;
+				case 'lbank':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_lbank">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('_','').toUpperCase()+'">';
+					str+=summary.symbol.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.symbol+'_price_lbank">'+format_numbers(parseFloat(summary.ticker.latest).toFixed(8))+'</td>';
+					str+='<td id="'+summary.symbol+'_vol_lbank">'+format_numbers(parseFloat(summary.ticker.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.symbol+'_lbank"><input type="hidden" id="hidden_'+summary.symbol+'_lbank" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'coinone':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_coinone">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+					str+=summary.product.toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_coinone">'+format_numbers(parseFloat(summary.last).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_vol_coinone">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_coinone"><input type="hidden" id="hidden_'+summary.product+'_coinone" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'wex':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_wex">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_wex">'+format_numbers(parseFloat(summary.last).toFixed(5))+'</td>';
+					str+='<td id="'+summary.product+'_vol_wex">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_wex"><input type="hidden" id="hidden_'+summary.product+'_wex" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'exmo':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					if(summary.base_currency && summary.product){
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_exmo">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_exmo">'+format_numbers(parseFloat(summary.last_trade).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_exmo">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_exmo"><input type="hidden" id="hidden_'+summary.product+'_exmo" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					}
+					});
+				break;
+				case 'liqui':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					if(summary.base_currency && summary.product){
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_liqui">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td class="text-bold">';
+					str+='<td>';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_liqui">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_liqui">'+format_numbers(parseFloat(summary.vol).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_liqui"><input type="hidden" id="hidden_'+summary.product+'_liqui" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					}
+					});
+				break;
+				case 'korbit':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_korbit">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_korbit">'+format_numbers(parseFloat(summary.last).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_vol_korbit">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_korbit"><input type="hidden" id="hidden_'+summary.product+'_korbit" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'bitmex':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol+'_bitmex">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('_','').toUpperCase()+'">';
+					str+=summary.symbol.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.symbol+'_price_bitmex">'+format_numbers(parseFloat(summary.lastPrice).toFixed(2))+'</td>';
+					str+='<td id="'+summary.symbol+'_vol_bitmex">'+format_numbers(parseFloat(summary.totalVolume).toFixed(2))+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.symbol+'_bitmex"><input type="hidden" id="hidden_'+summary.symbol+'_bitmex" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'livecoin':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_livecoin">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.replace('_','').toUpperCase()+'">';
+					str+=summary.product.replace('_','').toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_livecoin">'+format_numbers(parseFloat(summary.last).toFixed(8))+'</td>';
+					str+='<td id="'+summary.product+'_vol_livecoin">'+format_numbers(parseFloat(summary.volume).toFixed(2))+'</td>';
+					str+='<td id="'+summary.product+'_livecoin_high">'+summary.high+'</td>';
+					str+='<td id="'+summary.product+'_livecoin_low">'+summary.low+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_livecoin"><input type="hidden" id="hidden_'+summary.product+'_livecoin" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'cex':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.product+'_cex">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency.toUpperCase()+'">';
+					//str+=summary.base_currency.toUpperCase();
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.product.toUpperCase()+'">';
+					str+=summary.product.toUpperCase();
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.product+'_price_cex">'+parseFloat(summary.last)+'</td>';
+					str+='<td id="'+summary.product+'_vol_cex">'+Math.round(parseFloat(summary.volume))+'</td>';
+					str+='<td id="'+summary.product+'_high_cex">'+summary.high+'</td>';
+					str+='<td id="'+summary.product+'_low_cex">'+summary.low+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.product+'_cex"><input type="hidden" id="hidden_'+summary.product+'_cex" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'kucoin':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.symbol.replace('-','')+'_kucoin">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.coinType.toLowerCase()+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.coinType+'">';
+					//str+=summary.coinType;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.symbol.replace('-','')+'">';
+					str+=summary.symbol.replace('-','');
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.symbol.replace('-','')+'_price_kucoin">'+parseFloat(summary.lastDealPrice)+'</td>';
+					str+='<td id="'+summary.symbol.replace('-','')+'_vol_kucoin">'+Math.round(parseFloat(summary.vol))+'</td>';
+					str+='<td id="'+summary.symbol.replace('-','')+'_high_kucoin">'+summary.high+'</td>';
+					str+='<td id="'+summary.symbol.replace('-','')+'_low_kucoin">'+summary.low+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.symbol.replace('-','')+'_kucoin"><input type="hidden" id="hidden_'+summary.symbol.replace('-','')+'_kucoin" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
 			}
-		});
-	}	
+			$("#market_summary").html(str);
+			if(currency){
+				$("#exchange_data_details_link").css({'display':'none'});
+			}
+			else if(data.length>=50){
+				$("#exchange_data_details_link").css({'display':'block'});
+			}
+			initialize_table(currency);
+			whether_total_crypto_table_initialized=true;
+			draw_chart();
+		}
+	});
 }
 </script>

@@ -84,7 +84,7 @@ module.exports = {
 		});	
 	},
 	
-	bittrexMarketData:function(count=0){
+	bittrexMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bittrex'},function(err, bittrexExchange){
@@ -96,7 +96,12 @@ module.exports = {
 						if(!_.isEmpty(bittrexTickers)){
 							bittrexTickers=bittrexTickers.tickers.result;
 							bittrexTickers.sort(function(a,b){ if(parseFloat(a.Volume)>parseFloat(b.Volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								bittrexTickers=_.filter(bittrexTickers,{BaseCurrency:currency});
+							}
+							else if(count>0){
 								bittrexTickers=_.slice(bittrexTickers,0,count);
 							}
 							
@@ -130,7 +135,7 @@ module.exports = {
 		});
 	},
 	
-	coinmarketcapMarketData:function(count=0){
+	coinmarketcapMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'coinmarketcap'},function(err, coinmarketcapExchange){
@@ -142,7 +147,12 @@ module.exports = {
 						if(!_.isEmpty(coinMarketTickers)){
 							coinMarketTickers=coinMarketTickers.tickers;
 							coinMarketTickers.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								coinMarketTickers=_.filter(coinMarketTickers,{symbol:currency});
+							}
+							else if(count>0){
 								coinMarketTickers=_.slice(coinMarketTickers,0,count);
 							}
 							ExchangeDataService.currencyFullNames().then(full_names => {
@@ -174,7 +184,7 @@ module.exports = {
 		});	
 	},
 	
-	bitfinexMarketData:function(count=0){
+	bitfinexMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bitfinex'},function(err, bitfinexExchange){
@@ -186,7 +196,18 @@ module.exports = {
 						if(!_.isEmpty(bitfinexTickers)){
 							bitfinexTickers=bitfinexTickers.tickers;
 							bitfinexTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								var temp=[];
+								_.forEach(bitfinexTickers,function(ticker){
+									if(ticker.product_id.substr(0,3)==currency){
+										temp.push(ticker);
+									}
+								});
+								bitfinexTickers=temp;
+							}
+							else if(count>0){
 								bitfinexTickers=_.slice(bitfinexTickers,0,count);
 							}
 							
@@ -220,7 +241,7 @@ module.exports = {
 		});
 	},
 	
-	hitbtcMarketData:function(count=0){
+	hitbtcMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'hitbtc'},function(err, hitbtcExchange){
@@ -232,7 +253,12 @@ module.exports = {
 						if(!_.isEmpty(hitbtcTickers)){
 							hitbtcTickers=hitbtcTickers.tickers;
 							hitbtcTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								hitbtcTickers=_.filter(hitbtcTickers,{baseCurrency:currency});
+							}
+							else if(count>0){
 								hitbtcTickers=_.slice(hitbtcTickers,0,count);
 							}
 							
@@ -266,7 +292,7 @@ module.exports = {
 		});	
 	},
 	
-	gateMarketData:function(count=0){
+	gateMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve, reject){
 			ExchangeList.findOne({name:'gate'},function(err, gateExchange){
@@ -278,7 +304,18 @@ module.exports = {
 						if(!_.isEmpty(gateTickers)){
 							gateTickers=gateTickers.tickers;
 							gateTickers.sort(function(a,b){ if(parseFloat(a.baseVolume)>parseFloat(b.baseVolume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								var temp=[];
+								_.forEach(gateTickers,function(ticker){
+									if(_.join(_.split(ticker.product,'_',1))==currency){
+										temp.push(ticker);
+									}
+								});
+								gateTickers=temp;
+							}
+							else if(count>0){
 								gateTickers=_.slice(gateTickers,0,count);
 							}
 							
@@ -312,7 +349,7 @@ module.exports = {
 		});
 	},
 	
-	kunaMarketData:function(count=0){
+	kunaMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'kuna'},function(err, kunaExchange){
@@ -324,7 +361,18 @@ module.exports = {
 						if(!_.isEmpty(kunaTickers)){
 							kunaTickers=kunaTickers.tickers;
 							kunaTickers.sort(function(a,b){if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								var temp=[];
+								_.forEach(kunaTickers,function(ticker){ 
+									if(ticker.product.indexOf(currency)>=0){
+										temp.push(ticker);
+									}
+								});
+								kunaTickers=temp;
+							}
+							else if(count>0){
 								kunaTickers=_.slice(kunaTickers,0,count);
 							}
 							
@@ -342,7 +390,7 @@ module.exports = {
 		});
 	},
 	
-	okexMarketData:function(count=0){
+	okexMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve, reject) {
 			ExchangeList.findOne({name:'okex'},function(err, okexExchange){
@@ -355,7 +403,18 @@ module.exports = {
 						if(!_.isEmpty(okexTickers)){
 							var okexTickers=okexTickers.tickers;
 							okexTickers.sort(function(a,b){ if(parseFloat(a.ticker.vol)>parseFloat(b.ticker.vol)){return -1;}else{ return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								var temp=[];
+								_.forEach(okexTickers,function(ticker){ 
+									if(_.join(_.split(ticker.product,'_',1))==currency){
+										temp.push(ticker);
+									}
+								});
+								okexTickers=temp;
+							}
+							else if(count>0){
 								okexTickers=_.slice(okexTickers,0,count);
 							}
 							
@@ -389,7 +448,7 @@ module.exports = {
 		});	
 	},
 	
-	binanceMarketData:function(count=0){
+	binanceMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve, reject) {
 			ExchangeList.findOne({name:'binance'},function(err, binanceExchange){
@@ -401,7 +460,12 @@ module.exports = {
 						if(!_.isEmpty(binanceTickers)){
 							binanceTickers=binanceTickers.tickers;
 							binanceTickers.sort(function(a,b){if(parseFloat(a.volume)>parseFloat(b.volume)){ return -1;}else{ return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								binanceTickers=_.filter(binanceTickers,{baseAsset:currency});
+							}
+							else if(count>0){
 								binanceTickers=_.slice(binanceTickers,0,count);
 							}
 							
@@ -434,7 +498,7 @@ module.exports = {
 		});
 	},
 	
-	huobiMarketData:function(count=0){
+	huobiMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve, reject){
 			ExchangeList.findOne({name:'huobi'}, function(err, huobiExchange){
@@ -446,7 +510,12 @@ module.exports = {
 						if(!_.isEmpty(huobiTickers)){
 							huobiTickers=huobiTickers.tickers;
 							huobiTickers.sort(function(a,b){ if(parseFloat(a.tick.vol)>parseFloat(b.tick.vol)){ return -1;}else{ return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								huobiTickers=_.filter(huobiTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								huobiTickers=_.slice(huobiTickers,0,count);
 							}
 							
@@ -479,7 +548,7 @@ module.exports = {
 		});
 	},
 	
-	geminiMarketData:function(count=0){
+	geminiMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve, reject){
 			ExchangeList.findOne({name:'gemini'}, function(err, geminiExchange){
@@ -492,7 +561,12 @@ module.exports = {
 						if(!_.isEmpty(geminiTickers)){
 							geminiTickers=geminiTickers.tickers;
 							geminiTickers.sort(function(a,b){if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else{ return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								geminiTickers=_.filter(geminiTickers,{currency:currency});
+							}
+							else if(count>0){
 								geminiTickers=_.slice(geminiTickers,0,count);
 							}
 							
@@ -525,7 +599,7 @@ module.exports = {
 		});
 	},
 	
-	krakenMarketData:function(count=0){
+	krakenMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'kraken'},function(err, krakenExchange){
@@ -537,7 +611,12 @@ module.exports = {
 						if(!_.isEmpty(krakenTickers)){
 							krakenTickers=krakenTickers.tickers;
 							krakenTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								krakenTickers=_.filter(krakenTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								krakenTickers=_.slice(krakenTickers,0,count);
 							}
 							
@@ -570,7 +649,7 @@ module.exports = {
 		});
 	},
 	
-	bitflyerMarketData:function(count){
+	bitflyerMarketData:function(count,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bitflyer'},function(err, bitflyerExchange){
@@ -582,7 +661,12 @@ module.exports = {
 						if(!_.isEmpty(bitflyerTickers)){
 							bitflyerTickers=bitflyerTickers.tickers;
 							bitflyerTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								bitflyerTickers=_.filter(bitflyerTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								bitflyerTickers=_.slice(bitflyerTickers,0,count);
 							}
 							
@@ -615,7 +699,7 @@ module.exports = {
 		});
 	},
 	
-	bithumbMarketData:function(count=0){
+	bithumbMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bithumb'},function(err, bithumbExchange){
@@ -627,7 +711,12 @@ module.exports = {
 						if(!_.isEmpty(bithumbTickers)){
 							bithumbTickers=bithumbTickers.tickers;
 							bithumbTickers.sort(function(a,b){ if(parseFloat(a.volume_1day)>parseFloat(b.volume_1day)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								bithumbTickers=_.filter(bithumbTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								bithumbTickers=_.slice(bithumbTickers,0,count);
 							}
 							
@@ -660,7 +749,7 @@ module.exports = {
 		});
 	},
 	
-	bitstampMarketData:function(count=0){
+	bitstampMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bitstamp'},function(err, bitstampExchange){
@@ -672,7 +761,12 @@ module.exports = {
 						if(!_.isEmpty(bitstampTickers)){
 							bitstampTickers=bitstampTickers.tickers;
 							bitstampTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								bitstampTickers=_.filter(bitstampTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								bitstampTickers=_.slice(bitstampTickers,0,count);
 							}
 							
@@ -705,7 +799,7 @@ module.exports = {
 		});
 	},
 	
-	bitzMarketData:function(count=0){
+	bitzMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bitz'},function(err, bitzExchange){
@@ -717,7 +811,12 @@ module.exports = {
 						if(!_.isEmpty(bitzTickers)){
 							bitzTickers=bitzTickers.tickers;
 							bitzTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								bitzTickers=_.filter(bitzTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								bitzTickers=_.slice(bitzTickers,0,count);
 							}
 							
@@ -750,7 +849,7 @@ module.exports = {
 		});
 	},
 	
-	lbankMarketData:function(count=0){
+	lbankMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'lbank'},function(err, lbankExchange){
@@ -762,7 +861,12 @@ module.exports = {
 						if(!_.isEmpty(lbankTickers)){
 							lbankTickers=lbankTickers.tickers;
 							lbankTickers.sort(function(a,b){ if(parseFloat(a.ticker.vol)>parseFloat(b.ticker.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								lbankTickers=_.filter(lbankTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								lbankTickers=_.slice(lbankTickers,0,count);
 							}
 							
@@ -795,7 +899,7 @@ module.exports = {
 		});
 	},
 	
-	coinoneMarketData:function(count=0){
+	coinoneMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'coinone'},function(err, coinoneExchange){
@@ -807,7 +911,12 @@ module.exports = {
 						if(!_.isEmpty(coinoneTickers)){
 							coinoneTickers=coinoneTickers.tickers;
 							coinoneTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								coinoneTickers=_.filter(coinoneTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								coinoneTickers=_.slice(coinoneTickers,0,count);
 							}
 							
@@ -840,7 +949,7 @@ module.exports = {
 		});
 	},
 	
-	wexMarketData:function(count=0){
+	wexMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'wex'},function(err, wexExchange){
@@ -852,7 +961,12 @@ module.exports = {
 						if(!_.isEmpty(wexTickers)){
 							wexTickers=wexTickers.tickers;
 							wexTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								wexTickers=_.filter(wexTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								wexTickers=_.slice(wexTickers,0,count);
 							}
 							
@@ -885,7 +999,7 @@ module.exports = {
 		});
 	},
 	
-	exmoMarketData:function(count=0){
+	exmoMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'exmo'},function(err, exmoExchange){
@@ -897,7 +1011,12 @@ module.exports = {
 						if(!_.isEmpty(exmoTickers)){
 							exmoTickers=exmoTickers.tickers;
 							exmoTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								exmoTickers=_.filter(exmoTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								exmoTickers=_.slice(exmoTickers,0,count);
 							}
 							
@@ -930,7 +1049,7 @@ module.exports = {
 		});
 	},
 	
-	liquiMarketData:function(count=0){
+	liquiMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'liqui'},function(err, liquiExchange){
@@ -942,7 +1061,12 @@ module.exports = {
 						if(!_.isEmpty(liquiTickers)){
 							liquiTickers=liquiTickers.tickers;
 							liquiTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								liquiTickers=_.filter(liquiTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								liquiTickers=_.slice(liquiTickers,0,count);
 							}
 							
@@ -975,7 +1099,7 @@ module.exports = {
 		});
 	},
 	
-	korbitMarketData:function(count=0){
+	korbitMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'korbit'},function(err, korbitExchange){
@@ -987,7 +1111,12 @@ module.exports = {
 						if(!_.isEmpty(korbitTickers)){
 							korbitTickers=korbitTickers.tickers;
 							korbitTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								korbitTickers=_.filter(korbitTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								korbitTickers=_.slice(korbitTickers,0,count);
 							}
 							
@@ -1020,7 +1149,7 @@ module.exports = {
 		});
 	},
 	
-	bitmexMarketData:function(count=0){
+	bitmexMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'bitmex'},function(err, bitmexExchange){
@@ -1032,7 +1161,12 @@ module.exports = {
 						if(!_.isEmpty(bitmexTickers)){
 							bitmexTickers=bitmexTickers.tickers;
 							bitmexTickers.sort(function(a,b){ if(parseFloat(a.totalVolume)>parseFloat(b.totalVolume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								bitmexTickers=_.filter(bitmexTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								bitmexTickers=_.slice(bitmexTickers,0,count);
 							}
 							
@@ -1065,7 +1199,7 @@ module.exports = {
 		});
 	},
 	
-	livecoinMarketData:function(count=0){
+	livecoinMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'livecoin'},function(err, livecoinExchange){
@@ -1077,7 +1211,12 @@ module.exports = {
 						if(!_.isEmpty(livecoinTickers)){
 							livecoinTickers=livecoinTickers.tickers;
 							livecoinTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								livecoinTickers=_.filter(livecoinTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								livecoinTickers=_.slice(livecoinTickers,0,count);
 							}
 							
@@ -1110,7 +1249,7 @@ module.exports = {
 		});
 	},
 	
-	cexMarketData:function(count=0){
+	cexMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'cex'},function(err, cexExchange){
@@ -1122,7 +1261,12 @@ module.exports = {
 						if(!_.isEmpty(cexTickers)){
 							cexTickers=cexTickers.tickers;
 							cexTickers.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								cexTickers=_.filter(cexTickers,{base_currency:currency});
+							}
+							else if(count>0){
 								cexTickers=_.slice(cexTickers,0,count);
 							}
 							
@@ -1155,7 +1299,7 @@ module.exports = {
 		});
 	},
 	
-	kucoinMarketData:function(count=0){
+	kucoinMarketData:function(count=0,currency=null){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
 			ExchangeList.findOne({name:'kucoin'},function(err, kucoinExchange){
@@ -1167,7 +1311,12 @@ module.exports = {
 						if(!_.isEmpty(kucoinTickers)){
 							kucoinTickers=kucoinTickers.tickers.data;
 							kucoinTickers.sort(function(a,b){ if(parseFloat(a.vol)>parseFloat(b.vol)){return -1;}else {return 1;}});
-							if(count>0){
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toUpper(currency);
+								kucoinTickers=_.filter(kucoinTickers,{coinType:currency});
+							}
+							else if(count>0){
 								kucoinTickers=_.slice(kucoinTickers,0,count);
 							}
 							
@@ -1489,14 +1638,7 @@ module.exports = {
 					
 					if(!_.isEmpty(currency)){
 						currency=_.toLower(currency);
-						var temp=[];
-						_.forEach(totalCryptoPrices,function(price){
-							//if(_.includes(price.product,currency)){
-							if(price.base_currency==currency){
-								temp.push(price);
-							}
-						});
-						totalCryptoPrices=temp;
+						totalCryptoPrices=_.filter(totalCryptoPrices,{base_currency:currency});
 					}
 					else if(count>0){
 						totalCryptoPrices=_.slice(totalCryptoPrices,0,count);

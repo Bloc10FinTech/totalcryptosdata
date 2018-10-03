@@ -84,127 +84,127 @@ module.exports = {
 			break;
 			case 'coin':
 				return Promise.all([
-					ExchangeDataService.coinmarketcapMarketData(count)
+					ExchangeDataService.coinmarketcapMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bittrex':
 				return Promise.all([
-					ExchangeDataService.bittrexMarketData(count)
+					ExchangeDataService.bittrexMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitfinex':
 				return Promise.all([
-					ExchangeDataService.bitfinexMarketData(count)
+					ExchangeDataService.bitfinexMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'hitbtc':
 				return Promise.all([
-					ExchangeDataService.hitbtcMarketData(count)
+					ExchangeDataService.hitbtcMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'gate':
 				return Promise.all([
-					ExchangeDataService.gateMarketData(count)
+					ExchangeDataService.gateMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'kuna':
 				return Promise.all([
-					ExchangeDataService.kunaMarketData(count)
+					ExchangeDataService.kunaMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'okex':
 				return Promise.all([
-					ExchangeDataService.okexMarketData(count)
+					ExchangeDataService.okexMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'binance':
 				return Promise.all([
-					ExchangeDataService.binanceMarketData(count)
+					ExchangeDataService.binanceMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'huobi':
 				return Promise.all([
-					ExchangeDataService.huobiMarketData(count)
+					ExchangeDataService.huobiMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'gemini':
 				return Promise.all([
-					ExchangeDataService.geminiMarketData(count)
+					ExchangeDataService.geminiMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'kraken':
 				return Promise.all([
-					ExchangeDataService.krakenMarketData(count)
+					ExchangeDataService.krakenMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitflyer':
 				return Promise.all([
-					ExchangeDataService.bitflyerMarketData(count)
+					ExchangeDataService.bitflyerMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bithumb':
 				return Promise.all([
-					ExchangeDataService.bithumbMarketData(count)
+					ExchangeDataService.bithumbMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitstamp':
 				return Promise.all([
-					ExchangeDataService.bitstampMarketData(count)
+					ExchangeDataService.bitstampMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitz':
 				return Promise.all([
-					ExchangeDataService.bitzMarketData(count)
+					ExchangeDataService.bitzMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'lbank':
 				return Promise.all([
-					ExchangeDataService.lbankMarketData(count)
+					ExchangeDataService.lbankMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'coinone':
 				return Promise.all([
-					ExchangeDataService.coinoneMarketData(count)
+					ExchangeDataService.coinoneMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'wex':
 				return Promise.all([
-					ExchangeDataService.wexMarketData(count)
+					ExchangeDataService.wexMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'exmo':
 				return Promise.all([
-					ExchangeDataService.exmoMarketData(count)
+					ExchangeDataService.exmoMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'liqui':
 				return Promise.all([
-					ExchangeDataService.liquiMarketData(count)
+					ExchangeDataService.liquiMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'korbit':
 				return Promise.all([
-					ExchangeDataService.korbitMarketData(count)
+					ExchangeDataService.korbitMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});	
 			break;
 			case 'bitmex':
 				return Promise.all([
-					ExchangeDataService.bitmexMarketData(count)
+					ExchangeDataService.bitmexMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'livecoin':
 				return Promise.all([
-					ExchangeDataService.livecoinMarketData(count)
+					ExchangeDataService.livecoinMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'cex':
 				return Promise.all([
-					ExchangeDataService.cexMarketData(count)
+					ExchangeDataService.cexMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'kucoin':
 				return Promise.all([
-					ExchangeDataService.kucoinMarketData(count)
+					ExchangeDataService.kucoinMarketData(count,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			default:
