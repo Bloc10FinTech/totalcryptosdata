@@ -15,23 +15,20 @@
 								<div class="sub-menu">
 								   <ul class="nav nav-tabs">
 									  <li class="nav-item">
-										<a class="nav-link active" data-toggle="tab" href="#markets">Markets</a>
-									  </li>
-									  <li class="nav-item">
-										<a class="nav-link" data-toggle="tab" href="#history">History</a>
+										<a class="nav-link active" data-toggle="tab" href="#history">History</a>
 									  </li>
 									  <li class="nav-item">
 										<a class="nav-link" data-toggle="tab" href="#charts">Charts</a>
-									  </li> 
+									  </li>
+									  <li class="nav-item">
+										<a class="nav-link" data-toggle="tab" href="#markets">Markets</a>
+									  </li>
 									</ul>
 								</div>
 								<div class="tab-content" style="margin-top:20px;">
-									<div class="tab-pane active" id="markets">
-										<div style="text-align:center;"><img src="/images/data-loader.gif"/></div>
-									</div>
-									<div class="tab-pane" id="history">
+									<div class="tab-pane active" id="history">
 										<div class="table-responsive">
-											<table class="display table-custom dataTable">
+											<table class="display table-custom dataTable history_chart">
 											<thead>
 											<tr>
 												<th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>
@@ -52,7 +49,7 @@
 									</div>
 									<div class="tab-pane" id="charts">
 										<div class="table-responsive">
-											<table class="display table-custom dataTable">
+											<table class="display table-custom dataTable history_chart">
 											<thead>
 											<tr role="row">
 												 <th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>
@@ -68,6 +65,9 @@
 											</tbody>
 											</table>
 										</div>	
+									</div>
+									<div class="tab-pane" id="markets">
+										<div style="text-align:center;"><img src="/images/data-loader.gif"/></div>
 									</div>
 								</div>
 							</div>
@@ -194,44 +194,10 @@ $(document).ready(function(){
 
 	$.ajax({
 		type:'GET',
-		url:'/volume_24_hour_currency_symbol_data/'+currency,
+		url:'/volume_24_hour_currency_symbol_data/'+currency+'/history',
 		success:function(data){ 
 			var str='';
 			$("#currency").html(data.currency.toUpperCase());
-			data.markets.forEach(function(coins){
-				str+='<div class="table-responsive">';
-				str+='<table class="display table-custom dataTable">';
-				str+='<thead>';
-				str+='<tr>';
-				
-				str+='<th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>';
-				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Volume (24h)</th>';
-				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Currency</th>';
-				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Price</th>';
-				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Source</th>';
-				
-				str+='</tr>';
-				str+='</thead>';
-				str+='<tbody>';
-				coins.data.forEach(function(volume,index){
-					if(index%2==0){
-						class_even_odd='odd';
-					}
-					str+='<tr role="row" class="'+class_even_odd+'">';
-					str+='<td class="sorting_1">'+(index+1)+'</td>';
-					str+='<td>'+format_numbers(parseFloat(volume.volume).toFixed(2))+'</td>';
-					str+='<td>'+volume.currency+'</td>';
-					str+='<td>'+format_numbers(parseFloat(volume.price).toFixed(5))+'</td>';
-					str+='<td><a href="/exchange/'+volume.src.toLowerCase()+'">'+volume.src+'</a></td>';
-					str+='</tr>';
-				});
-				str+='</tbody>';
-				str+='</table>';
-				str+='</div>';	
-			});
-			$("#markets").html(str);
-			
-			str='';
 			data.history.forEach(function(data,index){
 				var class_even_odd='even';
 				if(index%2==0){
@@ -268,7 +234,7 @@ $(document).ready(function(){
 			});
 			$("#history_chart").html(str);
 			
-			$('.dataTable').DataTable({
+			$('.history_chart').DataTable({
 				pageLength: 10,
 				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
 				responsive: true,
@@ -302,6 +268,72 @@ $(document).ready(function(){
 				}
 			});
 			draw_chart();
+		}
+	});	
+	
+	$.ajax({
+		type:'GET',
+		url:'/volume_24_hour_currency_symbol_data/'+currency+'/market',
+		success:function(data){ 
+			var str='';
+			data.markets.forEach(function(coins){
+				str+='<div class="table-responsive">';
+				str+='<table class="display table-custom dataTable market">';
+				str+='<thead>';
+				str+='<tr>';
+				
+				str+='<th class="sorting_asc" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">#</th>';
+				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Volume (24h)</th>';
+				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Currency</th>';
+				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Price</th>';
+				str+='<th class="sorting" tabindex="0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="#: activate to sort column descending">Source</th>';
+				
+				str+='</tr>';
+				str+='</thead>';
+				str+='<tbody>';
+				coins.data.forEach(function(volume,index){
+					if(index%2==0){
+						class_even_odd='odd';
+					}
+					str+='<tr role="row" class="'+class_even_odd+'">';
+					str+='<td class="sorting_1">'+(index+1)+'</td>';
+					str+='<td>'+format_numbers(parseFloat(volume.volume).toFixed(2))+'</td>';
+					str+='<td>'+volume.currency+'</td>';
+					str+='<td>'+format_numbers(parseFloat(volume.price).toFixed(5))+'</td>';
+					str+='<td><a href="/exchange/'+volume.src.toLowerCase()+'">'+volume.src+'</a></td>';
+					str+='</tr>';
+				});
+				str+='</tbody>';
+				str+='</table>';
+				str+='</div>';	
+			});
+			$("#markets").html(str);
+			
+			$('.market').DataTable({
+				pageLength: 10,
+				lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'All']],
+				responsive: true,
+				dom: '<"html5buttons"B>lTfgitp',
+				aoColumnDefs: [{
+					'bSortable': false,
+					'aTargets': [0] 
+				}],
+				order: [],
+				buttons: [
+					//{extend: 'copy'},
+					{extend: 'csv'},
+					{extend: 'excel', title: 'ExampleFile'},
+					{extend: 'pdf', title: 'ExampleFile'},
+
+					//{extend: 'print',
+					 //customize: function (win){
+						//$(win.document.body).addClass('white-bg');
+						//$(win.document.body).css('font-size', '10px');
+						//$(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+					//}
+					//}
+				]
+			});
 		}
 	});	
 });

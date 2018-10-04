@@ -80,11 +80,13 @@ module.exports = {
 	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1);
 	  return response.view('volume_24_hour_currency_symbol',{title: title,currency: request.param('symbol'),path:request.path}); 
   },
+  
   volume_24_hour_currency_symbol_data:function(request,response){
-	  FrontendService.volume_24_hour_currency_symbol_data(request.param('symbol'),function(data){
+	  FrontendService.volume_24_hour_currency_symbol_data(request.param('symbol'),request.param('data'),function(data){
 		 return response.send(data); 
 	  });
   },
+  
   volume_24_hour_market:function(request,response){
 	  var lower=request.param('market');
 	  var title='Total Cryptos - '+lower.charAt(0).toUpperCase() + lower.substr(1);

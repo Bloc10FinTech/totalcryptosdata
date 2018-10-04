@@ -1471,13 +1471,16 @@ module.exports = {
 		});
 	},
 	
-	volume_24_hour_currency_symbol_data(symbol,callBack){
+	volume_24_hour_currency_symbol_data(symbol,data,callBack){
 		var _ = require('lodash');
 		symbol=_.toLower(symbol);
-		return Promise.all([
-			ExchangeDataService.totalCryptoPricesHistorySymbol(symbol)
-		]).
-		then(response => {
+		
+		if(data=='history'){
+			ExchangeDataService.totalCryptoPricesHistorySymbol(symbol).then(history => {
+				callBack({history:history,currency:symbol});
+			}).catch( err => {callBack({history:[],currency:symbol});});
+		}
+		else if(data=='market'){
 			ExchangeList.find({},function(err, currencies){
 				if(!_.isEmpty(currencies)){
 					var exchange_array=[];
@@ -1888,13 +1891,12 @@ module.exports = {
 							currencies.data.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
 						});
 						
-						callBack({markets:return_array,history:response[0],currency:symbol});
+						callBack({markets:return_array,currency:symbol});
 					}).
-					catch(err => { callBack({markets:[],history:response[0],currency:symbol});});
+					catch(err => { callBack({markets:[],currency:symbol});});
 				}
 			});
-		}).
-		catch(err => { callBack({markets:[],history:[],currency:symbol});});		
+		}		
 	},
 	
 	volume_24_hour_market_data:function(market,callBack){

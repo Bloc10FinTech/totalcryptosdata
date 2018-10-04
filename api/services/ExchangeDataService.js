@@ -1879,7 +1879,7 @@ module.exports = {
 								return_array.push(filter_data);
 							});
 						}
-					});
+					}); 
 					return resolve(return_array);
 				}
 				else{
