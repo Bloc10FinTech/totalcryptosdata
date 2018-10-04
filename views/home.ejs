@@ -349,9 +349,9 @@ function show_totalcrypto_price(tab,currency=null){
 				str+='</td>';
 				str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos">';
 				if(summary.change_perc_1h>0){
-				str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
+				str+='<span class="green-text">'+format_numbers(parseFloat(summary.price).toFixed(8),'price')+'</span> <img src="/images/green-up-arrow.png" alt="green arrow">';
 				}else{
-				str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8))+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
+				str+='<span class="red-text">'+format_numbers(parseFloat(summary.price).toFixed(8),'price')+'</span> <img src="/images/red-down-arrow.png" alt="red arrow">';
 				}
 				str+='</td>';
 				str+='<td id="'+summary.product+'_volume_totalcryptos">';
@@ -402,7 +402,11 @@ function show_totalcrypto_price(tab,currency=null){
 	});	
 }
 
-function format_numbers(number){
+function format_numbers(number,is_price=null){
+	if(is_price){
+		number=parseFloat(number);
+		number=(number>1)?number.toPrecision(10):number.toFixed(9);
+	}
 	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
 }
 

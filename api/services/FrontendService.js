@@ -60,7 +60,7 @@ module.exports = {
 		});
 	},
 	
-	tabData:function(tab,callBack,count,currency=null){
+	tabData:function(tab,callBack,count,currency=null){ 
 		switch(tab){
 			case 'totalcryptospriceusd':
 				return Promise.all([
@@ -74,7 +74,7 @@ module.exports = {
 			break;
 			case 'totalcryptosall':
 				return Promise.all([
-					ExchangeDataService.totalCryptoPricesPairs(count,currency)
+					ExchangeDataService.totalCryptoPricesPairs(0,currency)
 				]).then(response => {callBack(response[0].data);}).catch( err => {callBack([]);});
 			break;
 			case 'totalcryptonewlisting':

@@ -72,9 +72,9 @@ $(document).ready(function(){
 				str+='</td>';
 				str+='<td class="text-bold" id="'+summary.product+'_price_totalcryptos">';
 				if(summary.change_perc_1h>0){
-				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/green-up-arrow.png" alt="green arrow">';
+				str+=format_numbers(parseFloat(summary.price).toFixed(8),'price')+'<img src="/images/green-up-arrow.png" alt="green arrow">';
 				}else{
-				str+=parseFloat(summary.price).toFixed(8)+'<img src="/images/red-down-arrow.png" alt="red arrow">';
+				str+=format_numbers(parseFloat(summary.price).toFixed(8),'price')+'<img src="/images/red-down-arrow.png" alt="red arrow">';
 				}
 				str+='</td>';
 				str+='<td id="'+summary.product+'_volume_totalcryptos">'+parseFloat(summary.volume).toFixed(0)+'</td>';
@@ -127,4 +127,12 @@ $(document).ready(function(){
 		}
 	});	
 });
+
+function format_numbers(number,is_price=null){
+	if(is_price){
+		number=parseFloat(number);
+		number=(number>1)?number.toPrecision(10):number.toFixed(9);
+	}
+	return number.replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
 </script>
