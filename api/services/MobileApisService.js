@@ -1159,6 +1159,40 @@ module.exports = {
 		});	
 	},
 	
+	exchanges:function(callBack,request,isInc){
+		var _ = require('lodash');
+		MobileApisService.checkUpdateApiCalls(request.ip,'exchanges').
+		then(response => {
+			if(response){
+				ExchangeList.find({select :['id','name','url','rating'],is_exchange:'yes'},function(err, exchanges){
+					if(err){ 
+						if(isInc){
+							callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+						}
+						else{
+							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+						}
+					}
+					_.sortBy(exchanges,[function(exchange) { return exchange.name; }]);
+					if(isInc){
+						callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:exchanges}));
+					}
+					else{
+						callBack({errCode:1,message:'Request processed successfully.',data:exchanges});
+					}
+				});
+			}
+		}).
+		catch(err => {
+			if(isInc){
+				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
+			}
+			else{
+				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
+			}
+		});	
+	},
+	
 	checkUpdateApiCalls:function(ip_address,api_name){
 		var moment = require('moment');
 		var _ = require('lodash');

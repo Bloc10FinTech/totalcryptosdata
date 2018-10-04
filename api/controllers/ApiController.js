@@ -183,6 +183,16 @@ module.exports = {
 		return response.send(data);
 	},request.param('product'),request,true);
   },
+  exchanges:function(request, response){
+	  MobileApisService.exchanges(function(data){
+		return response.send(data);
+	},request,false);
+  },
+  exchangesInc:function(request, response){
+	  MobileApisService.exchanges(function(data){
+		return response.send(data);
+	},request,true);
+  },
   userRegistration:function(request, response) {
 	  MobileApisService.userRegistration(function(data){
 		return response.send(data);
