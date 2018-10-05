@@ -8,40 +8,20 @@ module.exports = {
 					TotalCryptoPrice.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrice){ 
 						if(!_.isEmpty(totalCryptoPrice)){ 
 							totalCryptoPrice=_.head(totalCryptoPrice);
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:{tc100:Math.round(totalCryptoPrice.tc100),total_usd_market_cap:Math.round(totalCryptoPrice.total_usd_market_cap),tcw100:Math.round(totalCryptoPrice.tcw100)}},isInc));
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -53,56 +33,31 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						if(!_.isEmpty(totalCryptoPrices)){ 
 							totalCryptoPrices=_.head(totalCryptoPrices);
 							totalCryptoPrices=totalCryptoPrices.prices;
 							totalCryptoPrices=_.filter(totalCryptoPrices,{quote_currency:'usd'});
 							totalCryptoPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:totalCryptoPrices},isInc));
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
-	symbolUSDPrice:function(callBack,request,currency,isInc){
+	symbolUSDPrice:function(callBack,request,currency,isInc){ 
 		var _ = require('lodash');
 		MobileApisService.checkUpdateApiCalls(request.ip,'symbolUSDPrice').
 		then(response => {
@@ -110,12 +65,7 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						if(!_.isEmpty(totalCryptoPrices)){ 
 							totalCryptoPrices=_.head(totalCryptoPrices);
@@ -123,49 +73,24 @@ module.exports = {
 							totalCryptoPrice=_.filter(totalCryptoPrices,{base_currency:currency,quote_currency:'usd'});
 							if(!_.isEmpty(totalCryptoPrice)){
 								totalCryptoPrice=_.head(totalCryptoPrice);
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptoPrice}));
-								}
-								else{
-									callBack({errCode:1,message:'Request processed successfully.',data:totalCryptoPrice});
-								}
+								callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:totalCryptoPrice},isInc));
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -177,51 +102,26 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						if(!_.isEmpty(productPrices)){ 
 							productPrices=_.head(productPrices);
 							productPrices=productPrices.prices;
 							productPrices.sort(function(a,b){ if(parseFloat(a.volume)>parseFloat(b.volume)){return -1;}else {return 1;}});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:productPrices}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:productPrices},isInc));
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -233,12 +133,7 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						if(!_.isEmpty(productPrices)){ 
 							productPrices=_.head(productPrices);
@@ -246,49 +141,24 @@ module.exports = {
 							productPrice=_.filter(productPrices,{product:product});
 							if(!_.isEmpty(productPrice)){
 								productPrice=_.head(productPrice);
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:productPrice}));
-								}
-								else{
-									callBack({errCode:1,message:'Request processed successfully.',data:productPrice});
-								}
+								callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:productPrice},isInc));
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -302,37 +172,17 @@ module.exports = {
 					MobileApisService.topProductsPrices(callBack,request,false,'internal_call'),
 					MobileApisService.topGainersLosers(callBack,request,'',false,'internal_call')
 				]).then(response => { 
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:{products:response[0],gainers:response[1]}}));
-					}
-					else{
-						callBack({errCode:1,message:'Request processed successfully.',data:{products:response[0],gainers:response[1]}});
-					}
+					callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:{products:response[0],gainers:response[1]}},isInc));
 				}).catch(err => {
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-					}
-					else{
-						callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-					}
+					callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -345,12 +195,7 @@ module.exports = {
 					return new Promise(function(resolve,reject){
 						TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,productPrices){ 
 							if(err){
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-								}
-								else{
-									callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 							}
 							if(!_.isEmpty(productPrices)){ 
 								productPrices=_.head(productPrices);
@@ -359,40 +204,20 @@ module.exports = {
 								_.remove(productPrices,function(price){ if(_.isEmpty(price.market_cap_usd)){return true;} return false;});
 								productPrices.sort(function(a,b){ if(parseFloat(a.market_cap_usd)>parseFloat(b.market_cap_usd)){return -1;}else {return 1;}});
 								productPrices=_.slice(productPrices,0,10);
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:productPrices}));
-								}
-								else{
-									callBack({errCode:1,message:'Request processed successfully.',data:productPrices});
-								}
+								callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:productPrices},isInc));
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						});
 					});
 				}
 				else{
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-					}
-					else{
-						callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-					}
+					callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 				}
 			}).
 			catch(err => {
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-				}
-				else{
-					callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 			});
 		}
 		else{ 
@@ -432,12 +257,7 @@ module.exports = {
 					totalCryptosPrice.sort('id ASC');
 					totalCryptosPrice.exec(function(err,history){
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						var tc100_array=[];
 						var tcw100_array=[];
@@ -448,40 +268,20 @@ module.exports = {
 								tcw100_array.push({tcw100:data.tcw100,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
 								market_cap_array.push({total_usd_market_cap:data.total_usd_market_cap,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
 							});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}},isInc));
 						} 
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}	
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -499,12 +299,7 @@ module.exports = {
 					totalCryptosPrice.sort('id ASC');
 					totalCryptosPrice.exec(function(err,history){
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						var tc100_array=[];
 						var tcw100_array=[];
@@ -515,40 +310,20 @@ module.exports = {
 								tcw100_array.push({tcw100:data.tcw100,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
 								market_cap_array.push({total_usd_market_cap:data.total_usd_market_cap,timestamp:moment(data.date_created, "YYYY-MM-DD h:i:s").format('X')});
 							});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:{tc100_array:tc100_array,tcw100_array:tcw100_array,market_cap_array:market_cap_array}},isInc));
 						} 
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}	
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -561,12 +336,7 @@ module.exports = {
 					return new Promise(function(resolve,reject){
 						ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
 							if(err){
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-								}
-								else{
-									callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 							}
 							if(!_.isEmpty(coin_market_exchange)){
 								var tickers=ExchangeTickers.findOne();
@@ -586,49 +356,24 @@ module.exports = {
 										tickers=_.reject(tickers,{percent_change_7d:null});
 										tickers.sort(function(a,b){if(parseFloat(a.percent_change_7d)>parseFloat(b.percent_change_7d)){return -1;}else {return 1;}});
 									}
-									if(isInc){
-										callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}}));
-									}
-									else{
-										callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
-									}
+									callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}},isInc));
 								}).
 								catch(err => {
-									if(isInc){
-										callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-									}
-									else{
-										callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-									}
+									callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 								});
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						});	
 					});
 				}
 				else{
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-					}
-					else{
-						callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-					}
+					callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 				}
 			}).
 			catch(err => {
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-				}
-				else{
-					callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 			});
 		}
 		else{	
@@ -666,12 +411,7 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						if(!_.isEmpty(totalCryptofix)){ 
 							if(totalCryptofix.length==1){
@@ -684,49 +424,24 @@ module.exports = {
 							totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
 							totalCryptofix.prices=_.filter(totalCryptofix.prices,{currency:_.toUpper(symbol)});
 							if(!_.isEmpty(totalCryptofix.prices)){
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptofix}));
-								}
-								else{
-									callBack({errCode:1,message:'Request processed successfully.',data:totalCryptofix});
-								}
+								callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:totalCryptofix},isInc));
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -739,12 +454,7 @@ module.exports = {
 				return new Promise(function(resolve,reject){
 					TotalCryptoFix.find().limit(2).sort({id:-1}).exec(function(err,totalCryptofix){ 
 						if(err){
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-							}
-							else{
-								callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 						}
 						if(!_.isEmpty(totalCryptofix)){ 
 							if(totalCryptofix.length==1){
@@ -756,49 +466,24 @@ module.exports = {
 						
 							totalCryptofix.date_created=moment(totalCryptofix.date_created).format('LLLL');
 							if(!_.isEmpty(totalCryptofix.prices)){
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:totalCryptofix}));
-								}
-								else{
-									callBack({errCode:1,message:'Request processed successfully.',data:totalCryptofix});
-								}
+								callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:totalCryptofix},isInc));
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						}
 						else{
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-							}
-							else{
-								callBack({errCode:404,message:'Record not found.',data:[]});
-							}
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 						}
 					});
 				});
 			}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});
 	},
 	
@@ -874,12 +559,7 @@ module.exports = {
 		var time=request.param('time');
 		var currencies=request.param('currencies');
 		if(_.indexOf(['1h','24h','7d'],time)==-1){
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:300,message:'Invalid arguments.',data:[]}));
-			}
-			else{
-				callBack({errCode:300,message:'Invalid arguments.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:300,message:'Invalid arguments.',data:[]},isInc));
 		}
 		else{
 			MobileApisService.checkUpdateApiCalls(request.ip,'sliderData').
@@ -888,12 +568,7 @@ module.exports = {
 					return new Promise(function(resolve,reject){
 						ExchangeList.findOne({name:'coinmarketcap'},function(err, coin_market_exchange){
 							if(err){
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-								}
-								else{
-									callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 							}
 							if(!_.isEmpty(coin_market_exchange)){
 								var tickers=ExchangeTickers.findOne();
@@ -915,12 +590,7 @@ module.exports = {
 									}
 									
 									if(_.isEmpty(currencies)){
-										if(isInc){
-											callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}}));
-										}
-										else{
-											callBack({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}});
-										}
+										callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:{gainers:_.slice(tickers,0,5),losers:_.slice(tickers.reverse(),0,5)}},isInc));
 									}
 									else{
 										var temp=[];
@@ -931,50 +601,25 @@ module.exports = {
 												}
 											});
 										});
-										if(isInc){
-											callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:temp}));
-										}
-										else{
-											callBack({errCode:1,message:'Request processed successfully.',data:temp});
-										}
+										callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:temp},isInc));
 									}
 								}).
 								catch(err => {
-									if(isInc){
-										callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-									}
-									else{
-										callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-									}
+									callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 								});
 							}
 							else{
-								if(isInc){
-									callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-								}
-								else{
-									callBack({errCode:404,message:'Record not found.',data:[]});
-								}
+								callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 							}
 						});	
 					});
 				}
 				else{
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-					}
-					else{
-						callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-					}
+					callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 				}
 			}).
 			catch(err => {
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-				}
-				else{
-					callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 			});
 		}	
 	},
@@ -987,22 +632,12 @@ module.exports = {
 			return new Promise(function(resolve,reject){
 				ExchangeCurrencyFullNames.findOne({name:'coinmarketcap'},function(err, currencies){
 					currencies=_.map(currencies.list.data,function(currency){ return {symbol:_.toLower(currency.symbol),full_name:currency.name};}); 
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:currencies}));
-					}
-					else{
-						callBack({errCode:1,message:'Request processed successfully.',data:currencies});
-					}
+					callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:currencies},isInc));
 				});
 			});
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});	
 	},
 	
@@ -1027,31 +662,16 @@ module.exports = {
 							});
 							return_array=_.uniqBy(return_array,'data_date');
 							return_array.sort(function(a,b){if(a.data_date>b.data_date){return -1;}else {return 1;}});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:return_array}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:return_array});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:return_array},isInc));
 						});
 					});
 				}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});	
 	},
 	
@@ -1076,31 +696,16 @@ module.exports = {
 							});
 							return_array=_.uniqBy(return_array,'data_date');
 							return_array.sort(function(a,b){if(a.data_date>b.data_date){return -1;}else {return 1;}});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:return_array}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:return_array});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:return_array},isInc));
 						});
 					});
 				}
 			else{
-				if(isInc){
-					callBack(ExchangeDataService.encrypt({errCode:300,message:'Api call limit exceeded.',data:[]}));
-				}
-				else{
-					callBack({errCode:300,message:'Api call limit exceeded.',data:[]});
-				}
+				callBack(MobileApisService.returnObject({errCode:300,message:'Api call limit exceeded.',data:[]},isInc));
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});	
 	},
 	
@@ -1130,32 +735,17 @@ module.exports = {
 									return_array.push(historyData);
 								}
 							});
-							if(isInc){
-								callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:return_array}));
-							}
-							else{
-								callBack({errCode:1,message:'Request processed successfully.',data:return_array});
-							}
+							callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:return_array},isInc));
 						});
 					}
 					else{
-						if(isInc){
-							callBack(ExchangeDataService.encrypt({errCode:404,message:'Record not found.',data:[]}));
-						}
-						else{
-							callBack({errCode:404,message:'Record not found.',data:[]});
-						}
+						callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
 					}
 				});
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});	
 	},
 	
@@ -1166,31 +756,54 @@ module.exports = {
 			if(response){
 				ExchangeList.find({select :['id','name','url','rating'],is_exchange:'yes'},function(err, exchanges){
 					if(err){ 
-						if(isInc){
-							callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-						}
-						else{
-							callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-						}
+						callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 					}
 					_.sortBy(exchanges,[function(exchange) { return exchange.name; }]);
-					if(isInc){
-						callBack(ExchangeDataService.encrypt({errCode:1,message:'Request processed successfully.',data:exchanges}));
-					}
-					else{
-						callBack({errCode:1,message:'Request processed successfully.',data:exchanges});
-					}
+					callBack(MobileApisService.returnObject({errCode:1,message:'Request processed successfully.',data:exchanges},isInc));
 				});
 			}
 		}).
 		catch(err => {
-			if(isInc){
-				callBack(ExchangeDataService.encrypt({errCode:500,message:'Server error. Please try again.',data:[]}));
-			}
-			else{
-				callBack({errCode:500,message:'Server error. Please try again.',data:[]});
-			}
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
 		});	
+	},
+	
+	updateExchangeRating:function(callBack,request,isInc){
+		var _ = require('lodash');
+		MobileApisService.checkUpdateApiCalls(request.ip,'updateExchangeRating').
+		then(response => {
+			if(response){
+				var name=_.toLower(request.param('name'));
+				var rating=request.param('rating');
+				if(_.isEmpty(name) || _.isEmpty(rating)){
+					callBack(MobileApisService.returnObject({errCode:300,message:'Invalid exchange or rating.',data:[]},isInc));
+				}
+				else{
+					ExchangeList.count({name:name,is_exchange:'yes'}).exec(function(err,count){
+						if(count>0){
+							ExchangeList.update({name:name},{rating:rating},function(err,data){ 
+								callBack(MobileApisService.returnObject({errCode:1,message:'Rating updated successfully.',data:[]},isInc));
+							});
+						}
+						else{
+							callBack(MobileApisService.returnObject({errCode:404,message:'Record not found.',data:[]},isInc));
+						}
+					});
+				}
+			}
+		}).
+		catch(err => {
+			callBack(MobileApisService.returnObject({errCode:500,message:'Server error. Please try again.',data:[]},isInc));
+		});		
+	},
+	
+	returnObject:function(object,isInc){
+		if(isInc){
+			return ExchangeDataService.encrypt(object);
+		}
+		else{
+			return object;
+		}
 	},
 	
 	checkUpdateApiCalls:function(ip_address,api_name){

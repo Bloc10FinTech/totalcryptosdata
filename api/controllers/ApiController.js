@@ -193,6 +193,16 @@ module.exports = {
 		return response.send(data);
 	},request,true);
   },
+  updateExchangeRating:function(request,response){
+	  MobileApisService.updateExchangeRating(function(data){
+		return response.send(data);
+	},request,false);
+  },
+  updateExchangeRatingInc:function(request,response){
+	 MobileApisService.updateExchangeRating(function(data){
+		return response.send(data);
+	},request,true); 
+  },
   userRegistration:function(request, response) {
 	  MobileApisService.userRegistration(function(data){
 		return response.send(data);

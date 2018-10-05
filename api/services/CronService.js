@@ -17,7 +17,7 @@ module.exports = {
 				]).
 				then(response => {
 					if(count==0){ 
-						ExchangeList.create({name:'gdax',url:'https://www.gdax.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'gdax',url:'https://www.gdax.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gdax','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -68,7 +68,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'bittrex',url:'https://bittrex.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'bittrex',url:'https://bittrex.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('bittrex','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -113,7 +113,7 @@ module.exports = {
 		ExchangeList.count({name: 'coinmarketcap'},function(err,count){
 			if(err){ ApiService.exchangeErrors('coinmarketcap','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
-				ExchangeList.create({name:'coinmarketcap',url:'https://coinmarketcap.com',is_exchange:'no',currencies:null,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'coinmarketcap',url:'https://coinmarketcap.com',is_exchange:'no',currencies:null,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('coinmarketcap','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -145,7 +145,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){ 
-						ExchangeList.create({name:'bitfinex',url:'https://www.bitfinex.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'bitfinex',url:'https://www.bitfinex.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('bitfinex','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -195,7 +195,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'hitbtc',url:'https://hitbtc.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'hitbtc',url:'https://hitbtc.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('hitbtc','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -245,7 +245,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'gate',url:'https://gate.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'gate',url:'https://gate.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('gate','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -289,7 +289,7 @@ module.exports = {
 		ExchangeList.count({name:'kuna'},function(err,count){
 			if(err){ ApiService.exchangeErrors('kuna','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
-				ExchangeList.create({name:'kuna',url:'https://kuna.io',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'kuna',url:'https://kuna.io',is_exchange:'yes',currencies:null,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('kuna','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -300,7 +300,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('okex','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
 				var products=['ltc_btc', 'eth_btc', 'etc_btc', 'bch_btc', 'btc_usdt', 'eth_usdt' ,'ltc_usdt', 'etc_usdt', 'bch_usdt', 'etc_eth', 'bt1_btc' ,'bt2_btc' ,'btg_btc' ,'qtum_btc' ,'hsr_btc', 'neo_btc', 'gas_btc' ,'qtum_usdt' ,'hsr_usdt' ,'neo_usdt' ,'gas_usdt'];
-				ExchangeList.create({name:'okex',url:'https://www.okex.com',is_exchange:'yes',currencies:null,products:products,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'okex',url:'https://www.okex.com',is_exchange:'yes',currencies:null,products:products,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('okex','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -315,7 +315,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'binance',url:'https://www.binance.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'binance',url:'https://www.binance.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('binance','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -365,7 +365,7 @@ module.exports = {
 				]).
 				then(response => {  
 					if(count==0){
-						ExchangeList.create({name:'huobi',url:'https://www.huobi.pro',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'huobi',url:'https://www.huobi.pro',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('huobi','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -416,7 +416,7 @@ module.exports = {
 				]).
 				then(response => {  
 					if(count==0){
-						ExchangeList.create({name:'gemini',url:'https://gemini.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'gemini',url:'https://gemini.com',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('gemini','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -466,7 +466,7 @@ module.exports = {
 				]).
 				then(response => {
 					if(count==0){
-						ExchangeList.create({name:'kraken',url:'https://www.kraken.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'kraken',url:'https://www.kraken.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('kraken','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -527,7 +527,7 @@ module.exports = {
 					}
 					
 					if(count==0){
-						ExchangeList.create({name:'bitflyer',url:'https://bitflyer.jp',is_exchange:'yes',currencies:null,products:products,date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'bitflyer',url:'https://bitflyer.jp',is_exchange:'yes',currencies:null,products:products,rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('bitflyer','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -578,7 +578,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('bithumb','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
 				currencies=['BTC', 'ETH', 'DASH', 'LTC', 'ETC', 'XRP', 'BCH', 'XMR', 'ZEC', 'QTUM', 'BTG', 'EOS'];
-				ExchangeList.create({name:'bithumb',url:'https://www.bithumb.com',is_exchange:'yes',currencies:currencies,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'bithumb',url:'https://www.bithumb.com',is_exchange:'yes',currencies:currencies,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('bithumb','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -593,7 +593,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'bitstamp',url:'https://www.bitstamp.net',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'bitstamp',url:'https://www.bitstamp.net',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('bitstamp','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -637,7 +637,7 @@ module.exports = {
 		ExchangeList.count({name:'bitz'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitz','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
-				ExchangeList.create({name:'bitz',url:'https://www.bit-z.com',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'bitz',url:'https://www.bit-z.com',is_exchange:'yes',currencies:null,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('bitz','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -652,7 +652,7 @@ module.exports = {
 				]).
 				then(response => {  
 					if(count==0){
-						ExchangeList.create({name:'lbank',url:'https://www.lbank.info',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'lbank',url:'https://www.lbank.info',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('lbank','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -697,7 +697,7 @@ module.exports = {
 			if(err){ ApiService.exchangeErrors('coinone','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
 				currencies=['btc', 'bch', 'eth', 'etc', 'xrp', 'qtum', 'iota', 'ltc', 'btg'];
-				ExchangeList.create({name:'coinone',url:'https://coinone.co.kr',is_exchange:'yes',currencies:currencies,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'coinone',url:'https://coinone.co.kr',is_exchange:'yes',currencies:currencies,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('coinone','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -712,7 +712,7 @@ module.exports = {
 				]).
 				then(response => {  
 					if(count==0){
-						ExchangeList.create({name:'wex',url:'https://wex.nz',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'wex',url:'https://wex.nz',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('wex','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -762,7 +762,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'exmo',url:'https://exmo.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'exmo',url:'https://exmo.com',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('exmo','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -812,7 +812,7 @@ module.exports = {
 				]).
 				then(response => { 
 					if(count==0){
-						ExchangeList.create({name:'liqui',url:'https://liqui.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'liqui',url:'https://liqui.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 							if(err){ ApiService.exchangeErrors('liqui','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -858,7 +858,7 @@ module.exports = {
 			if(count==0){
 				var currencies=['BTC', 'ETC', 'ETH', 'XRP', 'BCH'];
 				var products=['etc_krw', 'eth_krw', 'xrp_krw', 'bch_krw'];
-				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:currencies,products:products,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'korbit',url:'https://www.korbit.co.kr',is_exchange:'yes',currencies:currencies,products:products,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('korbit','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -868,7 +868,7 @@ module.exports = {
 		ExchangeList.count({name:'bitmex'},function(err,count){
 			if(err){ ApiService.exchangeErrors('bitmex','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
-				ExchangeList.create({name:'bitmex',url:'https://www.bitmex.com',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'bitmex',url:'https://www.bitmex.com',is_exchange:'yes',currencies:null,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('bitmex','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -878,7 +878,7 @@ module.exports = {
 		ExchangeList.count({name:'livecoin'},function(err,count){
 			if(err){ ApiService.exchangeErrors('livecoin','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
-				ExchangeList.create({name:'livecoin',url:'https://www.livecoin.net',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'livecoin',url:'https://www.livecoin.net',is_exchange:'yes',currencies:null,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('livecoin','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
@@ -893,7 +893,7 @@ module.exports = {
 				]).
 				then(response => {  
 					if(count==0){
-						ExchangeList.create({name:'cex',url:'https://cex.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),date_created: curDateTime},function(err,data){
+						ExchangeList.create({name:'cex',url:'https://cex.io',is_exchange:'yes',currencies:null,products:JSON.parse(response[0]),rating:null,date_created: curDateTime},function(err,data){
 						if(err){ ApiService.exchangeErrors('cex','query_insert',err,'exchange_insert',curDateTime);}
 						});
 					}
@@ -937,7 +937,7 @@ module.exports = {
 		ExchangeList.count({name:'kucoin'},function(err,count){
 			if(err){ ApiService.exchangeErrors('kucoin','query_select',err,'exchange_select',curDateTime);}
 			if(count==0){
-				ExchangeList.create({name:'kucoin',url:'https://www.kucoin.com',is_exchange:'yes',currencies:null,products:null,date_created: curDateTime},function(err,data){
+				ExchangeList.create({name:'kucoin',url:'https://www.kucoin.com',is_exchange:'yes',currencies:null,products:null,rating:null,date_created: curDateTime},function(err,data){
 					if(err){ ApiService.exchangeErrors('kucoin','query_insert',err,'exchange_insert',curDateTime);}
 				});
 			}
