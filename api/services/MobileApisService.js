@@ -657,8 +657,12 @@ module.exports = {
 								if(!_.isEmpty(price)){
 									price=_.head(price);
 									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
+									
 									if(!price.hasOwnProperty('open') && (price.high) && (price.low)){
-										price.open=(Math.random() * (parseFloat(price.high) - parseFloat(price.low))) + parseFloat(price.low);  
+										price.open=(Math.random() * (parseFloat(price.high) - parseFloat(price.low))) + parseFloat(price.low);   
+									}
+									
+									if(!price.hasOwnProperty('close') && (price.high) && (price.low)){ 
 										price.close=(Math.random() * (parseFloat(price.high) - parseFloat(price.low))) + parseFloat(price.low);   
 									}
 									return_array.push(price);
@@ -696,7 +700,10 @@ module.exports = {
 									price=_.head(price);
 									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
 									if(!price.hasOwnProperty('open') && (price.high) && (price.low)){
-										price.open=(Math.random() * (parseFloat(price.high) - parseFloat(price.low))) + parseFloat(price.low);  
+										price.open=(Math.random() * (parseFloat(price.high) - parseFloat(price.low))) + parseFloat(price.low);   
+									}
+									
+									if(!price.hasOwnProperty('close') && (price.high) && (price.low)){ 
 										price.close=(Math.random() * (parseFloat(price.high) - parseFloat(price.low))) + parseFloat(price.low);   
 									}
 									return_array.push(price);
