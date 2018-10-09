@@ -658,8 +658,8 @@ module.exports = {
 									price=_.head(price);
 									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
 									if(!price.hasOwnProperty('open') && (price.high) && (price.low)){
-										price.open=(Math.random() * price.high) + price.low;  
-										price.close=(Math.random() * price.high) + price.low;  
+										price.open=(Math.random() * (price.high - price.low) + price.low);  
+										price.close=(Math.random() * (price.high - price.low) + price.low);  
 									}
 									return_array.push(price);
 								}
@@ -696,8 +696,8 @@ module.exports = {
 									price=_.head(price);
 									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
 									if(!price.hasOwnProperty('open') && (price.high) && (price.low)){
-										price.open=(Math.random() * price.high) + price.low;  
-										price.close=(Math.random() * price.high) + price.low;  
+										price.open=(Math.random() * (price.high - price.low) + price.low);  
+										price.close=(Math.random() * (price.high - price.low) + price.low);   
 									}
 									return_array.push(price);
 								}
