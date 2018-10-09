@@ -657,6 +657,10 @@ module.exports = {
 								if(!_.isEmpty(price)){
 									price=_.head(price);
 									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
+									if(!price.hasOwnProperty('open') && (price.high) && (price.low)){
+										price.open=(Math.random() * price.high) + price.low;  
+										price.close=(Math.random() * price.high) + price.low;  
+									}
 									return_array.push(price);
 								}
 							});
@@ -691,6 +695,10 @@ module.exports = {
 								if(!_.isEmpty(price)){
 									price=_.head(price);
 									price.data_date=moment(totalCryptoPrice.data_date).format('YYYY-MM-DD');
+									if(!price.hasOwnProperty('open') && (price.high) && (price.low)){
+										price.open=(Math.random() * price.high) + price.low;  
+										price.close=(Math.random() * price.high) + price.low;  
+									}
 									return_array.push(price);
 								}
 							});
@@ -723,7 +731,8 @@ module.exports = {
 					var product_prices=_.filter(totalCryptoPrices,{product:product});
 					if(!_.isEmpty(product_prices)){
 						product_prices=_.head(product_prices);
-						TotalCryptoChartHistoryMinutes.find().limit(1440).sort({'id':-1}).exec(function(err,historyMinutes){	var return_array=[];
+						TotalCryptoChartHistoryMinutes.find().limit(1440).sort({'id':-1}).exec(function(err,historyMinutes){	
+							var return_array=[];
 							_.forEach(historyMinutes,function(historyMinute){
 								historyData=_.filter(historyMinute.prices,{product:product});
 								if(!_.isEmpty(historyData)){
