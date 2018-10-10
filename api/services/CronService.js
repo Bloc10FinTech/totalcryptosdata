@@ -943,6 +943,58 @@ module.exports = {
 			}
 		});
 		
+		//PROCESS TO INSERT CRYPTOPIA STATIC DATA
+		ExchangeList.count({name:'cryptopia'},function(err,count){
+			if(err){ ApiService.exchangeErrors('cryptopia','query_select',err,'exchange_select',curDateTime);}
+			if(count>=0){
+				Promise.all([
+					ApiService.cryptopiaCurrencies(),
+					ApiService.cryptopiaProducts()
+				]).
+				then(response => { 
+					if(count==0){
+						ExchangeList.create({name:'cryptopia',url:'https://www.cryptopia.co.nz',is_exchange:'yes',currencies:JSON.parse(response[0]),products:JSON.parse(response[1]),rating:null,date_created: curDateTime},function(err,data){
+						if(err){ ApiService.exchangeErrors('cryptopia','query_insert',err,'exchange_insert',curDateTime);}
+						});
+					}
+					else{
+						ExchangeList.findOne({name:'cryptopia'},function(err,data){
+							var prev_currencies=data.currencies.Data;
+							var prev_products=data.products.Data;
+							
+							var new_currencies=_.differenceBy(JSON.parse(response[0]).Data, prev_currencies,'Symbol');
+							var new_products=_.differenceBy(JSON.parse(response[1]).Data, prev_products,'Label');
+							if(new_currencies.length>0 && new_products.length>0){
+								ExchangeList.update({name:'cryptopia'},{currencies:JSON.parse(response[0]),products:JSON.parse(response[1])},function(err,data){
+								if(err){ ApiService.exchangeErrors('cryptopia','query_update',err,'exchange_update',curDateTime);}	
+								});
+								
+								var new_products_all=[];
+								TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){
+									var temp_new=[];
+									if(!_.isEmpty(totalCryptoPrices)){ 
+										totalCryptoPrices=_.head(totalCryptoPrices);
+										totalCryptoPrices=totalCryptoPrices.prices;
+										_.forEach(new_products,function(product){
+											var filter_data=_.filter(totalCryptoPrices,{product:_.toLower(_.replace(product.Label,'/',''))});
+											if(_.isEmpty(filter_data)){
+												new_products_all.push(product);
+											}
+										});
+									}
+									
+									ExchangeNewCoins.create({exchange_id:data.id,name:'cryptopia',currencies:new_currencies,products:new_products,products_new:new_products_all,date_created:curDateTime},function(err,data){
+										if(err){ ApiService.exchangeErrors('cryptopia','query_insert',err,'exchange_insert',curDateTime);}
+									});	
+								});	
+							}
+						});
+					}
+				}).
+				catch(err => { ApiService.exchangeErrors('cryptopia','api',err,'exchange_api_select',curDateTime);});
+			}
+		});
+		
 		//PROCESS TO CREATE TOTAL CRYPTO PRICES 24 HOUR HISTORY
 		TotalCryptoPrices.find({ "date_created" : { ">": date_after } }).sort('id ASC').exec(function(err, data){
 			if(err){ 
@@ -3272,6 +3324,83 @@ module.exports = {
 			}	
 		});
 		
+		//PROCESS TO CREATE CRYPTOPIA MARKET TICKERS
+		ExchangeList.findOne({name:'cryptopia'},function(err,data){ 
+			if(err){ 
+				ApiService.exchangeErrors('cryptopia','query_select',err,'tickers_select',curDateTime);
+			}
+			if(!_.isEmpty(data)){
+				var exchange_id=data.id;
+				ExchangeTickers.find().where({exchange_id:exchange_id}).where({ "date_created" : { ">": date_after }}).sort('id ASC').exec(function(err, charts){
+					if(err){ 
+						ApiService.exchangeErrors('cryptopia','query_select',err,'tickers_select',curDateTime);
+					}
+					
+					ApiService.cryptopiaTicker().then(tickers=>{
+						tickers=JSON.parse(tickers);
+						
+						if(tickers.Success){
+						_.forEach(tickers.Data,function(ticker){
+								var chart_data=[];
+								ticker.is_old='no';
+								ticker.AskPrice=math.format(ticker.AskPrice,{lowerExp: -100, upperExp: 100});
+								ticker.BidPrice=math.format(ticker.BidPrice,{lowerExp: -100, upperExp: 100});
+								ticker.Low=math.format(ticker.Low,{lowerExp: -100, upperExp: 100});
+								ticker.High=math.format(ticker.High,{lowerExp: -100, upperExp: 100});
+								ticker.Volume=math.format(ticker.Volume,{lowerExp: -100, upperExp: 100});
+								ticker.LastPrice=math.format(ticker.LastPrice,{lowerExp: -100, upperExp: 100});
+								ticker.Open=math.format(ticker.Open,{lowerExp: -100, upperExp: 100});
+								ticker.Close=math.format(ticker.Close,{lowerExp: -100, upperExp: 100});
+								ticker.base_currency=_.toLower(_.join(_.split(ticker.Label,'/',1)));
+								ticker.quote_currency=_.toLower(_.replace(ticker.Label,_.toUpper(ticker.base_currency)+'/',''));
+								
+								_.forEach(charts,function(chart){
+									chart=_.filter(chart.tickers.Data,{Label:ticker.Label});
+									if(!_.isEmpty(chart)){
+										chart=_.head(chart);
+										chart_data.push(chart.LastPrice);
+									}
+								});
+								chart_data.push(ticker.LastPrice);
+								ticker.chart=chart_data;
+							});
+						
+							//PROCESS TO SYNC WITH LAST ENTRY
+							var last_tickers=ExchangeTickers.findOne();
+							last_tickers.where({exchange_id:exchange_id});
+							last_tickers.sort('id DESC');
+							last_tickers.exec(function(err,last_tickers){
+								if(err){ 
+									ApiService.exchangeErrors('cryptopia','query_select',err,'tickers_select',curDateTime);
+								}
+								
+								if(!_.isEmpty(last_tickers)){
+									last_tickers=last_tickers.tickers;
+									_.forEach(last_tickers.Data,function(ticker){
+										var filter=_.filter(tickers.Data,{Label:ticker.Label});
+										if(_.isEmpty(filter)){
+											ticker.is_old='yes';
+											tickers.data.push(ticker);
+										}
+									});
+								}
+								
+								ExchangeTickers.create({exchange_id:exchange_id,tickers:tickers,date_created:curDateTime},function(err,data){
+									if(err){ 
+										ApiService.exchangeErrors('cryptopia','query_insert',err,'tickers_insert',curDateTime);
+									}
+								});
+							});
+						}	
+					
+					}).
+					catch(err=> { 
+						ApiService.exchangeErrors('cryptopia','api',err,'tickers_api_select',curDateTime);
+					});
+				});
+			}	
+		});
+		
 		//PROCESS TO CALCULATE TOTAL CRYPTO PRICE
 		TotalCryptoPrices.find().limit(1).sort({id:-1}).exec(function(err,totalCryptoPrices){ 
 			if(err){ 
@@ -3366,10 +3495,11 @@ module.exports = {
 				ExchangeDataService.bitmexMarketData(),
 				ExchangeDataService.livecoinMarketData(),
 				ExchangeDataService.cexMarketData(),
-				ExchangeDataService.kucoinMarketData()
+				ExchangeDataService.kucoinMarketData(),
+				ExchangeDataService.cryptopiaMarketData()
 			]
 			).then(response => { 
-				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data,kucoin:response[25].data};
+				var exchange_objects={gdax:response[0].data, bittrex:response[1].data,coinmarketcap:response[2].data,bitfinex:response[3].data,hitbtc:response[4].data,gate:response[5].data,kuna:response[6].data,okex:response[7].data,binance:response[8].data,huobi:response[9].data,gemini:response[10].data,kraken:response[11].data,bitflyer:response[12].data,bithumb:response[13].data,bitstamp:response[14].data,bitz:response[15].data,lbank:response[16].data,coinone:response[17].data,wex:response[18].data,exmo:response[19].data,liqui:response[20].data,korbit:response[21].data,bitmex:response[22].data,livecoin:response[23].data,cex:response[24].data,kucoin:response[25].data,cryptopia:response[26].data};
 				var total_crypto_prices=[];
 				
 				_.forEach(Object.keys(exchange_objects),function(exchange){
@@ -3529,6 +3659,10 @@ module.exports = {
 								base_currency=_.toLower(ticker.coinType);
 								quote_currency=_.toLower(ticker.coinTypePair);	
 								total_crypto_prices.push({product:product,base_currency:base_currency,quote_currency:quote_currency,price:ticker.lastDealPrice,volume:ticker.vol,high:ticker.high,low:ticker.low,ask:ticker.sell,bid:ticker.buy,last:ticker.lastDealPrice});
+							break;
+							case 'cryptopia':
+								product=_.toLower(_.replace(ticker.Label,'/',''));        	
+								total_crypto_prices.push({product:product,base_currency:ticker.base_currency,quote_currency:ticker.quote_currency,price:ticker.LastPrice,volume:ticker.Volume,high:ticker.High,low:ticker.Low,ask:ticker.AskPrice,bid:ticker.BidPrice,last:ticker.LastPrice,open:ticker.Open,close:ticker.Close});
 							break;
 							default:
 							break;

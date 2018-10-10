@@ -61,6 +61,8 @@
 									CEX
 									<%}else if(tab=='kucoin') {%>
 									KUCOIN
+									<%}else if(tab=='cryptopia') {%>
+									CRYPTOPIA
 									<%}%>
 									</h5> 
 								</div>
@@ -235,6 +237,13 @@
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Low</th>
 													<%}else if(tab=='kucoin') {%>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Volume</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">High</th>
+													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Low</th>
+													<%}else if(tab=='cryptopia') {%>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Market Name</th>
 													<th class="sorting" tabindex="0" aria-controls="totalCryptos-table" rowspan="1" colspan="1">Price</th>
@@ -1244,6 +1253,37 @@ function show_tab_data(tab,currency=null){
 					str+='<td>';
 					str+='<div class="row">';
 					str+='<div class="col-md-12" id="chart_'+summary.symbol.replace('-','')+'_kucoin"><input type="hidden" id="hidden_'+summary.symbol.replace('-','')+'_kucoin" value="'+summary.chart+'" /></div>';
+					str+='</div>';
+					str+='</td>';
+					str+='</tr>';
+					});
+				break;
+				case 'cryptopia':
+					data.forEach(function(summary,index){
+					var even_odd_class='even';
+					if(index%2==0){
+						even_odd_class='odd';
+					}
+					str+='<tr role="row" class="'+even_odd_class+'" id="'+summary.Label.replace('/','')+'_cryptopia">';
+					str+='<td class="text-bold">';
+					str+='<img src="/images/currencies/'+summary.base_currency+'.png" width="16px" height="16px" onError="this.src=\'/images/currency.png\'" />';
+					str+='&nbsp;&nbsp;<a href="/volume-24-hour-currency/'+summary.base_currency+'">';
+					//str+=summary.coinType;
+					str+=summary.full_name;
+					str+='</a>';
+					str+='</td>';
+					str+='<td class="text-bold">';
+					str+='<a href="/volume-24-hour-market/'+summary.Label.replace('/','').toLowerCase()+'">';
+					str+=summary.Label.replace('/','');
+					str+='</a>';
+					str+='</td>';
+					str+='<td id="'+summary.Label.replace('-','')+'_price_cryptopia">'+format_numbers(parseFloat(summary.LastPrice),'price')+'</td>';
+					str+='<td id="'+summary.Label.replace('/','')+'_vol_cryptopia">'+Math.round(parseFloat(summary.Volume))+'</td>';
+					str+='<td id="'+summary.Label.replace('/','')+'_high_cryptopia">'+format_numbers(parseFloat(summary.High),'price')+'</td>';
+					str+='<td id="'+summary.Label.replace('/','')+'_low_cryptopia">'+format_numbers(parseFloat(summary.Low),'price')+'</td>';
+					str+='<td>';
+					str+='<div class="row">';
+					str+='<div class="col-md-12" id="chart_'+summary.Label.replace('/','')+'_cryptopia"><input type="hidden" id="hidden_'+summary.Label.replace('/','')+'_cryptopia" value="'+summary.chart+'" /></div>';
 					str+='</div>';
 					str+='</td>';
 					str+='</tr>';

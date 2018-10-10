@@ -403,6 +403,22 @@ module.exports = {
 									});
 									return resolve(temp_array);
 								break;
+								case 'cryptopia':
+									var temp_array=[];
+									tickers=tickers.Data;
+									_.forEach(currencies,function(currency){
+										_.forEach(currencies_temp,function(currency_temp){
+											var tickers_match=_.filter(tickers,{Label:_.toUpper(currency+'/'+currency_temp)});
+											if(!_.isEmpty(tickers_match)){
+												tickers_match=_.head(tickers_match);
+												if(_.isEmpty(tickers_match.is_old) || tickers_match.is_old=='no'){
+													temp_array.push({product:currency+'_'+currency_temp,record:{buy:tickers_match.BidPrice,sell:tickers_match.AskPrice,volume:tickers_match.Volume,ask:tickers_match.AskPrice,bid:tickers_match.BidPrice,last:tickers_match.LastPrice,exchange:exchange.name,date_created:date_created}});
+												}
+											}
+										});
+									});
+									return resolve(temp_array);
+								break;
 								default:
 									return resolve([]);
 								break;

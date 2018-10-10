@@ -810,6 +810,54 @@ module.exports = {
 		});
 	},
 	
+	cryptopiaCurrencies:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://www.cryptopia.co.nz/api/GetCurrencies',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
+	cryptopiaProducts:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://www.cryptopia.co.nz/api/GetTradePairs',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
+	cryptopiaTicker:function(){
+		var request = require('request');
+		return new Promise(function(resolve, reject){
+			var options = {
+			  url: 'https://www.cryptopia.co.nz/api/GetMarkets',
+			  headers: {
+				'User-Agent': 'request'
+			  }
+			};
+			request(options, function(err, res, body) {
+				if (err) { return reject(err); }
+				return resolve(body);
+			});
+		});
+	},
+	
 	icoWatchList:function(){
 		var request=require('request');
 		return new Promise(function(resolve, reject){

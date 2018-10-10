@@ -1349,6 +1349,56 @@ module.exports = {
 		});
 	},
 	
+	cryptopiaMarketData:function(count=0,currency=null){
+		var _ = require('lodash');
+		return new Promise(function(resolve,reject){
+			ExchangeList.findOne({name:'cryptopia'},function(err, cryptopiaExchange){
+				if(!_.isEmpty(cryptopiaExchange)){
+					var cryptopiaTickers=ExchangeTickers.findOne();
+					cryptopiaTickers.where({exchange_id:cryptopiaExchange.id});
+					cryptopiaTickers.sort('id DESC');
+					cryptopiaTickers.exec(function(err,cryptopiaTickers){
+						if(!_.isEmpty(cryptopiaTickers)){
+							cryptopiaTickers=cryptopiaTickers.tickers.Data;
+							cryptopiaTickers.sort(function(a,b){ if(parseFloat(a.Volume)>parseFloat(b.Volume)){return -1;}else {return 1;}});
+							
+							if(!_.isEmpty(currency)){
+								currency=_.toLower(currency);
+								cryptopiaTickers=_.filter(cryptopiaTickers,{base_currency:currency});
+							}
+							else if(count>0){
+								cryptopiaTickers=_.slice(cryptopiaTickers,0,count);
+							}
+							
+							ExchangeDataService.currencyFullNames().then(full_names => {
+							_.forEach(cryptopiaTickers,function(ticker){ 
+									var full_name=_.filter(full_names.list,{symbol:_.toLower(ticker.base_currency)});
+									if(!_.isEmpty(full_name)){
+										full_name=_.head(full_name);
+										ticker.full_name=full_name.full_name;
+									}
+									else{
+										ticker.full_name=ticker.base_currency;
+									}
+								}); 
+								return resolve({name:cryptopiaExchange.name,url:cryptopiaExchange.url,is_exchange:cryptopiaExchange.is_exchange,data:cryptopiaTickers});
+							}).
+							catch(err => {
+								return resolve({name:'',url:'',is_exchange:'',data:[]});
+							});
+						}
+						else{
+							return resolve({name:'',url:'',is_exchange:'',data:[]});
+						}
+					});
+				}
+				else{
+					return resolve({name:'',url:'',is_exchange:'',data:[]});
+				}
+			});
+		});
+	},
+	
 	fxMarketData:function(){
 		var _ = require('lodash');
 		return new Promise(function(resolve,reject){
