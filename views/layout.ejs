@@ -6,8 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<meta name="description" content="<%=typeof title == 'undefined' ? 'New Sails App' : title%>"/>
 	<meta name="description" content="<%=typeof meta_description == 'undefined' ? '' : meta_description%>"/>
+	
+	<meta property="og:url" content="https://totalcryptos.com/" />
+	<meta property="og:site_name" content="totalcryptos" />
 	<meta property="og:image" content="<%=typeof og_img == 'undefined' ? 'https://totalcryptos.com/images/logo.png' : og_img%>" />
-    <!--STYLES data-->
+	<meta property="og:image:secure_url" content="<%=typeof og_img == 'undefined' ? 'https://totalcryptos.com/images/logo.png' : og_img%>" />
+    <meta property="og:image:width" content="800" />
+	<meta property="og:image:height" content="400" />
+	<meta property="og:image:alt" content="totalcryptos" />
+	<!--STYLES data-->
 	<link rel="icon" href="/favicon.png?version=2" type="image/png">
     <link rel="stylesheet" href="/styles/lib/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/lib/c3.min.css">
