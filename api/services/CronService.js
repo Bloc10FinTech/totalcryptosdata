@@ -3380,7 +3380,7 @@ module.exports = {
 										var filter=_.filter(tickers.Data,{Label:ticker.Label});
 										if(_.isEmpty(filter)){
 											ticker.is_old='yes';
-											tickers.data.push(ticker);
+											tickers.Data.push(ticker);
 										}
 									});
 								}
