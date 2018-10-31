@@ -3,7 +3,8 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject) {
 			var options = {
-			  url: 'https://api.gdax.com/currencies',
+			  url: 'https://api.pro.coinbase.com/currencies',
+			  //url: 'https://api.gdax.com/currencies',
 			  headers: {
 				'User-Agent': 'request'
 			  }
@@ -19,7 +20,8 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject) {
 			var options = {
-			  url: 'https://api.gdax.com/products',
+			  url: 'https://api.pro.coinbase.com/products',
+			  //url: 'https://api.gdax.com/products',
 			  headers: {
 				'User-Agent': 'request'
 			  }
@@ -35,7 +37,8 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject) {
 			var options = {
-			  url: 'https://api.gdax.com/products/'+id+'/ticker',
+			  url: 'https://api.pro.coinbase.com/products/'+id+'/ticker',
+			  //url: 'https://api.gdax.com/products/'+id+'/ticker',
 			  headers: {
 				'User-Agent': 'request'
 			  }
@@ -51,7 +54,8 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject) {
 			var options = {
-			  url: 'https://api.gdax.com/products/'+id+'/stats',
+			  url: 'https://api.pro.coinbase.com/products/'+id+'/stats',
+			  //url: 'https://api.gdax.com/products/'+id+'/stats',
 			  headers: {
 				'User-Agent': 'request'
 			  }
@@ -67,7 +71,8 @@ module.exports = {
 		var request = require('request');
 		return new Promise(function(resolve, reject){
 			var options = {
-			  url: 'https://api.gdax.com/products/'+id+'/trades',
+			  url: 'https://api.pro.coinbase.com/products/'+id+'/trades',
+			  //url: 'https://api.gdax.com/products/'+id+'/trades',
 			  headers: {
 				'User-Agent': 'request'
 			  }
